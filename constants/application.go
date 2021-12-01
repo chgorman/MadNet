@@ -4,6 +4,10 @@ const (
 	// MaxTxVectorLength is the maximum size of input output vectors.
 	// This prevents uint32 overflow.
 	MaxTxVectorLength int = 128
+
+	// MaxTxSize is the maximum size in bytes of a marshaled transaction;
+	// 3 MiB (3 * 2^20).
+	MaxTxSize int = 3145728
 )
 
 const (
