@@ -107,8 +107,8 @@ func makeVSWithValueFee(t *testing.T, ownerSigner Signer, i int, value, fee *uin
 	return utxInputs
 }
 
-func makeDSWithValueFee(t *testing.T, ownerSigner Signer, i int, rawData []byte, index []byte, startEpoch uint32, numEpochs uint32, fee *uint256.Uint256) *TXOut {
-	if fee == nil || len(rawData) == 0 {
+func makeDSWithValueFee(t *testing.T, ownerSigner Signer, i int, rawData []byte, index []byte, startEpoch uint32, numEpochs uint32, dsPerEpochFee *uint256.Uint256) *TXOut {
+	if dsPerEpochFee == nil || len(rawData) == 0 {
 		panic("invalid fee or rawData")
 	}
 	cid := uint32(2)
@@ -127,14 +127,22 @@ func makeDSWithValueFee(t *testing.T, ownerSigner Signer, i int, rawData []byte,
 		t.Fatal(err)
 	}
 
+	mulFactor, err := new(uint256.Uint256).FromUint64(uint64(numEpochs + 2))
+	if err != nil {
+		t.Fatal(err)
+	}
+	dsfee, err := new(uint256.Uint256).Mul(dsPerEpochFee, mulFactor)
+	if err != nil {
+		t.Fatal(err)
+	}
 	dsp := &DSPreImage{
 		ChainID:  cid,
 		Index:    index,
 		IssuedAt: startEpoch,
-		Deposit:  deposit.Clone(),
+		Deposit:  deposit,
 		RawData:  rawData,
 		Owner:    owner,
-		Fee:      fee.Clone(),
+		Fee:      dsfee,
 	}
 	err = dsp.ValidateDeposit()
 	if err != nil {
