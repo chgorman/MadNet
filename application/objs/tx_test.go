@@ -611,6 +611,76 @@ func TestTxMarshalBad2(t *testing.T) {
 	}
 }
 
+func TestTxMarshalBad3(t *testing.T) {
+	// Here we test to ensure that an error is raised when
+	// we marshal a Tx object that is too large.
+	tx := &Tx{}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+
+	// Make utxos
+	fee := uint256.Zero()
+	rawData1 := make([]byte, constants.MaxDataStoreSize)
+	iat := uint32(1)
+	numEpochs1 := uint32(1)
+	index1 := make([]byte, constants.HashLen)
+	index1[0] = 1
+	utxo1 := makeDSWithValueFee(t, ownerSigner, 0, rawData1, index1, iat, numEpochs1, fee)
+	rawData2 := make([]byte, 130401) // Should be minimum value to cause an error to be raised
+	numEpochs2 := uint32(2)
+	index2 := make([]byte, constants.HashLen)
+	index2[0] = 2
+	utxo2 := makeDSWithValueFee(t, ownerSigner, 0, rawData2, index2, iat, numEpochs2, fee)
+
+	// Total value for txin
+	vf1, err := utxo1.ValuePlusFee()
+	if err != nil {
+		t.Fatal(err)
+	}
+	vf2, err := utxo2.ValuePlusFee()
+	if err != nil {
+		t.Fatal(err)
+	}
+	valueFeeTotal, err := new(uint256.Uint256).Add(vf1, vf2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make corresponding txin
+	utxo3 := makeVSWithValueFee(t, ownerSigner, 1, valueFeeTotal, fee)
+	txin1, err := utxo1.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = utxo3.valueStore.Sign(txin1, ownerSigner)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tx.Vin = []*TXIn{txin1}
+	tx.Vout = []*TXOut{utxo1, utxo2}
+	tx.Fee = uint256.Zero()
+
+	_, err = tx.MarshalBinary()
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxUnmarshalBad1(t *testing.T) {
+	// Here we test to ensure that we are not able to unmarshal data
+	// which is too large
+	tx := &Tx{}
+	data := make([]byte, constants.MaxTxSize+1)
+	err := tx.UnmarshalBinary(data)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
 func TestTxValidateChainIDBad1(t *testing.T) {
 	chainID := uint32(1)
 	tx := &Tx{}

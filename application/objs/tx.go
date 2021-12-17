@@ -35,6 +35,9 @@ func (b *Tx) UnmarshalBinary(data []byte) error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("tx.unmarshalBinary: tx not initialized")
 	}
+	if len(data) > constants.MaxTxSize {
+		return errorz.ErrInvalid{}.New("tx.unmarshalBinary: len(data) > MaxTxSize")
+	}
 	bc, err := tx.Unmarshal(data)
 	if err != nil {
 		return err
@@ -61,7 +64,14 @@ func (b *Tx) MarshalBinary() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return tx.Marshal(bc)
+	txBytes, err := tx.Marshal(bc)
+	if err != nil {
+		return nil, err
+	}
+	if len(txBytes) > constants.MaxTxSize {
+		return nil, errorz.ErrInvalid{}.New("tx.marshalBinary: len(txBytes) > MaxTxSize")
+	}
+	return txBytes, nil
 }
 
 // UnmarshalCapn unmarshals the capnproto definition of the object
