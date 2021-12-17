@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"math"
 	"math/big"
 	"testing"
 
@@ -645,6 +646,126 @@ func TestUint256ToUint32(t *testing.T) {
 	_, err = u.ToUint32()
 	if err == nil {
 		t.Fatal("Should have raised overflow error (2)")
+	}
+}
+
+func TestToFloat64(t *testing.T) {
+	obj := &testObj{}
+	_, err := obj.Value.ToFloat64()
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+
+	u := &Uint256{}
+	z := float64(0)
+	ret0, err := u.ToFloat64()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ret0 != z {
+		t.Fatal("Returned incorrect value for 0")
+	}
+
+	maxUint32 := constants.MaxUint32
+	_, err = u.FromUint64(uint64(maxUint32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ret, err := u.ToFloat64()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ret != float64(maxUint32) {
+		t.Fatal("Returned incorrect value (1)")
+	}
+
+	maxUint64 := constants.MaxUint64
+	_, err = u.FromUint64(uint64(maxUint64))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ret, err = u.ToFloat64()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ret != float64(maxUint64) {
+		t.Fatal("Returned incorrect value (2)")
+	}
+
+	// Loop through and check values 255*2^(8*k)
+	for k := 0; k < 32; k++ {
+		buf := make([]byte, 32)
+		buf[len(buf)-1-k] = 255
+		err = u.UnmarshalBinary(buf)
+		if err != nil {
+			t.Fatal(err)
+		}
+		f := float64(255) * math.Pow(float64(2), float64(8*k))
+		ret, err = u.ToFloat64()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if ret != f {
+			t.Fatal("Returned incorrect value (3)")
+		}
+	}
+
+	// Loop through and check values 65535*2^(8*k)
+	for k := 0; k < 31; k++ {
+		buf := make([]byte, 32)
+		buf[len(buf)-1-k] = 255
+		buf[len(buf)-2-k] = 255
+		err = u.UnmarshalBinary(buf)
+		if err != nil {
+			t.Fatal(err)
+		}
+		f := float64(65535) * math.Pow(float64(2), float64(8*k))
+		ret, err = u.ToFloat64()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if ret != f {
+			t.Fatal("Returned incorrect value (4)")
+		}
+	}
+
+	// Loop through and check values 4294967295*2^(8*k)
+	for k := 0; k < 28; k++ {
+		buf := make([]byte, 32)
+		buf[len(buf)-1-k] = 255
+		buf[len(buf)-2-k] = 255
+		buf[len(buf)-3-k] = 255
+		buf[len(buf)-4-k] = 255
+		err = u.UnmarshalBinary(buf)
+		if err != nil {
+			t.Fatal(err)
+		}
+		f := float64(4294967295) * math.Pow(float64(2), float64(8*k))
+		ret, err = u.ToFloat64()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if ret != f {
+			t.Fatal("Returned incorrect value (5)")
+		}
+	}
+
+	// Test max uint256 value
+	buf := make([]byte, 32)
+	for k := 0; k < len(buf); k++ {
+		buf[k] = 255
+	}
+	err = u.UnmarshalBinary(buf)
+	if err != nil {
+		t.Fatal(err)
+	}
+	f := math.Pow(float64(2), float64(256))
+	ret, err = u.ToFloat64()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ret != f {
+		t.Fatal("Returned incorrect value (6)")
 	}
 }
 

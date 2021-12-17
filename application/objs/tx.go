@@ -767,9 +767,8 @@ func (b *Tx) IsCleanupTx(currentHeight uint32, refUTXOs Vout) bool {
 	if b == nil || b.Fee == nil {
 		return false
 	}
-	// Confirm Vin
-	cleanupVin := b.Vin.IsCleanupVin(currentHeight, refUTXOs)
-	if !cleanupVin {
+	// Confirm Fee is zero
+	if !b.Fee.IsZero() {
 		return false
 	}
 	// Confirm Vout
@@ -777,8 +776,9 @@ func (b *Tx) IsCleanupTx(currentHeight uint32, refUTXOs Vout) bool {
 	if !cleanupVout {
 		return false
 	}
-	// Confirm Fee is zero
-	if !b.Fee.IsZero() {
+	// Confirm Vin
+	cleanupVin := b.Vin.IsCleanupVin(currentHeight, refUTXOs)
+	if !cleanupVin {
 		return false
 	}
 	// Confirm inputs equal outputs
