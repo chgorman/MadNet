@@ -192,7 +192,7 @@ func (pt *Handler) DeleteMined(txnState *badger.Txn, currentHeight uint32, txHas
 }
 
 // GetTxsForProposal returns an set of txs that are mutually exclusive with
-// respect to the consumed UTXOs. This is used to genrete new proposals.
+// respect to the consumed UTXOs. This is used to generate new proposals.
 func (pt *Handler) GetTxsForProposal(txnState *badger.Txn, ctx context.Context, currentHeight uint32, maxBytes uint32, tx *objs.Tx) (objs.TxVec, uint32, error) {
 	var utxos objs.TxVec
 	var err error

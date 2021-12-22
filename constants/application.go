@@ -12,6 +12,13 @@ const (
 )
 
 const (
+	// MaxFeeSizeRatio is 2^123 as a float32.
+	// Any transaction with a FeeSizeRatio above this value will
+	// be rounded down to this value.
+	MaxFeeSizeRatio float32 = 10633823966279326983230456482242756608
+)
+
+const (
 	// DSPIMinDeposit is the minimum amount of deposit. This is calculated
 	// assuming that no data is stored (datasize == 0) as well as storing
 	// the data for 1 epoch.
