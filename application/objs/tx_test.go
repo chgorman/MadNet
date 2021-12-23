@@ -681,6 +681,17 @@ func TestTxUnmarshalBad1(t *testing.T) {
 	}
 }
 
+func TestTxUnmarshalBad2(t *testing.T) {
+	// Here we test to ensure that we are not able to unmarshal data
+	// which is too large
+	tx := &Tx{}
+	data := make([]byte, 0)
+	err := tx.UnmarshalBinary(data)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
 func TestTxValidateChainIDBad1(t *testing.T) {
 	chainID := uint32(1)
 	tx := &Tx{}
@@ -1896,6 +1907,199 @@ func TestTxValidateEqualVinVoutBad3(t *testing.T) {
 		Fee:  uint256.Zero(),
 	}
 	err = tx.ValidateEqualVinVout(currentHeight, nil)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxCostGood(t *testing.T) {
+	// Initial set up
+	vsFeeBig := big.NewInt(1)
+	tfFeeBig := big.NewInt(4)
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+
+	// Setup fees
+	vsfee, err := new(uint256.Uint256).FromBigInt(vsFeeBig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	minTxFee, err := new(uint256.Uint256).FromBigInt(tfFeeBig)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make input
+	value64 := uint64(constants.MaxUint64)
+	valueIn, err := new(uint256.Uint256).FromUint64(value64)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo1 := makeVSWithValueFee(t, ownerSigner, 1, valueIn, vsfee)
+	txin1, err := utxo1.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Sum value of inputs
+	totalInput := uint256.Zero()
+	_, err = totalInput.Add(totalInput, valueIn)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make output
+	valueOut := totalInput.Clone()
+	_, err = valueOut.Sub(valueOut, minTxFee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = valueOut.Sub(valueOut, vsfee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo2 := makeVSWithValueFee(t, ownerSigner, 1, valueOut, vsfee)
+
+	// Setup Tx
+	vin := []*TXIn{txin1}
+	vout := []*TXOut{utxo2}
+	tx := &Tx{
+		Vin:  vin,
+		Vout: vout,
+		Fee:  minTxFee.Clone(),
+	}
+	err = tx.SetTxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Sign object
+	err = utxo1.valueStore.Sign(txin1, ownerSigner)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Now to test
+	txBytes, err := tx.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	trueCostInt := len(txBytes)
+	trueCost, err := new(uint256.Uint256).FromUint64(uint64(trueCostInt))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	totalCost, err := tx.Cost()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if totalCost.Cmp(trueCost) != 0 {
+		t.Fatal("Invalid Cost")
+	}
+}
+
+func TestTxCostBad1(t *testing.T) {
+	tx := &Tx{}
+	_, err := tx.Cost()
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxCostSizeGood(t *testing.T) {
+	// Initial set up
+	vsFeeBig := big.NewInt(1)
+	tfFeeBig := big.NewInt(4)
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+
+	// Setup fees
+	vsfee, err := new(uint256.Uint256).FromBigInt(vsFeeBig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	minTxFee, err := new(uint256.Uint256).FromBigInt(tfFeeBig)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make input
+	value64 := uint64(constants.MaxUint64)
+	valueIn, err := new(uint256.Uint256).FromUint64(value64)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo1 := makeVSWithValueFee(t, ownerSigner, 1, valueIn, vsfee)
+	txin1, err := utxo1.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Sum value of inputs
+	totalInput := uint256.Zero()
+	_, err = totalInput.Add(totalInput, valueIn)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make output
+	valueOut := totalInput.Clone()
+	_, err = valueOut.Sub(valueOut, minTxFee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = valueOut.Sub(valueOut, vsfee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo2 := makeVSWithValueFee(t, ownerSigner, 1, valueOut, vsfee)
+
+	// Setup Tx
+	vin := []*TXIn{txin1}
+	vout := []*TXOut{utxo2}
+	tx := &Tx{
+		Vin:  vin,
+		Vout: vout,
+		Fee:  minTxFee.Clone(),
+	}
+	err = tx.SetTxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Sign object
+	err = utxo1.valueStore.Sign(txin1, ownerSigner)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Now to test
+	txBytes, err := tx.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	trueCostSizeInt := len(txBytes)
+	trueCostSize, err := new(uint256.Uint256).FromUint64(uint64(trueCostSizeInt))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	totalCostSize, err := tx.CostSize()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if totalCostSize.Cmp(trueCostSize) != 0 {
+		t.Fatal("Invalid CostSize")
+	}
+}
+func TestTxCostSizeBad1(t *testing.T) {
+	tx := &Tx{}
+	_, err := tx.CostSize()
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}

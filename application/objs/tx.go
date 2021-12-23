@@ -35,6 +35,9 @@ func (b *Tx) UnmarshalBinary(data []byte) error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("tx.unmarshalBinary: tx not initialized")
 	}
+	if len(data) == 0 {
+		return errorz.ErrInvalid{}.New("tx.unmarshalBinary: len(data) == 0")
+	}
 	if len(data) > constants.MaxTxSize {
 		return errorz.ErrInvalid{}.New("tx.unmarshalBinary: len(data) > MaxTxSize")
 	}
@@ -67,6 +70,9 @@ func (b *Tx) MarshalBinary() ([]byte, error) {
 	txBytes, err := tx.Marshal(bc)
 	if err != nil {
 		return nil, err
+	}
+	if len(txBytes) == 0 {
+		return nil, errorz.ErrInvalid{}.New("tx.marshalBinary: len(txBytes) == 0")
 	}
 	if len(txBytes) > constants.MaxTxSize {
 		return nil, errorz.ErrInvalid{}.New("tx.marshalBinary: len(txBytes) > MaxTxSize")
@@ -493,6 +499,50 @@ func (b *Tx) ValidateFees(currentHeight uint32, refUTXOs Vout, storage *wrapper.
 		return errorz.ErrInvalid{}.New("tx.validateFees; tx.fee below minTxFee")
 	}
 	return nil
+}
+
+// Cost computes the total transaction complexity
+func (b *Tx) Cost() (*uint256.Uint256, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.Cost: tx not initialized")
+	}
+	costSize, err := b.CostSize()
+	if err != nil {
+		return nil, err
+	}
+	costComputation, err := b.CostComputation()
+	if err != nil {
+		return nil, err
+	}
+	costTotal, err := new(uint256.Uint256).Add(costSize, costComputation)
+	if err != nil {
+		return nil, err
+	}
+	return costTotal, nil
+}
+
+// CostSize computes the total transaction complexity due to size (bytes)
+func (b *Tx) CostSize() (*uint256.Uint256, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.CostSize: tx not initialized")
+	}
+	txBytes, err := b.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+	size := len(txBytes)
+	costSize := &uint256.Uint256{}
+	costSize.FromUint64(uint64(size))
+	return costSize, nil
+}
+
+// CostComputation computes the total transaction complexity due to computation
+func (b *Tx) CostComputation() (*uint256.Uint256, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.CostComputation: tx not initialized")
+	}
+	costComputation := uint256.Zero()
+	return costComputation, nil
 }
 
 // ValidateEqualVinVout checks the following

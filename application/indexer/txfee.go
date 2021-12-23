@@ -2,7 +2,6 @@ package indexer
 
 import (
 	"github.com/MadBase/MadNet/application/objs/uint256"
-	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/errorz"
 	"github.com/MadBase/MadNet/utils"
 	"github.com/dgraph-io/badger/v2"
@@ -10,14 +9,16 @@ import (
 
 /*
 Need double index
-First index is the fee ratio (transaction fee over bytes)
+First index is the fee ratio (transaction fee per cost)
 Second index is the size of the object
 
-<prefix>|<feeSizeRatio>|<size>|<txHash>
+<prefix>|<feeCostRatio>|<size>|<txHash>
   <>
 
 iterate in fwd direction
 */
+
+var numBytes int = 32
 
 // NewTxFeeIndex makes a new TxFeeIndex object
 func NewTxFeeIndex(p, pp prefixFunc) *TxFeeIndex {
@@ -62,16 +63,20 @@ func (tfirk *TxFeeIndexRefKey) UnmarshalBinary(data []byte) {
 }
 
 // Add adds a transaction to the TxFeeIndex
-func (tfi *TxFeeIndex) Add(txn *badger.Txn, fee *uint256.Uint256, size uint32, txHash []byte, isCleanup bool) error {
-	feeSizeRatioBytes, err := tfi.makeFeeSizeRatioBytes(fee, size, isCleanup)
+func (tfi *TxFeeIndex) Add(txn *badger.Txn, fee *uint256.Uint256, cost *uint256.Uint256, txHash []byte, isCleanup bool) error {
+	feeCostRatioBytes, err := tfi.makeFeeCostRatioBytes(fee, cost, isCleanup)
 	if err != nil {
 		return err
 	}
-	tfiKey := tfi.makeKey(feeSizeRatioBytes, size, txHash)
+	costBytes, err := cost.MarshalBinary()
+	if err != nil {
+		return err
+	}
+	tfiKey := tfi.makeKey(feeCostRatioBytes, costBytes, txHash)
 	key := tfiKey.MarshalBinary()
 	tfiRefKey := tfi.makeRefKey(txHash)
 	refKey := tfiRefKey.MarshalBinary()
-	refValue := tfi.makeRefValue(feeSizeRatioBytes, size)
+	refValue := tfi.makeRefValue(feeCostRatioBytes, costBytes)
 	err = utils.SetValue(txn, refKey, refValue)
 	if err != nil {
 		return err
@@ -83,34 +88,33 @@ func (tfi *TxFeeIndex) Add(txn *badger.Txn, fee *uint256.Uint256, size uint32, t
 func (tfi *TxFeeIndex) Drop(txn *badger.Txn, txHash []byte) error {
 	tfiRefKey := tfi.makeRefKey(txHash)
 	refKey := tfiRefKey.MarshalBinary()
-	feeSizeRatioSizeBytes, err := utils.GetValue(txn, refKey)
+	feeCostRatioSizeBytes, err := utils.GetValue(txn, refKey)
 	if err != nil {
 		return err
 	}
-	feeSizeRatioBytes := feeSizeRatioSizeBytes[:4]
-	sizeBytes := feeSizeRatioSizeBytes[4:]
-	size, err := utils.UnmarshalUint32(sizeBytes)
-	if err != nil {
-		return err
-	}
+	feeCostRatioBytes := feeCostRatioSizeBytes[:numBytes]
+	costBytes := feeCostRatioSizeBytes[numBytes:]
 	err = utils.DeleteValue(txn, refKey)
 	if err != nil {
 		return err
 	}
-	tfiKey := tfi.makeKey(feeSizeRatioBytes, size, txHash)
+	tfiKey := tfi.makeKey(feeCostRatioBytes, costBytes, txHash)
 	key := tfiKey.MarshalBinary()
 	return utils.DeleteValue(txn, key)
 }
 
-// makeFeeSizeRatioBytes returns the byte slice of the feeSizeRatio.
-// feeSizeRatio is a float32 object. In the case of a cleanup transaction,
+// makeFeeCostRatioBytes returns the byte slice of the feeCostRatio.
+// feeCostRatio is a uint256 object. In the case of a cleanup transaction,
 // the largest possible value is used.
-func (tfi *TxFeeIndex) makeFeeSizeRatioBytes(fee *uint256.Uint256, size uint32, isCleanup bool) ([]byte, error) {
+func (tfi *TxFeeIndex) makeFeeCostRatioBytes(fee *uint256.Uint256, cost *uint256.Uint256, isCleanup bool) ([]byte, error) {
 	if fee == nil {
-		return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeSizeRatioBytes: fee is not initialized")
+		return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeCostRatioBytes: fee is not initialized")
 	}
-	if size == 0 {
-		return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeSizeRatioBytes: invalid size; size is zero")
+	if cost == nil {
+		return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeCostRatioBytes: cost is not initialized")
+	}
+	if cost.IsZero() {
+		return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeCostRatioBytes: cost is zero")
 	}
 	if isCleanup {
 		// Cleanup transactions are special transactions with no fee.
@@ -118,32 +122,42 @@ func (tfi *TxFeeIndex) makeFeeSizeRatioBytes(fee *uint256.Uint256, size uint32, 
 		if !fee.IsZero() {
 			return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeSizeRatioBytes: invalid fee; cleanup transaction fee must be zero")
 		}
-		feeRatioBytes := make([]byte, 4)
+		feeRatioBytes := make([]byte, numBytes)
 		for k := 0; k < len(feeRatioBytes); k++ {
 			feeRatioBytes[k] = 255
 		}
 		return feeRatioBytes, nil
 	}
-	feeFloat64, err := fee.ToFloat64()
+	scaleFactor := uint256.TwoPower64()
+	maxFee := uint256.TwoPower128()
+	feeCopy := fee.Clone()
+	// Ensure the fee is not too large
+	if feeCopy.Gt(maxFee) {
+		err := feeCopy.Set(maxFee)
+		if err != nil {
+			return nil, err
+		}
+	}
+	scaledFee, err := new(uint256.Uint256).Mul(feeCopy, scaleFactor)
 	if err != nil {
 		return nil, err
 	}
-	sizeFloat64 := float64(size)
-	feeSizeRatio := feeFloat64 / sizeFloat64
-	// Ensure the ratio is not too large
-	if feeSizeRatio > float64(constants.MaxFeeSizeRatio) {
-		feeSizeRatio = float64(constants.MaxFeeSizeRatio)
+	feeCostRatio, err := new(uint256.Uint256).Div(scaledFee, cost)
+	if err != nil {
+		return nil, err
 	}
-	feeSizeRatioFloat32 := float32(feeSizeRatio)
-	return utils.MarshalFloat32(feeSizeRatioFloat32), nil
+	feeCostRatioBytes, err := feeCostRatio.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+	return feeCostRatioBytes, nil
 }
 
-func (tfi *TxFeeIndex) makeKey(feeSizeRatioBytes []byte, size uint32, txHash []byte) *TxFeeIndexKey {
+func (tfi *TxFeeIndex) makeKey(feeCostRatioBytes []byte, costBytes []byte, txHash []byte) *TxFeeIndexKey {
 	key := []byte{}
 	key = append(key, tfi.prefix()...)
-	key = append(key, feeSizeRatioBytes...)
-	sizeBytes := utils.MarshalUint32(size)
-	key = append(key, sizeBytes...)
+	key = append(key, feeCostRatioBytes...)
+	key = append(key, costBytes...)
 	key = append(key, txHash...)
 	tfiKey := &TxFeeIndexKey{}
 	tfiKey.UnmarshalBinary(key)
@@ -159,10 +173,9 @@ func (tfi *TxFeeIndex) makeRefKey(txHash []byte) *TxFeeIndexRefKey {
 	return tfiRefKey
 }
 
-func (tfi *TxFeeIndex) makeRefValue(feeSizeRatioBytes []byte, size uint32) []byte {
-	sizeBytes := utils.MarshalUint32(size)
+func (tfi *TxFeeIndex) makeRefValue(feeCostRatioBytes []byte, costBytes []byte) []byte {
 	refValue := []byte{}
-	refValue = append(refValue, utils.CopySlice(feeSizeRatioBytes)...)
-	refValue = append(refValue, sizeBytes...)
+	refValue = append(refValue, utils.CopySlice(feeCostRatioBytes)...)
+	refValue = append(refValue, utils.CopySlice(costBytes)...)
 	return refValue
 }
