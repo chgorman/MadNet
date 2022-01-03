@@ -629,7 +629,7 @@ func TestTxMarshalBad3(t *testing.T) {
 	index1 := make([]byte, constants.HashLen)
 	index1[0] = 1
 	utxo1 := makeDSWithValueFee(t, ownerSigner, 0, rawData1, index1, iat, numEpochs1, fee)
-	rawData2 := make([]byte, 130401) // Should be minimum value to cause an error to be raised
+	rawData2 := make([]byte, 902177) // Should be minimum value to cause an error to be raised
 	numEpochs2 := uint32(2)
 	index2 := make([]byte, constants.HashLen)
 	index2[0] = 2
