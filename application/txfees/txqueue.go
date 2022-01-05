@@ -61,11 +61,11 @@ func (tfq *TxFeeQueue) QueueSize() int {
 
 // Add adds a txhash to the TxFeeQueue
 func (tfq *TxFeeQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]byte) error {
-	if value == nil {
-		return errors.New("TxFeeQueue.Add: value is nil")
-	}
 	if tfq.IsFull() {
 		return errors.New("TxFeeQueue.Add: queue is full")
+	}
+	if value == nil {
+		return errors.New("TxFeeQueue.Add: value is nil")
 	}
 	txString := string(txhash)
 	utxoIDsCopy := [][]byte{}
@@ -143,7 +143,7 @@ func (tfq *TxFeeQueue) Drop(txhash []byte) {
 
 // DropMined drops a mined tx from the TxFeeQueue
 func (tfq *TxFeeQueue) DropMined(txhash []byte, utxoIDs [][]byte) {
-	// Remove
+	// Remove all utxoIDs
 	for k := 0; k < len(utxoIDs); k++ {
 		utxoID := utils.CopySlice(utxoIDs[k])
 		refTxHash, ok := tfq.utxoIDs[string(utxoID)]
