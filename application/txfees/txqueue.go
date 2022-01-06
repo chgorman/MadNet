@@ -99,20 +99,15 @@ func (tfq *TxFeeQueue) ValidAdd(utxoIDs [][]byte) bool {
 	return true
 }
 
-// Pop returns the highest value item from the TxFeeQueue
+// Pop returns the txhash of the highest valued item in the TxFeeQueue
 func (tfq *TxFeeQueue) Pop() ([]byte, error) {
 	if tfq.IsEmpty() {
 		return nil, errors.New("TxFeeQueue.Pop: queue is empty")
 	}
 	// Pop item from TxHeap
 	item := heap.Pop(&tfq.txheap).(*TxItem)
-	// Remove utxoIDs from utxoID map
-	for k := 0; k < len(item.utxoIDs); k++ {
-		utxoID := utils.CopySlice(item.utxoIDs[k])
-		delete(tfq.utxoIDs, string(utxoID))
-	}
-	// Remove txhash from txhash map
-	delete(tfq.refmap, string(item.txhash))
+	// Drop references to item in reference maps
+	tfq.dropReferences(item)
 	return utils.CopySlice(item.txhash), nil
 }
 
@@ -123,11 +118,9 @@ func (tfq *TxFeeQueue) Contains(txhash []byte) bool {
 	return ok
 }
 
-// drop drops a tx from the TxFeeQueue and all associated utxoIDs
-func (tfq *TxFeeQueue) drop(txhash []byte) {
-	txString := string(txhash)
-	item, ok := tfq.refmap[txString]
-	if !ok {
+// dropReferences drops all references to an item in the maps
+func (tfq *TxFeeQueue) dropReferences(item *TxItem) {
+	if item == nil {
 		return
 	}
 	// Remove utxoIDs from utxoID map
@@ -136,7 +129,17 @@ func (tfq *TxFeeQueue) drop(txhash []byte) {
 		delete(tfq.utxoIDs, string(utxoID))
 	}
 	// Remove txhash from txhash map
-	delete(tfq.refmap, txString)
+	delete(tfq.refmap, string(item.txhash))
+}
+
+// drop drops a tx from the TxFeeQueue and all associated utxoIDs
+func (tfq *TxFeeQueue) drop(txhash []byte) {
+	txString := string(txhash)
+	item, ok := tfq.refmap[txString]
+	if !ok {
+		return
+	}
+	tfq.dropReferences(item)
 	// Remove element from TxHeap
 	_ = heap.Remove(&tfq.txheap, item.index)
 }
@@ -152,8 +155,6 @@ func (tfq *TxFeeQueue) DropMined(utxoIDs [][]byte) {
 		}
 		// Drop the tx which contains it
 		tfq.drop([]byte(refTxHash))
-		// Drop the utxoID
-		delete(tfq.utxoIDs, string(utxoID))
 	}
 }
 

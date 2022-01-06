@@ -2,7 +2,6 @@ package txfees
 
 import (
 	"container/heap"
-	"fmt"
 	"testing"
 
 	"github.com/MadBase/MadNet/application/objs/uint256"
@@ -87,9 +86,25 @@ func TestTxHeap(t *testing.T) {
 	for k := 0; k < len(items); k++ {
 		heap.Push(&txh, items[k])
 	}
-	fmt.Println("Popping from heap:")
+	t.Logf("Popping from heap:\n")
+	itemA := heap.Pop(&txh).(*TxItem)
+	t.Logf("Hash: %x; Value: %v\n", itemA.txhash, itemA.value)
+	valueA := new(uint256.Uint256)
+	err = valueA.Set(itemA.value)
+	if err != nil {
+		t.Fatal(err)
+	}
 	for txh.Len() > 0 {
-		item := heap.Pop(&txh).(*TxItem)
-		fmt.Printf("Hash: %x; Value: %v\n", item.txhash, item.value)
+		itemB := heap.Pop(&txh).(*TxItem)
+		t.Logf("Hash: %x; Value: %v\n", itemB.txhash, itemB.value)
+		valueB := new(uint256.Uint256)
+		err = valueA.Set(itemB.value)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if valueB.Gt(valueA) {
+			t.Fatal("items not popped in correct order")
+		}
+		valueA.Set(valueB)
 	}
 }

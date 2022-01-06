@@ -103,8 +103,8 @@ func TestTxFeeQueueDropAll(t *testing.T) {
 	}
 
 	txhash := crypto.Hasher([]byte("TxHash1"))
-	utxoID1 := crypto.Hasher([]byte("utxoID11"))
-	utxoID2 := crypto.Hasher([]byte("utxoID12"))
+	utxoID1 := crypto.Hasher([]byte("utxoID1"))
+	utxoID2 := crypto.Hasher([]byte("utxoID2"))
 	utxoIDs := [][]byte{utxoID1, utxoID2}
 	value, err := new(uint256.Uint256).FromUint64(1)
 	if err != nil {
@@ -114,6 +114,16 @@ func TestTxFeeQueueDropAll(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if len(tfq.txheap) != 1 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tfq.refmap) != 1 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tfq.utxoIDs) != 2 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+
 	if tfq.IsEmpty() {
 		t.Fatal("Should not be empty")
 	}
@@ -161,8 +171,8 @@ func TestTxFeeQueueAddGood(t *testing.T) {
 
 	// Make and add tx
 	txhash := crypto.Hasher([]byte("TxHash1"))
-	utxoID1 := crypto.Hasher([]byte("utxoID11"))
-	utxoID2 := crypto.Hasher([]byte("utxoID12"))
+	utxoID1 := crypto.Hasher([]byte("utxoID1"))
+	utxoID2 := crypto.Hasher([]byte("utxoID2"))
 	utxoIDs := [][]byte{utxoID1, utxoID2}
 	value, err := new(uint256.Uint256).FromUint64(1)
 	if err != nil {
@@ -203,6 +213,196 @@ func TestTxFeeQueueAddGood(t *testing.T) {
 		t.Fatal("invalid length of utxoIDs")
 	}
 	tfq.drop(txhash)
+}
+
+// In depth test adding items and dropping them.
+// Add item1, item2, item3 (all valid additions);
+// Remove item2;
+// Add item2 again;
+// Make item4 which contains utxoIDs from item1 and item2;
+// item4 is mined, so remove all information conflicting with it.
+func TestTxFeeQueueAddGood2(t *testing.T) {
+	tfq := &TxFeeQueue{}
+	queueSize := 128
+	err := tfq.Init(queueSize)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make and add 3 txs
+	txhash1 := crypto.Hasher([]byte("TxHash1"))
+	utxoID11 := crypto.Hasher([]byte("utxoID11"))
+	utxoID12 := crypto.Hasher([]byte("utxoID12"))
+	value1, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	item1 := &TxItem{
+		txhash:  txhash1,
+		value:   value1,
+		utxoIDs: [][]byte{utxoID11, utxoID12},
+	}
+	if !tfq.ValidAdd(item1.utxoIDs) {
+		t.Fatal("Should be a valid addition")
+	}
+	err = tfq.Add(item1.txhash, item1.value, item1.utxoIDs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(tfq.txheap) != 1 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tfq.refmap) != 1 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tfq.utxoIDs) != 2 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+
+	txhash2 := crypto.Hasher([]byte("TxHash2"))
+	utxoID21 := crypto.Hasher([]byte("utxoID21"))
+	utxoID22 := crypto.Hasher([]byte("utxoID22"))
+	value2, err := new(uint256.Uint256).FromUint64(5)
+	if err != nil {
+		t.Fatal(err)
+	}
+	item2 := &TxItem{
+		txhash:  txhash2,
+		value:   value2,
+		utxoIDs: [][]byte{utxoID21, utxoID22},
+	}
+	if !tfq.ValidAdd(item2.utxoIDs) {
+		t.Fatal("Should be a valid addition")
+	}
+	err = tfq.Add(item2.txhash, item2.value, item2.utxoIDs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(tfq.txheap) != 2 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tfq.refmap) != 2 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tfq.utxoIDs) != 4 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+
+	txhash3 := crypto.Hasher([]byte("TxHash3"))
+	utxoID31 := crypto.Hasher([]byte("utxoID31"))
+	utxoID32 := crypto.Hasher([]byte("utxoID32"))
+	value3, err := new(uint256.Uint256).FromUint64(13)
+	if err != nil {
+		t.Fatal(err)
+	}
+	item3 := &TxItem{
+		txhash:  txhash3,
+		value:   value3,
+		utxoIDs: [][]byte{utxoID31, utxoID32},
+	}
+	if !tfq.ValidAdd(item3.utxoIDs) {
+		t.Fatal("Should be a valid addition")
+	}
+	err = tfq.Add(item3.txhash, item3.value, item3.utxoIDs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(tfq.txheap) != 3 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tfq.refmap) != 3 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tfq.utxoIDs) != 6 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+
+	// Drop item2; confirm missing
+	tfq.drop(item2.txhash)
+	if len(tfq.txheap) != 2 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tfq.refmap) != 2 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tfq.utxoIDs) != 4 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+	if !tfq.Contains(item1.txhash) {
+		t.Fatal("does not contain item1")
+	}
+	if tfq.Contains(item2.txhash) {
+		t.Fatal("contains item2")
+	}
+	if !tfq.Contains(item3.txhash) {
+		t.Fatal("does not contain item3")
+	}
+
+	// Add item2 again
+	if !tfq.ValidAdd(item2.utxoIDs) {
+		t.Fatal("Should be a valid addition")
+	}
+	err = tfq.Add(item2.txhash, item2.value, item2.utxoIDs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(tfq.txheap) != 3 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tfq.refmap) != 3 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tfq.utxoIDs) != 6 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+	if !tfq.Contains(item1.txhash) {
+		t.Fatal("does not contain item1")
+	}
+	if !tfq.Contains(item2.txhash) {
+		t.Fatal("does not contain item2")
+	}
+	if !tfq.Contains(item3.txhash) {
+		t.Fatal("does not contain item3")
+	}
+
+	// These are part of a "new tx" which has been mined
+	txhash4 := crypto.Hasher([]byte("TxHash4"))
+	value4, err := new(uint256.Uint256).FromUint64(25519)
+	if err != nil {
+		t.Fatal(err)
+	}
+	newUtxoIDs := [][]byte{utxoID11, utxoID22}
+	item4 := &TxItem{
+		txhash:  txhash4,
+		value:   value4,
+		utxoIDs: newUtxoIDs,
+	}
+	// We should not be able to add item4 because of conflicts
+	if tfq.ValidAdd(item4.utxoIDs) {
+		t.Fatal("Should not be a valid addition")
+	}
+
+	// Drop item4; confirm missing.
+	// This should kick out item1 and item2.
+	tfq.DropMined(item4.utxoIDs)
+	if len(tfq.txheap) != 1 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tfq.refmap) != 1 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tfq.utxoIDs) != 2 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+	if tfq.Contains(item1.txhash) {
+		t.Fatal("contains item1")
+	}
+	if tfq.Contains(item2.txhash) {
+		t.Fatal("contains item2")
+	}
+	if !tfq.Contains(item3.txhash) {
+		t.Fatal("does not contain item3")
+	}
 }
 
 func TestTxFeeQueueValidAdd(t *testing.T) {
@@ -365,4 +565,9 @@ func TestTxFeeQueueDropMined2(t *testing.T) {
 	if len(tfq.utxoIDs) != 0 {
 		t.Fatal("invalid length of utxoIDs")
 	}
+}
+
+func TestTxFeeQueueDropRefernces(t *testing.T) {
+	tfq := &TxFeeQueue{}
+	tfq.dropReferences(nil)
 }
