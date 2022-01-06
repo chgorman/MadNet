@@ -192,7 +192,7 @@ func TestTxFeeQueueAddGood(t *testing.T) {
 		t.Fatal("utxoID2 not present")
 	}
 
-	tfq.Drop(txhash)
+	tfq.drop(txhash)
 	if len(tfq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}
@@ -202,7 +202,7 @@ func TestTxFeeQueueAddGood(t *testing.T) {
 	if len(tfq.utxoIDs) != 0 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	tfq.Drop(txhash)
+	tfq.drop(txhash)
 }
 
 func TestTxFeeQueueValidAdd(t *testing.T) {
@@ -312,7 +312,7 @@ func TestTxFeeQueueDropMined1(t *testing.T) {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	tfq.DropMined(txhash, utxoIDs)
+	tfq.DropMined(utxoIDs)
 	if len(tfq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}
@@ -355,7 +355,7 @@ func TestTxFeeQueueDropMined2(t *testing.T) {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	tfq.DropMined(txhash, utxoIDs)
+	tfq.DropMined(utxoIDs)
 	if len(tfq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}

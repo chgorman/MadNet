@@ -123,8 +123,8 @@ func (tfq *TxFeeQueue) Contains(txhash []byte) bool {
 	return ok
 }
 
-// Drop drops a tx from the TxFeeQueue
-func (tfq *TxFeeQueue) Drop(txhash []byte) {
+// drop drops a tx from the TxFeeQueue and all associated utxoIDs
+func (tfq *TxFeeQueue) drop(txhash []byte) {
 	txString := string(txhash)
 	item, ok := tfq.refmap[txString]
 	if !ok {
@@ -141,9 +141,9 @@ func (tfq *TxFeeQueue) Drop(txhash []byte) {
 	_ = heap.Remove(&tfq.txheap, item.index)
 }
 
-// DropMined drops a mined tx from the TxFeeQueue
-func (tfq *TxFeeQueue) DropMined(txhash []byte, utxoIDs [][]byte) {
-	// Remove all utxoIDs
+// DropMined drops all txs which include the listed utxoIDs
+func (tfq *TxFeeQueue) DropMined(utxoIDs [][]byte) {
+	// Remove all utxoIDs and the txs which include them
 	for k := 0; k < len(utxoIDs); k++ {
 		utxoID := utils.CopySlice(utxoIDs[k])
 		refTxHash, ok := tfq.utxoIDs[string(utxoID)]
@@ -151,24 +151,10 @@ func (tfq *TxFeeQueue) DropMined(txhash []byte, utxoIDs [][]byte) {
 			continue
 		}
 		// Drop the tx which contains it
-		tfq.Drop([]byte(refTxHash))
+		tfq.drop([]byte(refTxHash))
 		// Drop the utxoID
 		delete(tfq.utxoIDs, string(utxoID))
 	}
-	txString := string(txhash)
-	item, ok := tfq.refmap[txString]
-	if !ok {
-		return
-	}
-	// Remove utxoIDs from utxoID map
-	for k := 0; k < len(item.utxoIDs); k++ {
-		utxoID := utils.CopySlice(item.utxoIDs[k])
-		delete(tfq.utxoIDs, string(utxoID))
-	}
-	// Remove txhash from txhash map
-	delete(tfq.refmap, txString)
-	// Remove element from TxHeap
-	_ = heap.Remove(&tfq.txheap, item.index)
 }
 
 // DropAll drops all txs from TxFeeQueue
