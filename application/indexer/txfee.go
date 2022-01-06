@@ -179,3 +179,11 @@ func (tfi *TxFeeIndex) makeRefValue(feeCostRatioBytes []byte, costBytes []byte) 
 	refValue = append(refValue, utils.CopySlice(costBytes)...)
 	return refValue
 }
+
+// NewIter makes a new iterator for iterating through TxFeeIndex
+func (tfi *TxFeeIndex) NewIter(txn *badger.Txn) (*badger.Iterator, []byte) {
+	prefix := tfi.prefix()
+	opts := badger.DefaultIteratorOptions
+	opts.Prefix = prefix
+	return txn.NewIterator(opts), prefix
+}

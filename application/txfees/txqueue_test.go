@@ -233,7 +233,7 @@ func TestTxFeeQueueAddGood2(t *testing.T) {
 	txhash1 := crypto.Hasher([]byte("TxHash1"))
 	utxoID11 := crypto.Hasher([]byte("utxoID11"))
 	utxoID12 := crypto.Hasher([]byte("utxoID12"))
-	value1, err := new(uint256.Uint256).FromUint64(1)
+	value1, err := new(uint256.Uint256).FromUint64(19)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -262,7 +262,7 @@ func TestTxFeeQueueAddGood2(t *testing.T) {
 	txhash2 := crypto.Hasher([]byte("TxHash2"))
 	utxoID21 := crypto.Hasher([]byte("utxoID21"))
 	utxoID22 := crypto.Hasher([]byte("utxoID22"))
-	value2, err := new(uint256.Uint256).FromUint64(5)
+	value2, err := new(uint256.Uint256).FromUint64(15)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -291,7 +291,7 @@ func TestTxFeeQueueAddGood2(t *testing.T) {
 	txhash3 := crypto.Hasher([]byte("TxHash3"))
 	utxoID31 := crypto.Hasher([]byte("utxoID31"))
 	utxoID32 := crypto.Hasher([]byte("utxoID32"))
-	value3, err := new(uint256.Uint256).FromUint64(13)
+	value3, err := new(uint256.Uint256).FromUint64(3)
 	if err != nil {
 		t.Fatal(err)
 	}

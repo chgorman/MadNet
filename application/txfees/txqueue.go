@@ -37,10 +37,10 @@ func (tfq *TxFeeQueue) Init(queueSize int) error {
 	if queueSize <= 0 {
 		return errors.New("TxFeeQueue.Init: queueSize <= 0")
 	}
-	tfq.txheap = make(TxHeap, 0, queueSize)
-	tfq.refmap = make(map[string]*TxItem, queueSize)
-	tfq.utxoIDs = make(map[string]string, queueSize)
 	tfq.queueSize = queueSize
+	tfq.txheap = make(TxHeap, 0, tfq.queueSize)
+	tfq.refmap = make(map[string]*TxItem, tfq.queueSize)
+	tfq.utxoIDs = make(map[string]string, tfq.queueSize)
 	return nil
 }
 
