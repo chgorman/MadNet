@@ -9,8 +9,36 @@ import (
 )
 
 /*
-We need the ability to store all specified txs.
-This is being done with badger and will continue to be.
+Here we describe an overview of the desired system.
+
+We want to have transaction selection algorithm which
+attempts to populate a block by prioritizing fee-dense transactions.
+To enable this to be performed quickly, we want to have a prepared
+list of transactions we can choose from.
+All these transactions should be high value, easily added in order
+of decreasing value, and are independent (that is, all possible subsets
+will form a valid block).
+
+Ordering the transactions in order of decreasing fee density
+may be performed by using a heap.
+One challenge is that this must be updated each time a new blockheader
+is received; thus, after receiving a new block,
+we must be able to *quickly* go through and purge the heap of all transactions
+which contain consumed utxos.
+In order to do this, we need to keep track of where each transaction
+is currently in the queue;
+thus, we also have two maps:
+ *	one which maps a transaction hash to its heap value;
+ *	another which maps utxo to transaction which consumes it.
+
+We also allow the ability to clear the entire queue.
+Presently, the thought is that this will be performed after a regular
+block proposal; it may be determined that there are additional times
+when this may be done.
+One challenge is that we want to ensure that the queue is not cleared
+too close to when a standard proposal will be performed.
+We want to ensure that the queue is essentially full even after dropping
+transactions from the blockheader just received.
 */
 
 // TxFeeQueue is the struct which will store the ordering of transactions
