@@ -473,11 +473,11 @@ func TestTxFeeQueuePopGood(t *testing.T) {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	retHash, err := tfq.Pop()
+	retItem, err := tfq.Pop()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !bytes.Equal(retHash, txhash) {
+	if !bytes.Equal(retItem.txhash, txhash) {
 		t.Fatal("returned hash value does not match")
 	}
 }

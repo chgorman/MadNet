@@ -13,7 +13,7 @@ First index is the fee ratio (transaction fee per cost)
 Second index is the size of the object
 
 <prefix>|<feeCostRatio>|<size>|<txHash>
-  <>
+  <prefix|txHash>
 
 iterate in fwd direction
 */
@@ -68,37 +68,31 @@ func (tfi *TxFeeIndex) Add(txn *badger.Txn, fee *uint256.Uint256, cost *uint256.
 	if err != nil {
 		return err
 	}
-	costBytes, err := cost.MarshalBinary()
-	if err != nil {
-		return err
-	}
-	tfiKey := tfi.makeKey(feeCostRatioBytes, costBytes, txHash)
+	tfiKey := tfi.makeKey(feeCostRatioBytes, txHash)
 	key := tfiKey.MarshalBinary()
 	tfiRefKey := tfi.makeRefKey(txHash)
 	refKey := tfiRefKey.MarshalBinary()
-	refValue := tfi.makeRefValue(feeCostRatioBytes, costBytes)
+	refValue := tfi.makeRefValue(feeCostRatioBytes)
 	err = utils.SetValue(txn, refKey, refValue)
 	if err != nil {
 		return err
 	}
-	return utils.SetValue(txn, key, []byte{})
+	return utils.SetValue(txn, key, refKey)
 }
 
 // Drop drops a transaction from the TxFeeIndex
 func (tfi *TxFeeIndex) Drop(txn *badger.Txn, txHash []byte) error {
 	tfiRefKey := tfi.makeRefKey(txHash)
 	refKey := tfiRefKey.MarshalBinary()
-	feeCostRatioSizeBytes, err := utils.GetValue(txn, refKey)
+	feeCostRatioBytes, err := utils.GetValue(txn, refKey)
 	if err != nil {
 		return err
 	}
-	feeCostRatioBytes := feeCostRatioSizeBytes[:numBytes]
-	costBytes := feeCostRatioSizeBytes[numBytes:]
 	err = utils.DeleteValue(txn, refKey)
 	if err != nil {
 		return err
 	}
-	tfiKey := tfi.makeKey(feeCostRatioBytes, costBytes, txHash)
+	tfiKey := tfi.makeKey(feeCostRatioBytes, txHash)
 	key := tfiKey.MarshalBinary()
 	return utils.DeleteValue(txn, key)
 }
@@ -153,11 +147,10 @@ func (tfi *TxFeeIndex) makeFeeCostRatioBytes(fee *uint256.Uint256, cost *uint256
 	return feeCostRatioBytes, nil
 }
 
-func (tfi *TxFeeIndex) makeKey(feeCostRatioBytes []byte, costBytes []byte, txHash []byte) *TxFeeIndexKey {
+func (tfi *TxFeeIndex) makeKey(feeCostRatioBytes []byte, txHash []byte) *TxFeeIndexKey {
 	key := []byte{}
 	key = append(key, tfi.prefix()...)
 	key = append(key, feeCostRatioBytes...)
-	key = append(key, costBytes...)
 	key = append(key, txHash...)
 	tfiKey := &TxFeeIndexKey{}
 	tfiKey.UnmarshalBinary(key)
@@ -173,10 +166,9 @@ func (tfi *TxFeeIndex) makeRefKey(txHash []byte) *TxFeeIndexRefKey {
 	return tfiRefKey
 }
 
-func (tfi *TxFeeIndex) makeRefValue(feeCostRatioBytes []byte, costBytes []byte) []byte {
+func (tfi *TxFeeIndex) makeRefValue(feeCostRatioBytes []byte) []byte {
 	refValue := []byte{}
 	refValue = append(refValue, utils.CopySlice(feeCostRatioBytes)...)
-	refValue = append(refValue, utils.CopySlice(costBytes)...)
 	return refValue
 }
 

@@ -9,7 +9,9 @@ import (
 
 	"github.com/MadBase/MadNet/application/db"
 	"github.com/MadBase/MadNet/application/objs"
+	"github.com/MadBase/MadNet/application/objs/uint256"
 	index "github.com/MadBase/MadNet/application/pendingtx/pendingindex"
+	"github.com/MadBase/MadNet/application/txfees"
 	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/logging"
 	"github.com/MadBase/MadNet/utils"
@@ -42,6 +44,7 @@ type Handler struct {
 	UTXOHandler    utxoHandler
 	logger         *logrus.Logger
 	DepositHandler depositHandler
+	txqueue        *txfees.TxFeeQueue
 }
 
 // Add stores a tx in the tx pool and possibly evicts other txs if the ref
@@ -54,7 +57,17 @@ func (pt *Handler) Add(txnState *badger.Txn, txs []*objs.Tx, currentHeight uint3
 	return pt.db.Update(func(txn *badger.Txn) error {
 		for i := 0; i < len(txs); i++ {
 			tx := txs[i]
-			utxoIds, err := tx.ConsumedUTXOID()
+			utxoIDs, err := tx.ConsumedUTXOID()
+			if err != nil {
+				utils.DebugTrace(pt.logger, err)
+				return err
+			}
+			deposits, _, _, err := pt.DepositHandler.Get(txn, utxoIDs)
+			if err != nil {
+				utils.DebugTrace(pt.logger, err)
+				return err
+			}
+			consumedUTXOs, err := pt.UTXOHandler.IsValid(txn, []*objs.Tx{tx}, currentHeight, deposits)
 			if err != nil {
 				utils.DebugTrace(pt.logger, err)
 				return err
@@ -69,11 +82,23 @@ func (pt *Handler) Add(txnState *badger.Txn, txs []*objs.Tx, currentHeight uint3
 				utils.DebugTrace(pt.logger, err)
 				return err
 			}
+			fee := &uint256.Uint256{}
+			err = fee.Set(tx.Fee)
+			if err != nil {
+				utils.DebugTrace(pt.logger, err)
+				return err
+			}
+			cost, err := tx.Cost()
+			if err != nil {
+				utils.DebugTrace(pt.logger, err)
+				return err
+			}
+			isCleanup := tx.IsCleanupTx(currentHeight, consumedUTXOs)
 			cooldownKey := pt.makePendingTxCooldownKey(txHash)
 			_, err = utils.GetValue(txn, cooldownKey)
 			if err != nil {
 				if err == badger.ErrKeyNotFound {
-					err := pt.addOneInternal(txn, tx, eoe, txHash, utxoIds)
+					err := pt.addOneInternal(txn, tx, eoe, txHash, utxoIDs, fee, cost, isCleanup)
 					if err != nil {
 						utils.DebugTrace(pt.logger, err)
 						return err
@@ -196,7 +221,18 @@ func (pt *Handler) DeleteMined(txnState *badger.Txn, currentHeight uint32, txHas
 func (pt *Handler) GetTxsForProposal(txnState *badger.Txn, ctx context.Context, currentHeight uint32, maxBytes uint32, tx *objs.Tx) (objs.TxVec, uint32, error) {
 	var utxos objs.TxVec
 	var err error
-	utxos, maxBytes, err = pt.getTxsInternal(txnState, ctx, currentHeight, maxBytes, tx, false)
+	utxos, maxBytes, err = pt.getTxsFromQueue(txnState, ctx, currentHeight, maxBytes, []*objs.Tx{tx})
+	if err != nil {
+		utils.DebugTrace(pt.logger, err)
+		return nil, 0, err
+	}
+	// Jump if we ran out of time but keep utxos for new block
+	select {
+	case <-ctx.Done():
+		return utxos, maxBytes, nil
+	default:
+	}
+	utxos, maxBytes, err = pt.getTxsInternal(txnState, ctx, currentHeight, maxBytes, utxos, false)
 	if err != nil {
 		utils.DebugTrace(pt.logger, err)
 		return nil, 0, err
@@ -220,14 +256,107 @@ func (pt *Handler) GetTxsForGossip(txnState *badger.Txn, ctx context.Context, cu
 /////////PRIVATE METHODS////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-func (pt *Handler) getTxsInternal(txnState *badger.Txn, ctx context.Context, currentHeight uint32, maxBytes uint32, tx *objs.Tx, allowConflict bool) ([]*objs.Tx, uint32, error) {
+// getTxsFromQueue returns a list of txs from TxFeeQueue
+func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, currentHeight uint32, maxBytes uint32, utxos []*objs.Tx) ([]*objs.Tx, uint32, error) {
 	txs := objs.TxVec{}
-	if tx != nil {
-		txs = append(txs, tx)
+	if len(utxos) != 0 {
+		txs = append(txs, utxos...)
 	}
 	byteCount := uint32(0)
 	if len(txs) > 0 {
+		byteCount += constants.HashLen * uint32(len(txs))
+	}
+	// Note: we are not including any deposits in this check because we are
+	// 		 assuming the included tx is a cleanup transaction so it has
+	//		 no deposits. If we implement validator-specific txs, this logic
+	//		 will need to change to accomidate it.
+	consumedUTXOs, err := pt.UTXOHandler.IsValid(txnState, txs, currentHeight, nil)
+	if err != nil {
+		return nil, 0, err
+	}
+	var consumed map[string]bool
+	consumedUTXOIDs := [][]byte{}
+	for k := 0; k < len(consumedUTXOs); k++ {
+		consumedUTXOID, err := consumedUTXOs[k].UTXOID()
+		if err != nil {
+			return nil, 0, err
+		}
+		consumedUTXOIDs = append(consumedUTXOIDs, consumedUTXOID)
+	}
+	validAdd := pt.txqueue.ValidAdd(consumedUTXOIDs)
+	if !validAdd {
+		// We initialize map with consumedUTXOID to check to see if there
+		// are any overlapping in new txs.
+		consumed = make(map[string]bool, len(consumedUTXOIDs))
+		for k := 0; k < len(consumedUTXOIDs); k++ {
+			consumed[string(consumedUTXOIDs[k])] = true
+		}
+	}
+
+	for !pt.txqueue.IsEmpty() {
+		select {
+		case <-ctx.Done():
+			break
+		default:
+		}
+		item, err := pt.txqueue.Pop()
+		if err != nil {
+			return nil, 0, err
+		}
+		if !validAdd {
+			consumedUTXOIDs := item.UtxoIDs()
+			conflict := false
+			for k := 0; k < len(consumedUTXOIDs); k++ {
+				_, ok := consumed[string(consumedUTXOIDs[k])]
+				if ok {
+					conflict = true
+					break
+				}
+			}
+			if conflict {
+				// There is a conflict in the consumed utxo set;
+				// jump to next potential tx.
+				continue
+			}
+		}
+
+		txhash := item.TxHash()
+		tx, err := pt.getOneInternal(txnState, utils.Epoch(currentHeight), txhash)
+		if err != nil {
+			utils.DebugTrace(pt.logger, err)
+			continue
+		}
+		if ok := pt.checkSize(maxBytes, byteCount); !ok {
+			break
+		}
+		ok, err := pt.checkTx(txnState, tx, currentHeight)
+		if err != nil {
+			utils.DebugTrace(pt.logger, err)
+			continue
+		}
+		if !ok {
+			continue
+		}
+		err = tx.ValidateIssuedAtForMining(currentHeight)
+		if err != nil {
+			continue
+		}
+		txs = append(txs, tx)
 		byteCount += constants.HashLen
+	}
+
+	remainingBytes := maxBytes - byteCount
+	return txs, remainingBytes, nil
+}
+
+func (pt *Handler) getTxsInternal(txnState *badger.Txn, ctx context.Context, currentHeight uint32, maxBytes uint32, utxos []*objs.Tx, allowConflict bool) ([]*objs.Tx, uint32, error) {
+	txs := objs.TxVec{}
+	if len(utxos) != 0 {
+		txs = append(txs, utxos...)
+	}
+	byteCount := uint32(0)
+	if len(txs) > 0 {
+		byteCount += constants.HashLen * uint32(len(txs))
 	}
 	dropKeys := [][]byte{}
 	err := pt.db.View(func(txn *badger.Txn) error {
@@ -494,7 +623,7 @@ func (pt *Handler) getOneInternal(txn *badger.Txn, epoch uint32, txHash []byte) 
 	return tx, nil
 }
 
-func (pt *Handler) addOneInternal(txn *badger.Txn, tx *objs.Tx, expEpoch uint32, txHash []byte, utxoIDs [][]byte) error {
+func (pt *Handler) addOneInternal(txn *badger.Txn, tx *objs.Tx, expEpoch uint32, txHash []byte, utxoIDs [][]byte, fee, cost *uint256.Uint256, isCleanup bool) error {
 	contains, err := pt.containsOneInternal(txn, expEpoch, txHash)
 	if err != nil {
 		utils.DebugTrace(pt.logger, err)
@@ -503,7 +632,7 @@ func (pt *Handler) addOneInternal(txn *badger.Txn, tx *objs.Tx, expEpoch uint32,
 	if contains {
 		return nil
 	}
-	evicted, err := pt.indexer.Add(txn, expEpoch, txHash, utxoIDs)
+	evicted, err := pt.indexer.Add(txn, expEpoch, txHash, fee, cost, utxoIDs, isCleanup)
 	if err != nil {
 		utils.DebugTrace(pt.logger, err)
 		return err

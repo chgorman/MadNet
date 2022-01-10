@@ -128,7 +128,7 @@ func (tfq *TxFeeQueue) ValidAdd(utxoIDs [][]byte) bool {
 }
 
 // Pop returns the txhash of the highest valued item in the TxFeeQueue
-func (tfq *TxFeeQueue) Pop() ([]byte, error) {
+func (tfq *TxFeeQueue) Pop() (*TxItem, error) {
 	if tfq.IsEmpty() {
 		return nil, errors.New("TxFeeQueue.Pop: queue is empty")
 	}
@@ -136,7 +136,7 @@ func (tfq *TxFeeQueue) Pop() ([]byte, error) {
 	item := heap.Pop(&tfq.txheap).(*TxItem)
 	// Drop references to item in reference maps
 	tfq.dropReferences(item)
-	return utils.CopySlice(item.txhash), nil
+	return item, nil
 }
 
 // Contains checks if tx is present in queue

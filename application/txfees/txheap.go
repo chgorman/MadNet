@@ -4,6 +4,7 @@ import (
 	"container/heap"
 
 	"github.com/MadBase/MadNet/application/objs/uint256"
+	"github.com/MadBase/MadNet/utils"
 )
 
 // TxItem is an item storing tx information for the tx heap
@@ -16,6 +17,18 @@ type TxItem struct {
 	utxoIDs [][]byte
 	// index is the index in the heap
 	index int
+}
+
+func (ti *TxItem) TxHash() []byte {
+	return utils.CopySlice(ti.txhash)
+}
+
+func (ti *TxItem) UtxoIDs() [][]byte {
+	utxoIDsCopy := [][]byte{}
+	for k := 0; k < len(ti.utxoIDs); k++ {
+		utxoIDsCopy = append(utxoIDsCopy, utils.CopySlice(ti.utxoIDs[k]))
+	}
+	return utxoIDsCopy
 }
 
 // TxHeap is a slice of TxItems

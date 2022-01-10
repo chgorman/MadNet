@@ -248,9 +248,8 @@ func TestTxFeeIndexMakeKey(t *testing.T) {
 	trueKey := []byte{}
 	trueKey = append(trueKey, index.prefix()...)
 	trueKey = append(trueKey, feeRatioBytes...)
-	trueKey = append(trueKey, costBytes...)
 	trueKey = append(trueKey, txHash...)
-	tfiKey := index.makeKey(feeRatioBytes, costBytes, txHash)
+	tfiKey := index.makeKey(feeRatioBytes, txHash)
 	key := tfiKey.MarshalBinary()
 	if !bytes.Equal(key, trueKey) {
 		t.Fatal("keys do not match")
