@@ -29,12 +29,18 @@ type depositHandler interface {
 }
 
 // NewPendingTxHandler creates a new Handler object
-func NewPendingTxHandler(db *badger.DB) *Handler {
+func NewPendingTxHandler(db *badger.DB, queueSize int) (*Handler, error) {
+	txqueue := &txfees.TxFeeQueue{}
+	err := txqueue.Init(queueSize)
+	if err != nil {
+		return nil, err
+	}
 	return &Handler{
 		indexer: index.NewPendingTxIndexer(),
 		db:      db,
 		logger:  logging.GetLogger(constants.LoggerApp),
-	}
+		txqueue: txqueue,
+	}, nil
 }
 
 // Handler is the object that acts as the pending tx pool
@@ -62,15 +68,19 @@ func (pt *Handler) Add(txnState *badger.Txn, txs []*objs.Tx, currentHeight uint3
 				utils.DebugTrace(pt.logger, err)
 				return err
 			}
-			deposits, _, _, err := pt.DepositHandler.Get(txn, utxoIDs)
-			if err != nil {
-				utils.DebugTrace(pt.logger, err)
-				return err
-			}
-			consumedUTXOs, err := pt.UTXOHandler.IsValid(txn, []*objs.Tx{tx}, currentHeight, deposits)
-			if err != nil {
-				utils.DebugTrace(pt.logger, err)
-				return err
+			var isCleanup bool
+			if tx.IsPotentialCleanupTx() {
+				deposits, _, _, err := pt.DepositHandler.Get(txn, utxoIDs)
+				if err != nil {
+					utils.DebugTrace(pt.logger, err)
+					return err
+				}
+				consumedUTXOs, err := pt.UTXOHandler.IsValid(txn, []*objs.Tx{tx}, currentHeight, deposits)
+				if err != nil {
+					utils.DebugTrace(pt.logger, err)
+					return err
+				}
+				isCleanup = tx.IsCleanupTx(currentHeight, consumedUTXOs)
 			}
 			txHash, err := tx.TxHash()
 			if err != nil {
@@ -93,7 +103,6 @@ func (pt *Handler) Add(txnState *badger.Txn, txs []*objs.Tx, currentHeight uint3
 				utils.DebugTrace(pt.logger, err)
 				return err
 			}
-			isCleanup := tx.IsCleanupTx(currentHeight, consumedUTXOs)
 			cooldownKey := pt.makePendingTxCooldownKey(txHash)
 			_, err = utils.GetValue(txn, cooldownKey)
 			if err != nil {
@@ -249,6 +258,88 @@ func (pt *Handler) GetTxsForGossip(txnState *badger.Txn, ctx context.Context, cu
 		return nil, err
 	}
 	return utxos, nil
+}
+
+// AddTxsToQueue adds additional txs to the TxFeeQueue
+func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, currentHeight uint32) error {
+	err := pt.db.View(func(txn *badger.Txn) error {
+		it, prefix := pt.indexer.GetOrderedIter(txn)
+		err := func() error {
+			defer it.Close()
+			for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+				select {
+				case <-ctx.Done():
+					break
+				default:
+				}
+				if pt.txqueue.IsFull() {
+					break
+				}
+				itm := it.Item()
+				vBytes, err := itm.ValueCopy(nil)
+				if err != nil {
+					utils.DebugTrace(pt.logger, err)
+					return err
+				}
+				txHash := vBytes[len(prefix):]
+				if pt.txqueue.Contains(txHash) {
+					continue
+				}
+				tx, err := pt.getOneInternal(txn, utils.Epoch(currentHeight), txHash)
+				if err != nil {
+					utils.DebugTrace(pt.logger, err)
+					continue
+				}
+				consumedUTXOIDs, err := tx.ConsumedUTXOID()
+				if err != nil {
+					utils.DebugTrace(pt.logger, err)
+					return err
+				}
+				if !pt.txqueue.ValidAdd(consumedUTXOIDs) {
+					continue
+				}
+
+				var isCleanup bool
+				if tx.IsPotentialCleanupTx() {
+					deposits, _, _, err := pt.DepositHandler.Get(txn, consumedUTXOIDs)
+					if err != nil {
+						utils.DebugTrace(pt.logger, err)
+						continue
+					}
+					consumedUTXOs, err := pt.UTXOHandler.IsValid(txn, []*objs.Tx{tx}, currentHeight, deposits)
+					if err != nil {
+						utils.DebugTrace(pt.logger, err)
+						continue
+					}
+					isCleanup = tx.IsCleanupTx(currentHeight, consumedUTXOs)
+				}
+
+				feeCostRatio, err := tx.ScaledFeeCostRatio(isCleanup)
+				if err != nil {
+					utils.DebugTrace(pt.logger, err)
+					continue
+				}
+				err = pt.txqueue.Add(txHash, feeCostRatio, consumedUTXOIDs)
+				if err != nil {
+					utils.DebugTrace(pt.logger, err)
+					return err
+				}
+			}
+			return nil
+		}()
+		return err
+	})
+	return err
+}
+
+// ClearTxQueue drops all transactions in the TxFeeQueue.
+func (pt *Handler) ClearTxQueue() {
+	pt.txqueue.DropAll()
+}
+
+// SetQueueSize sets the queue size for TxFeeQueue
+func (pt *Handler) SetQueueSize(queueSize int) error {
+	return pt.txqueue.SetQueueSize(queueSize)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

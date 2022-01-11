@@ -270,8 +270,9 @@ func validatorNode(cmd *cobra.Command, args []string) {
 	consDB.Init(rawConsensusDb)
 	consTxPool.Init(consDB)
 
+	initialTxQueueSize := 10000
 	appDepositHandler.Init()
-	if err := app.Init(consDB, rawTxPoolDb, appDepositHandler, storage); err != nil {
+	if err := app.Init(consDB, rawTxPoolDb, appDepositHandler, storage, initialTxQueueSize); err != nil {
 		panic(err)
 	}
 

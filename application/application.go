@@ -38,11 +38,14 @@ type Application struct {
 }
 
 // Init initializes Application ...
-func (a *Application) Init(conDB *consensusdb.Database, memDB *badger.DB, dph *deposit.Handler, storageInterface dynamics.StorageGetter) error {
+func (a *Application) Init(conDB *consensusdb.Database, memDB *badger.DB, dph *deposit.Handler, storageInterface dynamics.StorageGetter, txQueueSize int) error {
 	a.logger = logging.GetLogger(constants.LoggerApp)
 	storage := wrapper.NewStorage(storageInterface)
 	uHdlr := utxohandler.NewUTXOHandler(conDB.DB())
-	pHdlr := pendingtx.NewPendingTxHandler(memDB)
+	pHdlr, err := pendingtx.NewPendingTxHandler(memDB, txQueueSize)
+	if err != nil {
+		return err
+	}
 	pHdlr.UTXOHandler = uHdlr
 	pHdlr.DepositHandler = dph
 	a.txHandler = &txHandler{

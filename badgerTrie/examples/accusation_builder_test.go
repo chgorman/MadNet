@@ -78,6 +78,7 @@ func makeTxs(t *testing.T, s objs.Signer, v *objs.ValueStore) *objs.Tx {
 		t.Fatal(err)
 	}
 	tx.Vout = append(tx.Vout, newUTXO)
+	tx.Fee = uint256.Zero()
 	err = tx.SetTxHash()
 	if err != nil {
 		t.Fatal(err)
@@ -265,6 +266,7 @@ func makeTransfer(t *testing.T, sender objs.Signer, receiver objs.Signer, transf
 		t.Fatal(err)
 	}
 	tx.Vout = append(tx.Vout, newUTXOSender, newUTXOReceiver)
+	tx.Fee = uint256.Zero()
 	err = tx.SetTxHash() // <- compute the root from the TxHash smt
 	if err != nil {
 		t.Fatal(err)

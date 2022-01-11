@@ -2089,7 +2089,7 @@ func TestTxCostSizeGood(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	totalCostSize, err := tx.CostSize()
+	totalCostSize, err := tx.costSize()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2099,7 +2099,7 @@ func TestTxCostSizeGood(t *testing.T) {
 }
 func TestTxCostSizeBad1(t *testing.T) {
 	tx := &Tx{}
-	_, err := tx.CostSize()
+	_, err := tx.costSize()
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}

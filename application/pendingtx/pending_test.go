@@ -10,7 +10,6 @@ import (
 
 	"github.com/MadBase/MadNet/application/objs"
 	"github.com/MadBase/MadNet/application/objs/uint256"
-	"github.com/MadBase/MadNet/application/txfees"
 	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/crypto"
 	"github.com/dgraph-io/badger/v2"
@@ -275,16 +274,13 @@ func setup(t *testing.T) (*Handler, *mockTrie, func()) {
 	////////////////////////////////////////
 	mt := &mockTrie{}
 	mt.m = make(map[string]bool)
-	hndlr := NewPendingTxHandler(db)
+	queueSize := 1024
+	hndlr, err := NewPendingTxHandler(db, queueSize)
+	if err != nil {
+		t.Fatal(err)
+	}
 	hndlr.UTXOHandler = mt
 	hndlr.DepositHandler = mt
-	queueSize := 1024
-	txqueue := &txfees.TxFeeQueue{}
-	err = txqueue.Init(queueSize)
-	if err != nil {
-		panic(err)
-	}
-	hndlr.txqueue = txqueue
 	return hndlr, mt, fn
 }
 
