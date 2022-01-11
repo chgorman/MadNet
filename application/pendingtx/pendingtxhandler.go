@@ -92,22 +92,16 @@ func (pt *Handler) Add(txnState *badger.Txn, txs []*objs.Tx, currentHeight uint3
 				utils.DebugTrace(pt.logger, err)
 				return err
 			}
-			fee := &uint256.Uint256{}
-			err = fee.Set(tx.Fee)
-			if err != nil {
-				utils.DebugTrace(pt.logger, err)
-				return err
-			}
-			cost, err := tx.Cost()
-			if err != nil {
-				utils.DebugTrace(pt.logger, err)
-				return err
-			}
 			cooldownKey := pt.makePendingTxCooldownKey(txHash)
 			_, err = utils.GetValue(txn, cooldownKey)
 			if err != nil {
 				if err == badger.ErrKeyNotFound {
-					err := pt.addOneInternal(txn, tx, eoe, txHash, utxoIDs, fee, cost, isCleanup)
+					feeCostRatio, err := tx.ScaledFeeCostRatio(isCleanup)
+					if err != nil {
+						utils.DebugTrace(pt.logger, err)
+						return err
+					}
+					err = pt.addOneInternal(txn, tx, eoe, txHash, utxoIDs, feeCostRatio)
 					if err != nil {
 						utils.DebugTrace(pt.logger, err)
 						return err
@@ -714,7 +708,7 @@ func (pt *Handler) getOneInternal(txn *badger.Txn, epoch uint32, txHash []byte) 
 	return tx, nil
 }
 
-func (pt *Handler) addOneInternal(txn *badger.Txn, tx *objs.Tx, expEpoch uint32, txHash []byte, utxoIDs [][]byte, fee, cost *uint256.Uint256, isCleanup bool) error {
+func (pt *Handler) addOneInternal(txn *badger.Txn, tx *objs.Tx, expEpoch uint32, txHash []byte, utxoIDs [][]byte, feeCostRatio *uint256.Uint256) error {
 	contains, err := pt.containsOneInternal(txn, expEpoch, txHash)
 	if err != nil {
 		utils.DebugTrace(pt.logger, err)
@@ -723,7 +717,7 @@ func (pt *Handler) addOneInternal(txn *badger.Txn, tx *objs.Tx, expEpoch uint32,
 	if contains {
 		return nil
 	}
-	evicted, err := pt.indexer.Add(txn, expEpoch, txHash, fee, cost, utxoIDs, isCleanup)
+	evicted, err := pt.indexer.Add(txn, expEpoch, txHash, feeCostRatio, utxoIDs)
 	if err != nil {
 		utils.DebugTrace(pt.logger, err)
 		return err

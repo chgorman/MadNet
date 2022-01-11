@@ -2,7 +2,6 @@ package indexer
 
 import (
 	"github.com/MadBase/MadNet/application/objs/uint256"
-	"github.com/MadBase/MadNet/errorz"
 	"github.com/MadBase/MadNet/utils"
 	"github.com/dgraph-io/badger/v2"
 )
@@ -63,8 +62,8 @@ func (tfirk *TxFeeIndexRefKey) UnmarshalBinary(data []byte) {
 }
 
 // Add adds a transaction to the TxFeeIndex
-func (tfi *TxFeeIndex) Add(txn *badger.Txn, fee *uint256.Uint256, cost *uint256.Uint256, txHash []byte, isCleanup bool) error {
-	feeCostRatioBytes, err := tfi.makeFeeCostRatioBytes(fee, cost, isCleanup)
+func (tfi *TxFeeIndex) Add(txn *badger.Txn, feeCostRatio *uint256.Uint256, txHash []byte) error {
+	feeCostRatioBytes, err := feeCostRatio.MarshalBinary()
 	if err != nil {
 		return err
 	}
@@ -95,56 +94,6 @@ func (tfi *TxFeeIndex) Drop(txn *badger.Txn, txHash []byte) error {
 	tfiKey := tfi.makeKey(feeCostRatioBytes, txHash)
 	key := tfiKey.MarshalBinary()
 	return utils.DeleteValue(txn, key)
-}
-
-// makeFeeCostRatioBytes returns the byte slice of the feeCostRatio.
-// feeCostRatio is a uint256 object. In the case of a cleanup transaction,
-// the largest possible value is used.
-func (tfi *TxFeeIndex) makeFeeCostRatioBytes(fee *uint256.Uint256, cost *uint256.Uint256, isCleanup bool) ([]byte, error) {
-	if fee == nil {
-		return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeCostRatioBytes: fee is not initialized")
-	}
-	if cost == nil {
-		return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeCostRatioBytes: cost is not initialized")
-	}
-	if cost.IsZero() {
-		return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeCostRatioBytes: cost is zero")
-	}
-	if isCleanup {
-		// Cleanup transactions are special transactions with no fee.
-		// These must be prioritized above all other transactions.
-		if !fee.IsZero() {
-			return nil, errorz.ErrInvalid{}.New("TxFeeIndex.makeFeeSizeRatioBytes: invalid fee; cleanup transaction fee must be zero")
-		}
-		feeRatioBytes := make([]byte, numBytes)
-		for k := 0; k < len(feeRatioBytes); k++ {
-			feeRatioBytes[k] = 255
-		}
-		return feeRatioBytes, nil
-	}
-	scaleFactor := uint256.TwoPower64()
-	maxFee := uint256.TwoPower128()
-	feeCopy := fee.Clone()
-	// Ensure the fee is not too large
-	if feeCopy.Gt(maxFee) {
-		err := feeCopy.Set(maxFee)
-		if err != nil {
-			return nil, err
-		}
-	}
-	scaledFee, err := new(uint256.Uint256).Mul(feeCopy, scaleFactor)
-	if err != nil {
-		return nil, err
-	}
-	feeCostRatio, err := new(uint256.Uint256).Div(scaledFee, cost)
-	if err != nil {
-		return nil, err
-	}
-	feeCostRatioBytes, err := feeCostRatio.MarshalBinary()
-	if err != nil {
-		return nil, err
-	}
-	return feeCostRatioBytes, nil
 }
 
 func (tfi *TxFeeIndex) makeKey(feeCostRatioBytes []byte, txHash []byte) *TxFeeIndexKey {

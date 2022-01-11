@@ -30,8 +30,8 @@ type PendingTxIndexer struct {
 	expiration *indexer.EpochConstrainedList
 }
 
-func (pti *PendingTxIndexer) Add(txn *badger.Txn, epoch uint32, txHash []byte, fee, cost *uint256.Uint256, utxoIDs [][]byte, isCleanup bool) ([][]byte, error) {
-	err := pti.order.Add(txn, fee, cost, txHash, isCleanup)
+func (pti *PendingTxIndexer) Add(txn *badger.Txn, epoch uint32, txHash []byte, feeCostRatio *uint256.Uint256, utxoIDs [][]byte) ([][]byte, error) {
+	err := pti.order.Add(txn, feeCostRatio, txHash)
 	if err != nil {
 		return nil, err
 	}
