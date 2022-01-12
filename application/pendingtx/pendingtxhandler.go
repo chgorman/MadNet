@@ -224,7 +224,10 @@ func (pt *Handler) DeleteMined(txnState *badger.Txn, currentHeight uint32, txHas
 func (pt *Handler) GetTxsForProposal(txnState *badger.Txn, ctx context.Context, currentHeight uint32, maxBytes uint32, tx *objs.Tx) (objs.TxVec, uint32, error) {
 	var utxos objs.TxVec
 	var err error
-	utxos, maxBytes, err = pt.getTxsFromQueue(txnState, ctx, currentHeight, maxBytes, []*objs.Tx{tx})
+	if tx != nil {
+		utxos = append(utxos, tx)
+	}
+	utxos, maxBytes, err = pt.getTxsFromQueue(txnState, ctx, currentHeight, maxBytes, utxos)
 	if err != nil {
 		utils.DebugTrace(pt.logger, err)
 		return nil, 0, err
@@ -344,26 +347,28 @@ func (pt *Handler) SetQueueSize(queueSize int) error {
 // getTxsFromQueue returns a list of txs from TxFeeQueue
 func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, currentHeight uint32, maxBytes uint32, utxos []*objs.Tx) ([]*objs.Tx, uint32, error) {
 	txs := objs.TxVec{}
+	byteCount := uint32(0)
+	var consumedUTXOs objs.Vout
+	var err error
 	if len(utxos) != 0 {
 		txs = append(txs, utxos...)
-	}
-	byteCount := uint32(0)
-	if len(txs) > 0 {
+		// Note: we are not including any deposits in this check because we are
+		// 		 assuming the included tx is a cleanup transaction so it has
+		//		 no deposits. If we implement validator-specific txs, this logic
+		//		 will need to change to accomidate it.
+		consumedUTXOs, err = pt.UTXOHandler.IsValid(txnState, txs, currentHeight, nil)
+		if err != nil {
+			utils.DebugTrace(pt.logger, err)
+			return nil, 0, err
+		}
 		byteCount += constants.HashLen * uint32(len(txs))
-	}
-	// Note: we are not including any deposits in this check because we are
-	// 		 assuming the included tx is a cleanup transaction so it has
-	//		 no deposits. If we implement validator-specific txs, this logic
-	//		 will need to change to accomidate it.
-	consumedUTXOs, err := pt.UTXOHandler.IsValid(txnState, txs, currentHeight, nil)
-	if err != nil {
-		return nil, 0, err
 	}
 	var consumed map[string]bool
 	consumedUTXOIDs := [][]byte{}
 	for k := 0; k < len(consumedUTXOs); k++ {
 		consumedUTXOID, err := consumedUTXOs[k].UTXOID()
 		if err != nil {
+			utils.DebugTrace(pt.logger, err)
 			return nil, 0, err
 		}
 		consumedUTXOIDs = append(consumedUTXOIDs, consumedUTXOID)
@@ -386,6 +391,7 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 		}
 		item, err := pt.txqueue.Pop()
 		if err != nil {
+			utils.DebugTrace(pt.logger, err)
 			return nil, 0, err
 		}
 		if !validAdd {
@@ -424,6 +430,7 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 		}
 		err = tx.ValidateIssuedAtForMining(currentHeight)
 		if err != nil {
+			utils.DebugTrace(pt.logger, err)
 			continue
 		}
 		txs = append(txs, tx)
