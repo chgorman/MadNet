@@ -2,6 +2,7 @@ package application
 
 import (
 	"bytes"
+	"context"
 	"errors"
 
 	"github.com/MadBase/MadNet/dynamics"
@@ -346,6 +347,23 @@ func (a *Application) GetHeightForTx(txn *badger.Txn, txHash []byte) (uint32, er
 // Cleanup does nothing at this time
 func (a *Application) Cleanup() error {
 	return nil
+}
+
+// AddTxsToQueue attempts to add additional txs to queue
+func (a *Application) AddTxsToQueue(txn *badger.Txn, ctx context.Context, currentHeight uint32) error {
+	return a.txHandler.pTxHdlr.AddTxsToQueue(txn, ctx, currentHeight)
+}
+
+// ClearTxQueue clears the TxFeeQueue of all transactions in memory
+func (a *Application) ClearTxQueue() error {
+	a.txHandler.pTxHdlr.ClearTxQueue()
+	return nil
+}
+
+// SetQueueSize sets the size of the TxFeeQueue;
+// this determines how many txs we store in memory to quickly form a proposal.
+func (a *Application) SetQueueSize(queueSize int) error {
+	return a.txHandler.pTxHdlr.SetQueueSize(queueSize)
 }
 
 // StoreSnapShotNode will store a node of the state trie during fast sync

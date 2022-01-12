@@ -395,7 +395,7 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 			return nil, 0, err
 		}
 		if !validAdd {
-			consumedUTXOIDs := item.UtxoIDs()
+			consumedUTXOIDs := item.UTXOIDs()
 			conflict := false
 			for k := 0; k < len(consumedUTXOIDs); k++ {
 				_, ok := consumed[string(consumedUTXOIDs[k])]

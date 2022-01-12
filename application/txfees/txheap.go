@@ -23,7 +23,7 @@ func (ti *TxItem) TxHash() []byte {
 	return utils.CopySlice(ti.txhash)
 }
 
-func (ti *TxItem) UtxoIDs() [][]byte {
+func (ti *TxItem) UTXOIDs() [][]byte {
 	utxoIDsCopy := [][]byte{}
 	for k := 0; k < len(ti.utxoIDs); k++ {
 		utxoIDsCopy = append(utxoIDsCopy, utils.CopySlice(ti.utxoIDs[k]))
