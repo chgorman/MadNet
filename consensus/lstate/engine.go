@@ -492,6 +492,14 @@ func (ce *Engine) updateLocalStateInternal(txn *badger.Txn, rs *RoundStates) (bo
 			utils.DebugTrace(ce.logger, err)
 			return false, err
 		}
+		if rs.round == 1 {
+			// Clear txqueue right after standard proposal
+			err = ce.appHandler.ClearTxQueue()
+			if err != nil {
+				utils.DebugTrace(ce.logger, err)
+				return false, err
+			}
+		}
 		return true, nil
 	}
 	return true, nil

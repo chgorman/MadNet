@@ -1,6 +1,8 @@
 package appmock
 
 import (
+	"context"
+
 	trie "github.com/MadBase/MadNet/badgerTrie"
 	"github.com/MadBase/MadNet/consensus/objs"
 	"github.com/MadBase/MadNet/crypto"
@@ -70,6 +72,22 @@ func (m *MockApplication) PendingTxGet(txn *badger.Txn, height uint32, txhashes 
 //PendingTxContains is defined on the interface object
 func (m *MockApplication) PendingTxContains(txn *badger.Txn, height uint32, txHashes [][]byte) ([][]byte, error) {
 	return nil, nil
+}
+
+// AddTxsToQueue attempts to add additional txs to queue
+func (m *MockApplication) AddTxsToQueue(txn *badger.Txn, ctx context.Context, currentHeight uint32) error {
+	return nil
+}
+
+// ClearTxQueue clears the TxFeeQueue of all transactions in memory
+func (m *MockApplication) ClearTxQueue() error {
+	return nil
+}
+
+// SetQueueSize sets the size of the TxFeeQueue;
+// this determines how many txs we store in memory to quickly form a proposal.
+func (m *MockApplication) SetQueueSize(queueSize int) error {
+	return nil
 }
 
 // UnmarshalTx is defined on the interface object

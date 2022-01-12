@@ -398,8 +398,7 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 			consumedUTXOIDs := item.UTXOIDs()
 			conflict := false
 			for k := 0; k < len(consumedUTXOIDs); k++ {
-				_, ok := consumed[string(consumedUTXOIDs[k])]
-				if ok {
+				if _, present := consumed[string(consumedUTXOIDs[k])]; present {
 					conflict = true
 					break
 				}
