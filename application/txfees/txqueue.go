@@ -87,22 +87,53 @@ func (tfq *TxFeeQueue) QueueSize() int {
 	return tfq.queueSize
 }
 
-// Add adds a txhash to the TxFeeQueue
-func (tfq *TxFeeQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]byte) error {
+// Add adds a txhash to the TxFeeQueue.
+// If there are no consumedUTXO conflicts, we add to queue and exit;
+// if there are consumedUTXO conflicts, we check values and replace only if
+// value is greater.
+// Here, value specifies the feeCostRatio of the corresponding tx.
+func (tfq *TxFeeQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]byte) (bool, error) {
 	if tfq.IsFull() {
-		return errors.New("TxFeeQueue.Add: queue is full")
+		return false, errors.New("TxFeeQueue.Add: queue is full")
 	}
 	if value == nil {
-		return errors.New("TxFeeQueue.Add: value is nil")
+		return false, errors.New("TxFeeQueue.Add: value is nil")
+	}
+	utxoIDsCopy := [][]byte{}
+	for k := 0; k < len(utxoIDs); k++ {
+		utxoID := utils.CopySlice(utxoIDs[k])
+		utxoIDsCopy = append(utxoIDsCopy, utxoID)
+	}
+	conflictingTxHashes, conflict := tfq.ConflictingUTXOIDs(utxoIDsCopy)
+	if conflict {
+		// There are conflicts with utxo sets.
+		// Find all txs with conflicts and their corresponding values.
+		// If current value is larger than all of them, then we drop all
+		// conflicts and add this one.
+		// If value is less than any, we exit and do not add tx.
+		maxValue := uint256.Zero()
+		for k := 0; k < len(conflictingTxHashes); k++ {
+			txhash := utils.CopySlice(conflictingTxHashes[k])
+			item, ok := tfq.refmap[string(txhash)]
+			if !ok {
+				continue
+			}
+			if item.value.Gt(maxValue) {
+				maxValue.Set(item.value)
+			}
+		}
+		if value.Lte(maxValue) {
+			// The value (feeCostRatio) of the potential tx we want to add
+			// is below the value of a conflicting tx;
+			// thus, we do not add it to the queue.
+			return false, nil
+		}
+		tfq.bulkDrop(conflictingTxHashes)
 	}
 	txString := string(txhash)
-	utxoIDsCopy := [][]byte{}
-	// Store new utxoIDs; previous call to ValidAdd will ensure there
-	// are no conflicts
 	for k := 0; k < len(utxoIDs); k++ {
 		utxoID := utils.CopySlice(utxoIDs[k])
 		tfq.utxoIDs[string(utxoID)] = txString
-		utxoIDsCopy = append(utxoIDsCopy, utxoID)
 	}
 	item := &TxItem{
 		txhash:  utils.CopySlice(txhash),
@@ -111,20 +142,22 @@ func (tfq *TxFeeQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]by
 	}
 	tfq.refmap[txString] = item
 	heap.Push(&tfq.txheap, item)
-	return nil
+	return true, nil
 }
 
-// ValidAdd checks if any potential utxoIDs conflict with current utxoID set;
-// we only tx if utxoIDs are not already present.
-func (tfq *TxFeeQueue) ValidAdd(utxoIDs [][]byte) bool {
+// ConflictingUTXOIDs determines if the proposed additional utxos conflict
+// with the present set of utxos in the TxFeeQueue;
+// returns total list of corresponding txhashes where there are conflicts.
+func (tfq *TxFeeQueue) ConflictingUTXOIDs(utxoIDs [][]byte) ([][]byte, bool) {
+	conflictingTxHashes := [][]byte{}
 	for k := 0; k < len(utxoIDs); k++ {
 		utxoID := utils.CopySlice(utxoIDs[k])
-		_, ok := tfq.utxoIDs[string(utxoID)]
+		txhashString, ok := tfq.utxoIDs[string(utxoID)]
 		if ok {
-			return false
+			conflictingTxHashes = append(conflictingTxHashes, []byte(txhashString))
 		}
 	}
-	return true
+	return conflictingTxHashes, len(conflictingTxHashes) > 0
 }
 
 // Pop returns the txhash of the highest valued item in the TxFeeQueue
@@ -158,6 +191,13 @@ func (tfq *TxFeeQueue) dropReferences(item *TxItem) {
 	}
 	// Remove txhash from txhash map
 	delete(tfq.refmap, string(item.txhash))
+}
+
+func (tfq *TxFeeQueue) bulkDrop(txhashes [][]byte) {
+	for k := 0; k < len(txhashes); k++ {
+		txhash := utils.CopySlice(txhashes[k])
+		tfq.drop(txhash)
+	}
 }
 
 // drop drops a tx from the TxFeeQueue and all associated utxoIDs

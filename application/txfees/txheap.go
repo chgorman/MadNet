@@ -19,10 +19,12 @@ type TxItem struct {
 	index int
 }
 
+// TxHash returns a copy of the txhash for the item
 func (ti *TxItem) TxHash() []byte {
 	return utils.CopySlice(ti.txhash)
 }
 
+// UTXOIDs returns a copy of all the utxoIDs which are consumed by the item
 func (ti *TxItem) UTXOIDs() [][]byte {
 	utxoIDsCopy := [][]byte{}
 	for k := 0; k < len(ti.utxoIDs); k++ {

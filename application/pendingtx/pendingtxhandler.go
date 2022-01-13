@@ -292,9 +292,6 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 					utils.DebugTrace(pt.logger, err)
 					return err
 				}
-				if !pt.txqueue.ValidAdd(consumedUTXOIDs) {
-					continue
-				}
 
 				var isCleanup bool
 				if tx.IsPotentialCleanupTx() {
@@ -316,7 +313,7 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 					utils.DebugTrace(pt.logger, err)
 					continue
 				}
-				err = pt.txqueue.Add(txHash, feeCostRatio, consumedUTXOIDs)
+				_, err = pt.txqueue.Add(txHash, feeCostRatio, consumedUTXOIDs)
 				if err != nil {
 					utils.DebugTrace(pt.logger, err)
 					return err
@@ -363,7 +360,7 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 		}
 		byteCount += constants.HashLen * uint32(len(txs))
 	}
-	var consumed map[string]bool
+	var conflictHashMap map[string]bool
 	consumedUTXOIDs := [][]byte{}
 	for k := 0; k < len(consumedUTXOs); k++ {
 		consumedUTXOID, err := consumedUTXOs[k].UTXOID()
@@ -373,13 +370,13 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 		}
 		consumedUTXOIDs = append(consumedUTXOIDs, consumedUTXOID)
 	}
-	validAdd := pt.txqueue.ValidAdd(consumedUTXOIDs)
-	if !validAdd {
+	conflictingTxHashes, conflict := pt.txqueue.ConflictingUTXOIDs(consumedUTXOIDs)
+	if conflict {
 		// We initialize map with consumedUTXOID to check to see if there
 		// are any overlapping in new txs.
-		consumed = make(map[string]bool, len(consumedUTXOIDs))
-		for k := 0; k < len(consumedUTXOIDs); k++ {
-			consumed[string(consumedUTXOIDs[k])] = true
+		conflictHashMap = make(map[string]bool, len(conflictingTxHashes))
+		for k := 0; k < len(conflictingTxHashes); k++ {
+			conflictHashMap[string(conflictingTxHashes[k])] = true
 		}
 	}
 
@@ -389,35 +386,25 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 			break
 		default:
 		}
+		if ok := pt.checkSize(maxBytes, byteCount); !ok {
+			break
+		}
 		item, err := pt.txqueue.Pop()
 		if err != nil {
 			utils.DebugTrace(pt.logger, err)
 			return nil, 0, err
 		}
-		if !validAdd {
-			consumedUTXOIDs := item.UTXOIDs()
-			conflict := false
-			for k := 0; k < len(consumedUTXOIDs); k++ {
-				if _, present := consumed[string(consumedUTXOIDs[k])]; present {
-					conflict = true
-					break
-				}
-			}
-			if conflict {
-				// There is a conflict in the consumed utxo set;
-				// jump to next potential tx.
-				continue
-			}
+		txhash := item.TxHash()
+		if conflict && conflictHashMap[string(txhash)] {
+			// There is a conflict in the consumed utxo set;
+			// jump to next potential tx.
+			continue
 		}
 
-		txhash := item.TxHash()
 		tx, err := pt.getOneInternal(txnState, utils.Epoch(currentHeight), txhash)
 		if err != nil {
 			utils.DebugTrace(pt.logger, err)
 			continue
-		}
-		if ok := pt.checkSize(maxBytes, byteCount); !ok {
-			break
 		}
 		ok, err := pt.checkTx(txnState, tx, currentHeight)
 		if err != nil {
