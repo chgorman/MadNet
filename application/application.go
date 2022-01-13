@@ -354,12 +354,6 @@ func (a *Application) AddTxsToQueue(txn *badger.Txn, ctx context.Context, curren
 	return a.txHandler.pTxHdlr.AddTxsToQueue(txn, ctx, currentHeight)
 }
 
-// ClearTxQueue clears the TxFeeQueue of all transactions in memory
-func (a *Application) ClearTxQueue() error {
-	a.txHandler.pTxHdlr.ClearTxQueue()
-	return nil
-}
-
 // SetQueueSize sets the size of the TxFeeQueue;
 // this determines how many txs we store in memory to quickly form a proposal.
 func (a *Application) SetQueueSize(queueSize int) error {

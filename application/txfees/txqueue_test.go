@@ -133,20 +133,6 @@ func TestTxFeeQueueDropAll(t *testing.T) {
 	if tfq.IsEmpty() {
 		t.Fatal("Should not be empty")
 	}
-
-	tfq.DropAll()
-	if len(tfq.txheap) != 0 {
-		t.Fatal("TxHeap should be length 0")
-	}
-	if len(tfq.refmap) != 0 {
-		t.Fatal("refmap should be length 0")
-	}
-	if len(tfq.utxoIDs) != 0 {
-		t.Fatal("utxoIDs should be length 0")
-	}
-	if !tfq.IsEmpty() {
-		t.Fatal("Should be empty")
-	}
 }
 
 func TestTxFeeQueueAddBad(t *testing.T) {
@@ -710,4 +696,67 @@ func TestTxFeeQueueDropMined2(t *testing.T) {
 func TestTxFeeQueueDropRefernces(t *testing.T) {
 	tfq := &TxFeeQueue{}
 	tfq.dropReferences(nil)
+}
+
+func TestTxFeeQueueFeeCostThresholdGood(t *testing.T) {
+	tfq := &TxFeeQueue{}
+	queueSize := 128
+	err := tfq.Init(queueSize)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make and add tx
+	txhash := crypto.Hasher([]byte("TxHash1"))
+	utxoID1 := crypto.Hasher([]byte("utxoID11"))
+	utxoID2 := crypto.Hasher([]byte("utxoID12"))
+	utxoIDs := [][]byte{utxoID1, utxoID2}
+	value, err := new(uint256.Uint256).FromUint64(1000000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ok, err := tfq.Add(txhash, value, utxoIDs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	retFeeCostThreshold, err := tfq.FeeCostThreshold()
+	if err != nil {
+		t.Fatal(err)
+	}
+	feeCostThresholdTrue := new(uint256.Uint256)
+	err = feeCostThresholdTrue.Set(value)
+	if err != nil {
+		t.Fatal(err)
+	}
+	num, err := new(uint256.Uint256).FromUint64(uint64(tfq.queueAcceptanceNum))
+	if err != nil {
+		t.Fatal(err)
+	}
+	denum, err := new(uint256.Uint256).FromUint64(uint64(tfq.queueAcceptanceDenum))
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = feeCostThresholdTrue.Mul(feeCostThresholdTrue, num)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = feeCostThresholdTrue.Div(feeCostThresholdTrue, denum)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !retFeeCostThreshold.Eq(feeCostThresholdTrue) {
+		t.Fatal("invalid feeCostRatioThreshold")
+	}
+}
+
+func TestTxFeeQueueFeeCostThresholdBad(t *testing.T) {
+	tfq := &TxFeeQueue{}
+	_, err := tfq.FeeCostThreshold()
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
 }

@@ -58,6 +58,20 @@ type TxFeeQueue struct {
 	// queueSize is the size of TxFeeQueue. No additional transactions are
 	// added if the total number reaches this level.
 	queueSize int
+	// queueThrehold is the size where we begin to be more selective the txs
+	// we add to the queue because we are getting full
+	queueThrehold int
+	// queueThresholdFrac is the fraction which specifies how full the queue
+	// must be before we are selective
+	queueThresholdFrac float32
+	// queueAcceptance is the proportionality constant above which we require
+	// all txs to satisfy once we have reached the threshold in order to add
+	// them to the queue.
+	queueAcceptanceNum   int
+	queueAcceptanceDenum int
+	// feeCostSum is the total sum of feeCostRatios of every object inside
+	// the queue
+	feeCostSum *uint256.Uint256
 }
 
 // Init initializes the TxFeeQueue
@@ -66,6 +80,11 @@ func (tfq *TxFeeQueue) Init(queueSize int) error {
 		return errors.New("TxFeeQueue.Init: queueSize <= 0")
 	}
 	tfq.queueSize = queueSize
+	tfq.queueThresholdFrac = 0.75
+	tfq.queueThrehold = int(tfq.queueThresholdFrac * float32(tfq.queueSize))
+	tfq.queueAcceptanceNum = 5
+	tfq.queueAcceptanceDenum = 4
+	tfq.feeCostSum = uint256.Zero()
 	tfq.txheap = make(TxHeap, 0, tfq.queueSize)
 	tfq.refmap = make(map[string]*TxItem, tfq.queueSize)
 	tfq.utxoIDs = make(map[string]string, tfq.queueSize)
@@ -79,6 +98,7 @@ func (tfq *TxFeeQueue) SetQueueSize(queueSize int) error {
 		return errors.New("TxFeeQueue.SetQueueSize: queueSize <= 0")
 	}
 	tfq.queueSize = queueSize
+	tfq.queueThrehold = int(tfq.queueThresholdFrac * float32(tfq.queueSize))
 	return nil
 }
 
@@ -98,6 +118,17 @@ func (tfq *TxFeeQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]by
 	}
 	if value == nil {
 		return false, errors.New("TxFeeQueue.Add: value is nil")
+	}
+	if !tfq.IsEmpty() && tfq.AboveThreshold() {
+		// The queue is close to being full, so we are more selective
+		// in the txs that we add.
+		feeCostThreshold, err := tfq.FeeCostThreshold()
+		if err != nil {
+			return false, err
+		}
+		if value.Lte(feeCostThreshold) {
+			return false, nil
+		}
 	}
 	utxoIDsCopy := [][]byte{}
 	for k := 0; k < len(utxoIDs); k++ {
@@ -140,9 +171,36 @@ func (tfq *TxFeeQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]by
 		value:   value.Clone(),
 		utxoIDs: utxoIDsCopy,
 	}
+	_, err := tfq.feeCostSum.Add(tfq.feeCostSum, item.value)
+	if err != nil {
+		return false, err
+	}
 	tfq.refmap[txString] = item
 	heap.Push(&tfq.txheap, item)
 	return true, nil
+}
+
+// FeeCostThreshold computes the minimum feeCostRatio value which is required
+// to add a tx to the queue once we have reached a threshold number of txs.
+func (tfq *TxFeeQueue) FeeCostThreshold() (*uint256.Uint256, error) {
+	averageFeeCostRatio, err := tfq.AverageFeeCostRatio()
+	if err != nil {
+		return nil, err
+	}
+	if (tfq.queueAcceptanceNum <= 0) || (tfq.queueAcceptanceDenum <= 0) {
+		return nil, errors.New("TxFeeQueue.FeeCostThreshold: invalid queueAcceptance values")
+	}
+	num, _ := new(uint256.Uint256).FromUint64(uint64(tfq.queueAcceptanceNum))
+	denum, _ := new(uint256.Uint256).FromUint64(uint64(tfq.queueAcceptanceDenum))
+	thresholdFeeCostRatio, err := new(uint256.Uint256).Mul(averageFeeCostRatio, num)
+	if err != nil {
+		return nil, err
+	}
+	_, err = thresholdFeeCostRatio.Div(thresholdFeeCostRatio, denum)
+	if err != nil {
+		return nil, err
+	}
+	return thresholdFeeCostRatio, nil
 }
 
 // ConflictingUTXOIDs determines if the proposed additional utxos conflict
@@ -169,6 +227,11 @@ func (tfq *TxFeeQueue) Pop() (*TxItem, error) {
 	item := heap.Pop(&tfq.txheap).(*TxItem)
 	// Drop references to item in reference maps
 	tfq.dropReferences(item)
+	// Subtract the value from the total feeCostSum
+	_, err := tfq.feeCostSum.Sub(tfq.feeCostSum, item.value)
+	if err != nil {
+		return nil, err
+	}
 	return item, nil
 }
 
@@ -201,15 +264,18 @@ func (tfq *TxFeeQueue) bulkDrop(txhashes [][]byte) {
 }
 
 // drop drops a tx from the TxFeeQueue and all associated utxoIDs
-func (tfq *TxFeeQueue) drop(txhash []byte) {
+func (tfq *TxFeeQueue) drop(txhash []byte) error {
 	txString := string(txhash)
 	item, ok := tfq.refmap[txString]
 	if !ok {
-		return
+		return nil
 	}
 	tfq.dropReferences(item)
 	// Remove element from TxHeap
 	_ = heap.Remove(&tfq.txheap, item.index)
+	// Subtract the value from the total feeCostSum
+	_, err := tfq.feeCostSum.Sub(tfq.feeCostSum, item.value)
+	return err
 }
 
 // DropMined drops all txs which include the listed utxoIDs
@@ -226,25 +292,36 @@ func (tfq *TxFeeQueue) DropMined(utxoIDs [][]byte) {
 	}
 }
 
-// DropAll drops all txs from TxFeeQueue
-func (tfq *TxFeeQueue) DropAll() {
-	tfq.txheap = make(TxHeap, 0, tfq.queueSize)
-	tfq.refmap = make(map[string]*TxItem, tfq.queueSize)
-	tfq.utxoIDs = make(map[string]string, tfq.queueSize)
-}
-
 // IsFull returns true if queue is at capacity
 func (tfq *TxFeeQueue) IsFull() bool {
-	if len(tfq.refmap) >= tfq.queueSize {
-		return true
-	}
-	return false
+	return len(tfq.refmap) >= tfq.queueSize
+}
+
+// AboveThreshold returns true if queue is above threshold.
+// At this point, we want to only prioritize txs above
+func (tfq *TxFeeQueue) AboveThreshold() bool {
+	return len(tfq.refmap) >= tfq.queueThrehold
 }
 
 // IsEmpty returns true if queue is empty
 func (tfq *TxFeeQueue) IsEmpty() bool {
-	if len(tfq.refmap) == 0 {
-		return true
+	return len(tfq.refmap) == 0
+}
+
+// AverageFeeCostRatio computes the average feeCostRatio of the txs in the queue
+func (tfq *TxFeeQueue) AverageFeeCostRatio() (*uint256.Uint256, error) {
+	if tfq == nil {
+		return nil, errors.New("TxFeeQueue.AverageFeeCostRatio: tfq not initialized")
 	}
-	return false
+	if tfq.feeCostSum == nil {
+		return nil, errors.New("TxFeeQueue.AverageFeeCostRatio: feeCostSum is nil")
+	}
+	if tfq.IsEmpty() {
+		return nil, errors.New("TxFeeQueue.AverageFeeCostRatio: tfq is empty")
+	}
+	uintLength, err := new(uint256.Uint256).FromUint64(uint64(tfq.txheap.Len()))
+	if err != nil {
+		return nil, err
+	}
+	return new(uint256.Uint256).Div(tfq.feeCostSum, uintLength)
 }

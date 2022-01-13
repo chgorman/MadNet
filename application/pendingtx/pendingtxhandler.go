@@ -326,11 +326,6 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 	return err
 }
 
-// ClearTxQueue drops all transactions in the TxFeeQueue.
-func (pt *Handler) ClearTxQueue() {
-	pt.txqueue.DropAll()
-}
-
 // SetQueueSize sets the queue size for TxFeeQueue
 func (pt *Handler) SetQueueSize(queueSize int) error {
 	return pt.txqueue.SetQueueSize(queueSize)

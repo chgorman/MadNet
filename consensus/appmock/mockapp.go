@@ -79,11 +79,6 @@ func (m *MockApplication) AddTxsToQueue(txn *badger.Txn, ctx context.Context, cu
 	return nil
 }
 
-// ClearTxQueue clears the TxFeeQueue of all transactions in memory
-func (m *MockApplication) ClearTxQueue() error {
-	return nil
-}
-
 // SetQueueSize sets the size of the TxFeeQueue;
 // this determines how many txs we store in memory to quickly form a proposal.
 func (m *MockApplication) SetQueueSize(queueSize int) error {

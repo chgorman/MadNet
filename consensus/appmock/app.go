@@ -43,8 +43,6 @@ type Application interface {
 	StoreSnapShotNode(txn *badger.Txn, batch []byte, root []byte, layer int) ([][]byte, int, []trie.LeafNode, error)
 	// AddTxsToQueue attempts to add additional txs to txqueue
 	AddTxsToQueue(txn *badger.Txn, ctx context.Context, currentHeight uint32) error
-	// ClearTxQueue clears the txqueue of all transactions in memory
-	ClearTxQueue() error
 	// SetQueueSize sets the size of the TxFeeQueue
 	SetQueueSize(queueSize int) error
 	// GetSnapShotNode returns a snapshot node from the state trie to a peer
