@@ -339,7 +339,11 @@ func TestDeleteMined(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = hndlr.DeleteMined(nil, 1, [][]byte{txHash})
+	consumedUTXOIDs, err := tx.ConsumedUTXOID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = hndlr.DeleteMined(nil, 1, [][]byte{txHash}, consumedUTXOIDs)
 	if err != nil {
 		t.Fatal(err)
 	}

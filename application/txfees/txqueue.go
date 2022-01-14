@@ -84,10 +84,7 @@ func (tfq *TxFeeQueue) Init(queueSize int) error {
 	tfq.queueThrehold = int(tfq.queueThresholdFrac * float32(tfq.queueSize))
 	tfq.queueAcceptanceNum = 5
 	tfq.queueAcceptanceDenum = 4
-	tfq.feeCostSum = uint256.Zero()
-	tfq.txheap = make(TxHeap, 0, tfq.queueSize)
-	tfq.refmap = make(map[string]*TxItem, tfq.queueSize)
-	tfq.utxoIDs = make(map[string]string, tfq.queueSize)
+	tfq.ClearTxQueue()
 	return nil
 }
 
@@ -278,8 +275,8 @@ func (tfq *TxFeeQueue) drop(txhash []byte) error {
 	return err
 }
 
-// DropMined drops all txs which include the listed utxoIDs
-func (tfq *TxFeeQueue) DropMined(utxoIDs [][]byte) {
+// DeleteMined drops all txs which include the listed utxoIDs
+func (tfq *TxFeeQueue) DeleteMined(utxoIDs [][]byte) {
 	// Remove all utxoIDs and the txs which include them
 	for k := 0; k < len(utxoIDs); k++ {
 		utxoID := utils.CopySlice(utxoIDs[k])
@@ -290,6 +287,14 @@ func (tfq *TxFeeQueue) DropMined(utxoIDs [][]byte) {
 		// Drop the tx which contains it
 		tfq.drop([]byte(refTxHash))
 	}
+}
+
+// ClearTxQueue clears the tx queue.
+func (tfq *TxFeeQueue) ClearTxQueue() {
+	tfq.feeCostSum = uint256.Zero()
+	tfq.txheap = make(TxHeap, 0, tfq.queueSize)
+	tfq.refmap = make(map[string]*TxItem, tfq.queueSize)
+	tfq.utxoIDs = make(map[string]string, tfq.queueSize)
 }
 
 // IsFull returns true if queue is at capacity

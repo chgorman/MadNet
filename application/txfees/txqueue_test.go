@@ -391,7 +391,7 @@ func TestTxFeeQueueAddGood2(t *testing.T) {
 
 	// Drop item4; confirm missing.
 	// This should kick out item1 and item2.
-	tfq.DropMined(item4.utxoIDs)
+	tfq.DeleteMined(item4.utxoIDs)
 	if len(tfq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
@@ -721,7 +721,7 @@ func TestTxFeeQueueDropMined1(t *testing.T) {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	tfq.DropMined(utxoIDs)
+	tfq.DeleteMined(utxoIDs)
 	if len(tfq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}
@@ -767,7 +767,7 @@ func TestTxFeeQueueDropMined2(t *testing.T) {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	tfq.DropMined(utxoIDs)
+	tfq.DeleteMined(utxoIDs)
 	if len(tfq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}

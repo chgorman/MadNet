@@ -176,7 +176,8 @@ func (pt *Handler) Contains(txnState *badger.Txn, currentHeight uint32, txHashes
 // DeleteMined removes all specified transactions from the pool as well as any
 // other transactions that reference a consumed UTXO from the set of passed in
 // transactions
-func (pt *Handler) DeleteMined(txnState *badger.Txn, currentHeight uint32, txHashes [][]byte) error {
+func (pt *Handler) DeleteMined(txnState *badger.Txn, currentHeight uint32, txHashes [][]byte, consumedUTXOIDs [][]byte) error {
+	pt.txqueue.DeleteMined(consumedUTXOIDs)
 	var txHash []byte
 	return pt.db.Update(func(txn *badger.Txn) error {
 		for i := 0; i < len(txHashes); i++ {
