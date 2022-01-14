@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/MadBase/MadNet/application/objs"
@@ -20,7 +21,9 @@ type mockTrie struct {
 }
 
 func (mt *mockTrie) IsValid(txn *badger.Txn, txs objs.TxVec, currentHeight uint32, deposits objs.Vout) (objs.Vout, error) {
-	return nil, nil
+	utxo1 := makeDS()
+	vout := objs.Vout{utxo1}
+	return vout, nil
 }
 
 func (mt *mockTrie) TrieContains(txn *badger.Txn, utxo []byte) (bool, error) {
@@ -56,7 +59,7 @@ func accountFromSigner(s objs.Signer) []byte {
 	return crypto.GetAccount(pubk)
 }
 
-func makeVS(ownerSigner objs.Signer) *objs.TXOut {
+func makeVS(ownerSigner objs.Signer, fee *uint256.Uint256) *objs.TXOut {
 	cid := uint32(2)
 	val := uint256.One()
 
@@ -64,7 +67,6 @@ func makeVS(ownerSigner objs.Signer) *objs.TXOut {
 	owner := &objs.ValueStoreOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	fee := uint256.One()
 	vsp := &objs.VSPreImage{
 		ChainID: cid,
 		Value:   val,
@@ -84,7 +86,7 @@ func makeVS(ownerSigner objs.Signer) *objs.TXOut {
 }
 
 func makeVSTXIn(ownerSigner objs.Signer, txHash []byte) (*objs.TXOut, *objs.TXIn) {
-	vs := makeVS(ownerSigner)
+	vs := makeVS(ownerSigner, uint256.One())
 	vss, err := vs.ValueStore()
 	if err != nil {
 		panic(err)
@@ -115,7 +117,7 @@ func makeTxInitial() (objs.Vout, *objs.Tx) {
 	}
 	generatedUTXOs := objs.Vout{}
 	for i := 0; i < 2; i++ {
-		generatedUTXOs = append(generatedUTXOs, makeVS(ownerSigner))
+		generatedUTXOs = append(generatedUTXOs, makeVS(ownerSigner, uint256.One()))
 	}
 	err := generatedUTXOs.SetTxOutIdx()
 	if err != nil {
@@ -156,7 +158,7 @@ func makeTxConsuming(consumedUTXOs objs.Vout) *objs.Tx {
 	}
 	generatedUTXOs := objs.Vout{}
 	for i := 0; i < 2; i++ {
-		generatedUTXOs = append(generatedUTXOs, makeVS(ownerSigner))
+		generatedUTXOs = append(generatedUTXOs, makeVS(ownerSigner, uint256.One()))
 	}
 	err := generatedUTXOs.SetTxOutIdx()
 	if err != nil {
@@ -183,6 +185,137 @@ func makeTxConsuming(consumedUTXOs objs.Vout) *objs.Tx {
 		}
 	}
 	return tx
+}
+
+func makeTxCleanup() (objs.Vout, *objs.Tx) {
+	ownerSigner := testingOwner()
+	consumedUTXOs := objs.Vout{}
+	txInputs := []*objs.TXIn{}
+	utxo, txin := makeVSTXIn(ownerSigner, nil)
+	consumedUTXOs = append(consumedUTXOs, utxo)
+	txInputs = append(txInputs, txin)
+
+	generatedUTXOs := objs.Vout{}
+	generatedUTXOs = append(generatedUTXOs, makeVS(ownerSigner, uint256.Zero()))
+	err := generatedUTXOs.SetTxOutIdx()
+	if err != nil {
+		panic(err)
+	}
+	txfee := uint256.Zero()
+	tx := &objs.Tx{
+		Vin:  txInputs,
+		Vout: generatedUTXOs,
+		Fee:  txfee,
+	}
+	err = tx.SetTxHash()
+	if err != nil {
+		panic(err)
+	}
+	for i := 0; i < 1; i++ {
+		vs, err := consumedUTXOs[i].ValueStore()
+		if err != nil {
+			panic(err)
+		}
+		err = vs.Sign(tx.Vin[i], ownerSigner)
+		if err != nil {
+			panic(err)
+		}
+	}
+	return consumedUTXOs, tx
+}
+
+func makeDS() *objs.TXOut {
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		panic(err)
+	}
+	fee := uint256.Zero()
+	rawData1 := make([]byte, constants.MaxDataStoreSize)
+	iat := uint32(1)
+	numEpochs := uint32(1)
+	index1 := make([]byte, constants.HashLen)
+	index1[0] = 1
+	return makeDSWithValueFee(ownerSigner, 0, rawData1, index1, iat, numEpochs, fee)
+}
+
+func makeDSWithValueFee(ownerSigner objs.Signer, i int, rawData []byte, index []byte, startEpoch uint32, numEpochs uint32, dsPerEpochFee *uint256.Uint256) *objs.TXOut {
+	if dsPerEpochFee == nil || len(rawData) == 0 {
+		panic("invalid fee or rawData")
+	}
+	cid := uint32(2)
+
+	ownerPubk, err := ownerSigner.Pubkey()
+	if err != nil {
+		panic(err)
+	}
+	ownerAcct := crypto.GetAccount(ownerPubk)
+	owner := &objs.DataStoreOwner{}
+	owner.New(ownerAcct, constants.CurveSecp256k1)
+
+	dataSize32 := uint32(len(rawData))
+	deposit, err := objs.BaseDepositEquation(dataSize32, numEpochs)
+	if err != nil {
+		panic(err)
+	}
+
+	mulFactor, err := new(uint256.Uint256).FromUint64(uint64(numEpochs + 2))
+	if err != nil {
+		panic(err)
+	}
+	dsfee, err := new(uint256.Uint256).Mul(dsPerEpochFee, mulFactor)
+	if err != nil {
+		panic(err)
+	}
+	dsp := &objs.DSPreImage{
+		ChainID:  cid,
+		Index:    index,
+		IssuedAt: startEpoch,
+		Deposit:  deposit,
+		RawData:  rawData,
+		Owner:    owner,
+		Fee:      dsfee,
+	}
+	err = dsp.ValidateDeposit()
+	if err != nil {
+		panic(err)
+	}
+	var txHash []byte
+	if i == 0 {
+		txHash = make([]byte, constants.HashLen)
+	} else {
+		txHash = crypto.Hasher([]byte(strconv.Itoa(i)))
+	}
+	dsl := &objs.DSLinker{
+		DSPreImage: dsp,
+		TxHash:     txHash,
+	}
+	ds := &objs.DataStore{
+		DSLinker: dsl,
+	}
+	err = ds.PreSign(ownerSigner)
+	if err != nil {
+		panic(err)
+	}
+	err = ds.ValidatePreSignature()
+	if err != nil {
+		panic(err)
+	}
+
+	ds2 := &objs.DataStore{}
+	dsBytes, err := ds.MarshalBinary()
+	if err != nil {
+		panic(err)
+	}
+	err = ds2.UnmarshalBinary(dsBytes)
+	if err != nil {
+		panic(err)
+	}
+	utxInputs := &objs.TXOut{}
+	err = utxInputs.NewDataStore(ds)
+	if err != nil {
+		panic(err)
+	}
+	return utxInputs
 }
 
 func mustAddTx(t *testing.T, hndlr *Handler, tx *objs.Tx, currentHeight uint32) {
@@ -402,5 +535,54 @@ func TestGetProposal(t *testing.T) {
 	}
 	if len(txs) != 2 {
 		t.Fatalf("conflict: %x", txHashes)
+	}
+}
+
+func TestAddTxsToQueueFullQueue(t *testing.T) {
+	hndlr, _, cleanup := setup(t)
+	defer cleanup()
+
+	_, tx := makeTxInitial()
+	mustAddTx(t, hndlr, tx, 1)
+
+	_, tx2 := makeTxInitial()
+	mustAddTx(t, hndlr, tx2, 1)
+
+	hndlr.SetQueueSize(1)
+	err := hndlr.AddTxsToQueue(nil, context.TODO(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAddTxsToQueueCleanupTx(t *testing.T) {
+	hndlr, _, cleanup := setup(t)
+	defer cleanup()
+
+	_, tx := makeTxCleanup()
+	mustAddTx(t, hndlr, tx, 1)
+
+	err := hndlr.AddTxsToQueue(nil, context.TODO(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetTxsFromQueue(t *testing.T) {
+	hndlr, _, cleanup := setup(t)
+	defer cleanup()
+
+	_, tx := makeTxCleanup()
+	mustAddTx(t, hndlr, tx, 1)
+
+	err := hndlr.AddTxsToQueue(nil, context.TODO(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+
+	_, _, err = hndlr.getTxsFromQueue(hndlr.db.NewTransaction(false), context.TODO(), 1, uint32(3000000), []*objs.Tx{tx})
+	if err != nil {
+		t.Fatal(err)
 	}
 }
