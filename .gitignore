@@ -22,3 +22,6 @@ local-geth/*
 
 # generated script files
 scripts/generated
+
+# IDE files
+.idea/

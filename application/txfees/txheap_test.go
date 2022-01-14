@@ -61,6 +61,16 @@ func TestTxHeap(t *testing.T) {
 		utxoIDs: [][]byte{utxoID41, utxoID42},
 	}
 
+	item4UTXOIDs := item4.UTXOIDs()
+	if len(item4UTXOIDs) != 2 {
+		t.Fatal("item4 should have 2 UTXOIDs")
+	}
+
+	item4Hash := item4.TxHash()
+	if len(item4Hash) != 32 {
+		t.Fatal("item4Hash should be 32 len")
+	}
+
 	txhash5 := crypto.Hasher([]byte("TxHash5"))
 	utxoID51 := crypto.Hasher([]byte("utxoID51"))
 	utxoID52 := crypto.Hasher([]byte("utxoID52"))

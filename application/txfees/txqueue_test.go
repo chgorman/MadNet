@@ -551,6 +551,92 @@ func TestTxFeeQueueValidAdd2(t *testing.T) {
 	}
 }
 
+func TestTxFeeQueueAddAboveThreshold(t *testing.T) {
+	tfq := &TxFeeQueue{}
+	queueSize := 2
+	err := tfq.Init(queueSize)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make and add tx
+	txhash := crypto.Hasher([]byte("TxHash1"))
+	utxoID1 := crypto.Hasher([]byte("utxoID11"))
+	utxoID2 := crypto.Hasher([]byte("utxoID12"))
+	utxoIDs := [][]byte{utxoID1, utxoID2}
+	value, err := new(uint256.Uint256).FromUint64(14)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err := tfq.Add(txhash, value, utxoIDs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); !conflict {
+		t.Fatal("Should have conflict")
+	}
+	if len(tfq.txheap) != 1 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tfq.refmap) != 1 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tfq.utxoIDs) != 2 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+	if _, ok := tfq.refmap[string(txhash)]; !ok {
+		t.Fatal("txhash1 should be present")
+	}
+	if _, ok := tfq.utxoIDs[string(utxoID1)]; !ok {
+		t.Fatal("utxoID1 should be present")
+	}
+	if _, ok := tfq.utxoIDs[string(utxoID2)]; !ok {
+		t.Fatal("utxoID2 should be present")
+	}
+
+	// Add another tx with higher value, kicking out the first tx
+	txhash2 := crypto.Hasher([]byte("TxHash2"))
+	utxoIDs2 := [][]byte{utxoID1}
+	value2, err := new(uint256.Uint256).FromUint64(2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs2); !conflict {
+		t.Fatal("Should have conflict")
+	}
+	ok, err = tfq.Add(txhash2, value2, utxoIDs2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ok {
+		t.Fatal("should not add")
+	}
+	if len(tfq.txheap) != 1 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tfq.refmap) != 1 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tfq.utxoIDs) != 2 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+	if _, ok := tfq.refmap[string(txhash)]; !ok {
+		t.Fatal("txhash1 should be present")
+	}
+	if _, ok := tfq.utxoIDs[string(utxoID1)]; !ok {
+		t.Fatal("utxoID1 should be present")
+	}
+	if _, ok := tfq.utxoIDs[string(utxoID2)]; !ok {
+		t.Fatal("utxoID2 should be present")
+	}
+}
+
 func TestTxFeeQueuePopBad(t *testing.T) {
 	tfq := &TxFeeQueue{}
 	_, err := tfq.Pop()
