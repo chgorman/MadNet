@@ -42,18 +42,51 @@ import (
 // distributed key generation protocol). Thus, these cases should be
 // handled carefully, and we instead choose to return an error.
 func HashToG1(msg []byte) (*G1, error) {
+	saltPre := []byte("MadNet Salt")
+	salt := HashFunc256(saltPre)
+	customizationPre := []byte("MadNet HashToBase Extract")
+	customization := HashFunc256(customizationPre)
+	customizationPre2 := []byte("MadNet HashToBase Expand")
+	customization2 := HashFunc256(customizationPre2)
+	prk := kmac(salt, msg, customization)
+
+	k0 := []byte{0}
+	bytes0 := kmac(prk, k0, customization2)
+	k1 := append(bytes0, []byte{1}...)
+	bytes1 := kmac(prk, k1, customization2)
+	k2 := append(bytes1, []byte{2}...)
+	bytes2 := kmac(prk, k2, customization2)
+	k3 := append(bytes2, []byte{3}...)
+	bytes3 := kmac(prk, k3, customization2)
+
+	fieldElement00 := new(big.Int).SetBytes(bytes0)
+	fieldElement01 := new(big.Int).SetBytes(bytes1)
+	fieldElement00.Mul(fieldElement00, two256ModP)
+	fieldElement00.Mod(fieldElement00, P)
+	fieldElement01.Mod(fieldElement01, P)
+	fieldElement0 := new(big.Int).Add(fieldElement00, fieldElement01)
+	fieldElement0.Mod(fieldElement0, P)
+	fieldElementGFp0 := bigToGFp(fieldElement0)
+
+	fieldElement10 := new(big.Int).SetBytes(bytes2)
+	fieldElement11 := new(big.Int).SetBytes(bytes3)
+	fieldElement10.Mul(fieldElement10, two256ModP)
+	fieldElement10.Mod(fieldElement10, P)
+	fieldElement11.Mod(fieldElement11, P)
+	fieldElement1 := new(big.Int).Add(fieldElement10, fieldElement11)
+	fieldElement1.Mod(fieldElement1, P)
+	fieldElementGFp1 := bigToGFp(fieldElement1)
+
 	g1HashPoint := &G1{}
 	const dsp0 byte = 0x00
 	const dsp1 byte = 0x01
 	const dsp2 byte = 0x02
 	const dsp3 byte = 0x03
-	fieldElement0 := hashToBase(msg, dsp0, dsp1)
-	fieldElement1 := hashToBase(msg, dsp2, dsp3)
-	g1Point0, err0 := baseToG1(fieldElement0)
+	g1Point0, err0 := baseToG1(fieldElementGFp0)
 	if err0 != nil {
 		return nil, err0
 	}
-	g1Point1, err1 := baseToG1(fieldElement1)
+	g1Point1, err1 := baseToG1(fieldElementGFp1)
 	if err1 != nil {
 		return nil, err1
 	}

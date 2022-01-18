@@ -51,3 +51,57 @@ func TestHashFunc256(t *testing.T) {
 		t.Fatal("HashFunc256 changed; invalid hash result for empty byte slice")
 	}
 }
+
+func TestKMAC(t *testing.T) {
+	trueMsg := []byte{}
+	trueMsg = append(trueMsg, []byte("KMAC")...)
+	rate := 136
+	zeroPad := make([]byte, 132)
+	trueMsg = append(trueMsg, zeroPad...)
+	if len(trueMsg) != rate {
+		t.Fatal("invalid padding")
+	}
+
+	emptyKMAC := make([]byte, 32)
+
+	emptyKMAC[0] = 115
+	emptyKMAC[1] = 217
+	emptyKMAC[2] = 78
+	emptyKMAC[3] = 34
+	emptyKMAC[4] = 83
+	emptyKMAC[5] = 52
+	emptyKMAC[6] = 47
+	emptyKMAC[7] = 90
+
+	emptyKMAC[8] = 27
+	emptyKMAC[9] = 31
+	emptyKMAC[10] = 121
+	emptyKMAC[11] = 200
+	emptyKMAC[12] = 39
+	emptyKMAC[13] = 121
+	emptyKMAC[14] = 49
+	emptyKMAC[15] = 130
+
+	emptyKMAC[16] = 69
+	emptyKMAC[17] = 231
+	emptyKMAC[18] = 227
+	emptyKMAC[19] = 91
+	emptyKMAC[20] = 81
+	emptyKMAC[21] = 19
+	emptyKMAC[22] = 83
+	emptyKMAC[23] = 44
+
+	emptyKMAC[24] = 228
+	emptyKMAC[25] = 11
+	emptyKMAC[26] = 53
+	emptyKMAC[27] = 242
+	emptyKMAC[28] = 98
+	emptyKMAC[29] = 41
+	emptyKMAC[30] = 95
+	emptyKMAC[31] = 59
+
+	rethash := kmac(nil, nil, nil)
+	if !bytes.Equal(rethash, emptyKMAC) {
+		t.Fatal("invalid KMAC")
+	}
+}
