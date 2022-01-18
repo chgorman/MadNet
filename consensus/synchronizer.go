@@ -449,6 +449,23 @@ func (s *Synchronizer) setupLoops() {
 	s.wg.Add(1)
 	go s.loop(stateLoopNoSyncConfig)
 
+	// TODO: This definitely needs some work.
+	//		 It is not clear how to ensure the correct behavior.
+	txqueueLoopSyncConfig := newLoopConfig().
+		withName("AddTxsQueueLoop").
+		withFn(s.stateHandler.AddTxsToQueue).
+		withFreq(1 * time.Second).
+		withDelayOnConditionFailure(1 * time.Second).
+		withLockFreeCondition(s.isNotClosing).
+		withLockFreeCondition(s.initialized.isSet).
+		withLockFreeCondition(s.ethSyncDone.isSet).
+		withLockFreeCondition(s.madSyncDone.isSet).
+		withLock().
+		withLockedCondition(s.isNotClosing).
+		withLockedCondition(s.madSyncDone.isSet)
+	s.wg.Add(1)
+	go s.loop(txqueueLoopSyncConfig)
+
 	appLoopConfig := newLoopConfig().
 		withName("AppLoop").
 		withFn(s.appHandler.Cleanup).

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"time"
 
 	"github.com/MadBase/MadNet/dynamics"
 	"github.com/MadBase/MadNet/errorz"
@@ -350,8 +351,11 @@ func (a *Application) Cleanup() error {
 }
 
 // AddTxsToQueue attempts to add additional txs to queue
-func (a *Application) AddTxsToQueue(txn *badger.Txn, ctx context.Context, currentHeight uint32) error {
-	return a.txHandler.pTxHdlr.AddTxsToQueue(txn, ctx, currentHeight)
+func (a *Application) AddTxsToQueue(txn *badger.Txn, currentHeight uint32) error {
+	ctx := context.Background()
+	subCtx, cf := context.WithTimeout(ctx, 500*time.Millisecond)
+	defer cf()
+	return a.txHandler.pTxHdlr.AddTxsToQueue(txn, subCtx, currentHeight)
 }
 
 // SetQueueSize sets the size of the TxFeeQueue;

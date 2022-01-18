@@ -580,7 +580,6 @@ func TestGetTxsFromQueue(t *testing.T) {
 		t.Fatal(err)
 	}
 
-
 	_, _, err = hndlr.getTxsFromQueue(hndlr.db.NewTransaction(false), context.TODO(), 1, uint32(3000000), []*objs.Tx{tx})
 	if err != nil {
 		t.Fatal(err)

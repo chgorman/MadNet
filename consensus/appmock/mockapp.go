@@ -1,8 +1,6 @@
 package appmock
 
 import (
-	"context"
-
 	trie "github.com/MadBase/MadNet/badgerTrie"
 	"github.com/MadBase/MadNet/consensus/objs"
 	"github.com/MadBase/MadNet/crypto"
@@ -75,7 +73,7 @@ func (m *MockApplication) PendingTxContains(txn *badger.Txn, height uint32, txHa
 }
 
 // AddTxsToQueue attempts to add additional txs to queue
-func (m *MockApplication) AddTxsToQueue(txn *badger.Txn, ctx context.Context, currentHeight uint32) error {
+func (m *MockApplication) AddTxsToQueue(txn *badger.Txn, currentHeight uint32) error {
 	return nil
 }
 

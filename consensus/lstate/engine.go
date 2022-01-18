@@ -632,6 +632,25 @@ func (ce *Engine) Sync() (bool, error) {
 	return syncDone, nil
 }
 
+// AddTxsToQueue adds transactions to the tx queue in Application
+func (ce *Engine) AddTxsToQueue() error {
+	err := ce.database.View(func(txn *badger.Txn) error {
+		rs, err := ce.sstore.LoadLocalState(txn)
+		if err != nil {
+			utils.DebugTrace(ce.logger, err)
+			return err
+		}
+		currentHeight := rs.OwnState.SyncToBH.BClaims.Height
+		err = ce.appHandler.AddTxsToQueue(txn, currentHeight)
+		if err != nil {
+			utils.DebugTrace(ce.logger, err)
+			return err
+		}
+		return nil
+	})
+	return err
+}
+
 // Updates the loaded objects with information that were not applied in the past
 // due to the lack of information (e.g a new validator set that was received for
 // a block that was not committed to the db yet)

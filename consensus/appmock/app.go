@@ -1,8 +1,6 @@
 package appmock
 
 import (
-	"context"
-
 	trie "github.com/MadBase/MadNet/badgerTrie"
 	"github.com/MadBase/MadNet/interfaces"
 	"github.com/dgraph-io/badger/v2"
@@ -42,7 +40,7 @@ type Application interface {
 	// StoreSnapShotNodes stores a snapshot node into the state trie of the application
 	StoreSnapShotNode(txn *badger.Txn, batch []byte, root []byte, layer int) ([][]byte, int, []trie.LeafNode, error)
 	// AddTxsToQueue attempts to add additional txs to txqueue
-	AddTxsToQueue(txn *badger.Txn, ctx context.Context, currentHeight uint32) error
+	AddTxsToQueue(txn *badger.Txn, currentHeight uint32) error
 	// SetQueueSize sets the size of the TxFeeQueue
 	SetQueueSize(queueSize int) error
 	// GetSnapShotNode returns a snapshot node from the state trie to a peer
