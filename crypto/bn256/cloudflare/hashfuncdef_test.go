@@ -114,6 +114,9 @@ func TestKMAC2(t *testing.T) {
 	trueMsg = append(trueMsg, emptyKey...)
 	emptyCustom := make([]byte, 32)
 	trueMsg = append(trueMsg, emptyCustom...)
+	if len(trueMsg) != 4+32+32 {
+		t.Fatal("invalid padding")
+	}
 	rate := 136
 	zeroPad := make([]byte, rate-len(trueMsg))
 	trueMsg = append(trueMsg, zeroPad...)
@@ -165,7 +168,7 @@ func TestKMAC2(t *testing.T) {
 		t.Fatal("invalid KMAC value")
 	}
 
-	rethash := kmac(nil, nil, nil)
+	rethash := kmac(emptyKey, nil, emptyCustom)
 	if !bytes.Equal(rethash, emptyKMAC) {
 		t.Fatal("invalid KMAC")
 	}

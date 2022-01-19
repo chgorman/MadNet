@@ -99,6 +99,51 @@ func TestHashToBase(t *testing.T) {
 	}
 }
 
+func TestHashToBaseG1Old(t *testing.T) {
+	s := "MadHive Rocks!"
+	bigMH0, _ := new(big.Int).SetString("2127590730004973161070119349205886624782173228737350700310995052292290242301", 10)
+	gfpMH0 := bigToGFp(bigMH0)
+
+	bigMH1, _ := new(big.Int).SetString("10639008181382806573651867997001852879340224748829551406507512470328095559889", 10)
+	gfpMH1 := bigToGFp(bigMH1)
+
+	retArrayMH := hashToBaseG1Old([]byte(s))
+	retGFpMH0 := retArrayMH[0]
+	retGFpMH1 := retArrayMH[1]
+	if !retGFpMH0.IsEqual(gfpMH0) {
+		t.Fatal("Failed to properly hash MH0")
+	}
+	if !retGFpMH1.IsEqual(gfpMH1) {
+		t.Fatal("Failed to properly hash MH1")
+	}
+
+	s = "Cryptography is great"
+	bigCIG0, _ := new(big.Int).SetString("9534123261356789366382704928175673799395615303165154346204974948104375713661", 10)
+	gfpCIG0 := bigToGFp(bigCIG0)
+
+	bigCIG1, _ := new(big.Int).SetString("10733399798341036526816149945929244685213243613006172177440646485476438343808", 10)
+	gfpCIG1 := bigToGFp(bigCIG1)
+
+	retArrayCIG := hashToBaseG1Old([]byte(s))
+	retGFpCIG0 := retArrayCIG[0]
+	retGFpCIG1 := retArrayCIG[1]
+	if !retGFpCIG0.IsEqual(gfpCIG0) {
+		t.Fatal("Failed to properly hash CIG0")
+	}
+	if !retGFpCIG1.IsEqual(gfpCIG1) {
+		t.Fatal("Failed to properly hash CIG1")
+	}
+
+	cG := returnCurveGen()
+	if !cG.IsEqual(curveGen) {
+		t.Fatal("HashToBase changed curveGen")
+	}
+	tG := returnTwistGen()
+	if !tG.IsEqual(twistGen) {
+		t.Fatal("HashToBase changed twistGen")
+	}
+}
+
 func hashTB(s string, byteI byte, byteJ byte) *gfP {
 	msg := []byte(s)
 	gfpIJ := hashToBase(msg, byteI, byteJ)
