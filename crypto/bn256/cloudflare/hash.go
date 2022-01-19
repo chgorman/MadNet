@@ -42,13 +42,43 @@ import (
 // distributed key generation protocol). Thus, these cases should be
 // handled carefully, and we instead choose to return an error.
 func HashToG1(msg []byte) (*G1, error) {
-	saltPre := []byte("MadNet Salt")
+	g1HashPoint := &G1{}
+	fieldArray := hashToBaseG1Old(msg)
+	fieldElement0 := fieldArray[0]
+	fieldElement1 := fieldArray[1]
+	g1Point0, err0 := baseToG1(fieldElement0)
+	if err0 != nil {
+		return nil, err0
+	}
+	g1Point1, err1 := baseToG1(fieldElement1)
+	if err1 != nil {
+		return nil, err1
+	}
+	g1HashPoint.Add(g1Point0, g1Point1)
+	if !safeSigningPoint(g1HashPoint) {
+		return nil, ErrDangerousPoint
+	}
+	return g1HashPoint, nil
+}
+
+func hashToBaseG1Old(msg []byte) [2]*gfP {
+	const dsp0 byte = 0x00
+	const dsp1 byte = 0x01
+	const dsp2 byte = 0x02
+	const dsp3 byte = 0x03
+	fieldElement0 := hashToBase(msg, dsp0, dsp1)
+	fieldElement1 := hashToBase(msg, dsp2, dsp3)
+	return [2]*gfP{fieldElement0, fieldElement1}
+}
+
+func hashToBaseG1(msg []byte) [2]*gfP {
+	saltPre := []byte("MadNet HashToBaseG1 Salt")
 	salt := HashFunc256(saltPre)
-	customizationPre := []byte("MadNet HashToBase Extract")
-	customization := HashFunc256(customizationPre)
-	customizationPre2 := []byte("MadNet HashToBase Expand")
+	customizationPre1 := []byte("MadNet HashToBaseG1 Extract")
+	customization1 := HashFunc256(customizationPre1)
+	customizationPre2 := []byte("MadNet HashToBaseG1 Expand")
 	customization2 := HashFunc256(customizationPre2)
-	prk := kmac(salt, msg, customization)
+	prk := kmac(salt, msg, customization1)
 
 	k0 := []byte{0}
 	bytes0 := kmac(prk, k0, customization2)
@@ -77,24 +107,7 @@ func HashToG1(msg []byte) (*G1, error) {
 	fieldElement1.Mod(fieldElement1, P)
 	fieldElementGFp1 := bigToGFp(fieldElement1)
 
-	g1HashPoint := &G1{}
-	const dsp0 byte = 0x00
-	const dsp1 byte = 0x01
-	const dsp2 byte = 0x02
-	const dsp3 byte = 0x03
-	g1Point0, err0 := baseToG1(fieldElementGFp0)
-	if err0 != nil {
-		return nil, err0
-	}
-	g1Point1, err1 := baseToG1(fieldElementGFp1)
-	if err1 != nil {
-		return nil, err1
-	}
-	g1HashPoint.Add(g1Point0, g1Point1)
-	if !safeSigningPoint(g1HashPoint) {
-		return nil, ErrDangerousPoint
-	}
-	return g1HashPoint, nil
+	return [2]*gfP{fieldElementGFp0, fieldElementGFp1}
 }
 
 // safeSigningPoint ensures that we only return safe points from HashToG1.
