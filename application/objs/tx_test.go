@@ -1210,7 +1210,7 @@ func TestTxValidateFeesGood1(t *testing.T) {
 func TestTxValidateFeesGood2(t *testing.T) {
 	// Is valid CleanupTx; Validate the fees
 	msg := makeMockStorageGetter()
-	msg.SetMinTxFee(big.NewInt(1))
+	msg.SetMinTxFeeCostRatio(big.NewInt(1))
 	storage := makeStorage(msg)
 	ownerSigner := &crypto.Secp256k1Signer{}
 	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
@@ -1312,7 +1312,7 @@ func TestTxValidateFeesBad3(t *testing.T) {
 
 	msg := makeMockStorageGetter()
 	minTxFee := big.NewInt(1)
-	msg.SetMinTxFee(minTxFee)
+	msg.SetMinTxFeeCostRatio(minTxFee)
 	storage := makeStorage(msg)
 	err = tx.ValidateFees(0, Vout{utxo1}, storage)
 	if err == nil {
@@ -1350,8 +1350,8 @@ func TestTxValidateFeesBad4(t *testing.T) {
 	tx.Fee = uint256.Zero()
 
 	msg := makeMockStorageGetter()
-	minTxFee := big.NewInt(1)
-	msg.SetMinTxFee(minTxFee)
+	minTxFeeCostRatio := big.NewInt(1)
+	msg.SetMinTxFeeCostRatio(minTxFeeCostRatio)
 	storage := makeStorage(msg)
 	err = tx.ValidateFees(0, nil, storage)
 	if err == nil {
@@ -1742,8 +1742,8 @@ func TestTxIsCleanupTxGood3(t *testing.T) {
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	vsFeeBig := big.NewInt(1000)
 	msg.SetValueStoreFee(vsFeeBig)
-	tfFeeBig := big.NewInt(10000)
-	msg.SetMinTxFee(tfFeeBig)
+	tfFeeCostRatioBig := big.NewInt(10000)
+	msg.SetMinTxFeeCostRatio(tfFeeCostRatioBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -1915,7 +1915,7 @@ func TestTxValidateEqualVinVoutBad3(t *testing.T) {
 func TestTxCostGood(t *testing.T) {
 	// Initial set up
 	vsFeeBig := big.NewInt(1)
-	tfFeeBig := big.NewInt(4)
+	tfFeeCostRatioBig := big.NewInt(4)
 
 	ownerSigner := &crypto.Secp256k1Signer{}
 	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
@@ -1927,7 +1927,7 @@ func TestTxCostGood(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	minTxFee, err := new(uint256.Uint256).FromBigInt(tfFeeBig)
+	minTxFee, err := new(uint256.Uint256).FromBigInt(tfFeeCostRatioBig)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2012,7 +2012,7 @@ func TestTxCostBad1(t *testing.T) {
 func TestTxCostSizeGood(t *testing.T) {
 	// Initial set up
 	vsFeeBig := big.NewInt(1)
-	tfFeeBig := big.NewInt(4)
+	tfFeeCostRatioBig := big.NewInt(4)
 
 	ownerSigner := &crypto.Secp256k1Signer{}
 	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
@@ -2024,7 +2024,7 @@ func TestTxCostSizeGood(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	minTxFee, err := new(uint256.Uint256).FromBigInt(tfFeeBig)
+	minTxFee, err := new(uint256.Uint256).FromBigInt(tfFeeCostRatioBig)
 	if err != nil {
 		t.Fatal(err)
 	}

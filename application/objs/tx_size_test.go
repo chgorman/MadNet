@@ -18,7 +18,7 @@ func TestTxValueTransferSize1(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -117,7 +117,7 @@ func TestTxValueTransferSize2(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -230,7 +230,7 @@ func TestTxValueTransferSize3(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -343,7 +343,7 @@ func TestTxCleanupTxSize1(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -445,7 +445,7 @@ func TestTxCleanupTxSize2(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -547,7 +547,7 @@ func TestTxCleanupTxSize3(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -649,7 +649,7 @@ func TestTxDataStoreSize1(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -775,7 +775,7 @@ func TestTxDataStoreSize2(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -901,7 +901,7 @@ func TestTxDataStoreSize3(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -1027,7 +1027,7 @@ func TestTxDataStoreSize4(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -1168,7 +1168,7 @@ func TestTxDataStoreSize5(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -1309,7 +1309,7 @@ func TestTxDataStoreSize6(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -1450,7 +1450,7 @@ func TestTxDataStoreSize7(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -1591,7 +1591,7 @@ func TestTxDataStoreSize8(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -1732,7 +1732,7 @@ func TestTxDataStoreSize9(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -1873,7 +1873,7 @@ func TestTxDataStoreSize10(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -2014,7 +2014,7 @@ func TestTxDataStoreSize11(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 
@@ -2155,7 +2155,7 @@ func TestTxDataStoreSize12(t *testing.T) {
 	vsFeeBig := big.NewInt(1)
 	msg.SetValueStoreFee(vsFeeBig)
 	tfFeeBig := big.NewInt(4)
-	msg.SetMinTxFee(tfFeeBig)
+	msg.SetMinTxFeeCostRatio(tfFeeBig)
 	msg.SetDataStoreEpochFee(dsFeeBig)
 	storage := makeStorage(msg)
 

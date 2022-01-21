@@ -15,6 +15,8 @@ type TxItem struct {
 	value *uint256.Uint256
 	// utxoIDs is the list of utxoIDs consumed by this transaction
 	utxoIDs [][]byte
+	// isCleanup stores whether the tx is a cleanup tx
+	isCleanup bool
 	// index is the index in the heap
 	index int
 }

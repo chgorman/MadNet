@@ -470,6 +470,9 @@ func (b *Tx) ValidatePreSignature() error {
 
 // ValidateFees validates the fees of the object.
 // currentHeight and refUTXOs are needed to verify if we have a cleanup tx.
+//
+// TODO: this needs to be changed so that we specificy minimum FeeCostRatio
+// 		 values, *not* min tx fee.
 func (b *Tx) ValidateFees(currentHeight uint32, refUTXOs Vout, storage *wrapper.Storage) error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("tx.validateFees: tx not initialized")
@@ -491,12 +494,12 @@ func (b *Tx) ValidateFees(currentHeight uint32, refUTXOs Vout, storage *wrapper.
 		return err
 	}
 	// Ensure Fee is above minimum
-	minTxFee, err := storage.GetMinTxFee()
+	minTxFee, err := storage.GetMinTxFeeCostRatio()
 	if err != nil {
 		return err
 	}
 	if b.Fee.Lt(minTxFee) {
-		return errorz.ErrInvalid{}.New("tx.validateFees; tx.fee below minTxFee")
+		return errorz.ErrInvalid{}.New("tx.validateFees; tx.fee below minTxFeeCostRatio")
 	}
 	return nil
 }
@@ -548,21 +551,21 @@ func (b *Tx) costComputation() (*uint256.Uint256, error) {
 // ScaledFeeCostRatio returns the fee cost ratio as a uint256
 func (b *Tx) ScaledFeeCostRatio(isCleanup bool) (*uint256.Uint256, error) {
 	if b == nil {
-		return nil, errorz.ErrInvalid{}.New("tx.ScaledCostFeeRatio: tx not initialized")
+		return nil, errorz.ErrInvalid{}.New("tx.ScaledFeeCostRatio: tx not initialized")
 	}
 	if b.Fee == nil {
-		return nil, errorz.ErrInvalid{}.New("tx.ScaledCostFeeRatio: tx.Fee not initialized")
+		return nil, errorz.ErrInvalid{}.New("tx.ScaledFeeCostRatio: tx.Fee not initialized")
 	}
 	cost, err := b.Cost()
 	if err != nil {
 		return nil, err
 	}
 	if cost.IsZero() {
-		return nil, errorz.ErrInvalid{}.New("tx.ScaledCostFeeRatio: tx cost is zero")
+		return nil, errorz.ErrInvalid{}.New("tx.ScaledFeeCostRatio: tx cost is zero")
 	}
 	if isCleanup {
 		if !b.Fee.IsZero() {
-			return nil, errorz.ErrInvalid{}.New("tx.ScaledCostFeeRatio: is cleanup tx but tx.Fee is nonzero")
+			return nil, errorz.ErrInvalid{}.New("tx.ScaledFeeCostRatio: is cleanup tx but tx.Fee is nonzero")
 		}
 		feeCostRatio := uint256.Max()
 		return feeCostRatio, nil

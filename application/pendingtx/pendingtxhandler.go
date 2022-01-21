@@ -324,7 +324,7 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 					utils.DebugTrace(pt.logger, err)
 					continue
 				}
-				_, err = pt.txqueue.Add(txHash, feeCostRatio, consumedUTXOIDs)
+				_, err = pt.txqueue.Add(txHash, feeCostRatio, consumedUTXOIDs, isCleanup)
 				if err != nil {
 					utils.DebugTrace(pt.logger, err)
 					return err

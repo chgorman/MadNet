@@ -118,3 +118,32 @@ func (ce *Engine) applyState(txn *badger.Txn, rs *RoundStates, chainID uint32, t
 	}
 	return nil
 }
+
+// AddTxsToQueue adds transactions to the tx queue in Application
+func (ce *Engine) AddTxsToQueue() error {
+	err := ce.database.View(func(txn *badger.Txn) error {
+		rs, err := ce.sstore.LoadLocalState(txn)
+		if err != nil {
+			utils.DebugTrace(ce.logger, err)
+			return err
+		}
+		currentHeight := rs.OwnState.SyncToBH.BClaims.Height
+		err = ce.appHandler.AddTxsToQueue(txn, currentHeight+1)
+		if err != nil {
+			utils.DebugTrace(ce.logger, err)
+			return err
+		}
+		return nil
+	})
+	return err
+}
+
+// SetQueueSize sets the tx queue size
+func (ce *Engine) SetQueueSize(queueSize int) error {
+	err := ce.appHandler.SetQueueSize(queueSize)
+	if err != nil {
+		utils.DebugTrace(ce.logger, err)
+		return err
+	}
+	return nil
+}
