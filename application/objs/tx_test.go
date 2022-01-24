@@ -1255,12 +1255,23 @@ func TestTxValidateFeesGood2(t *testing.T) {
 	}
 }
 
-func TestTxValidateFeesBad1(t *testing.T) {
+func TestTxValidateFeesBad0(t *testing.T) {
 	msg := makeMockStorageGetter()
 	storage := makeStorage(msg)
 
 	tx := &Tx{}
 	err := tx.ValidateFees(0, nil, storage)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxValidateFeesBad1(t *testing.T) {
+	txin := &TXIn{}
+	tx := &Tx{
+		Vin: []*TXIn{txin},
+	}
+	err := tx.ValidateFees(0, nil, nil)
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}
@@ -1272,7 +1283,6 @@ func TestTxValidateFeesBad2(t *testing.T) {
 	tx := &Tx{
 		Vin:  []*TXIn{txin},
 		Vout: []*TXOut{utxo},
-		Fee:  uint256.Zero(),
 	}
 	err := tx.ValidateFees(0, nil, nil)
 	if err == nil {
@@ -1855,7 +1865,17 @@ func TestTxValidateEqualVinVoutBad1(t *testing.T) {
 	tx := &Tx{}
 	err := tx.ValidateEqualVinVout(currentHeight, refUTXOs)
 	if err == nil {
-		t.Fatal("Should have raised error")
+		t.Fatal("Should have raised error (1)")
+	}
+	tx.Vin = Vin{&TXIn{}}
+	err = tx.ValidateEqualVinVout(currentHeight, refUTXOs)
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+	tx.Vout = Vout{&TXOut{}}
+	err = tx.ValidateEqualVinVout(currentHeight, refUTXOs)
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
 	}
 }
 
@@ -2097,9 +2117,344 @@ func TestTxCostSizeGood(t *testing.T) {
 		t.Fatal("Invalid CostSize")
 	}
 }
+
 func TestTxCostSizeBad1(t *testing.T) {
 	tx := &Tx{}
 	_, err := tx.costSize()
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxScaledFeeCostRatioGood1(t *testing.T) {
+	// Initial set up
+	vsFeeBig := big.NewInt(1)
+	tfFeeCostRatioBig := big.NewInt(4)
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+
+	// Setup fees
+	vsfee, err := new(uint256.Uint256).FromBigInt(vsFeeBig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	minTxFee, err := new(uint256.Uint256).FromBigInt(tfFeeCostRatioBig)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make input
+	value64 := uint64(constants.MaxUint64)
+	valueIn, err := new(uint256.Uint256).FromUint64(value64)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo1 := makeVSWithValueFee(t, ownerSigner, 1, valueIn, vsfee)
+	txin1, err := utxo1.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Sum value of inputs
+	totalInput := uint256.Zero()
+	_, err = totalInput.Add(totalInput, valueIn)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make output
+	valueOut := totalInput.Clone()
+	_, err = valueOut.Sub(valueOut, minTxFee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = valueOut.Sub(valueOut, vsfee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo2 := makeVSWithValueFee(t, ownerSigner, 1, valueOut, vsfee)
+
+	// Setup Tx
+	vin := []*TXIn{txin1}
+	vout := []*TXOut{utxo2}
+	tx := &Tx{
+		Vin:  vin,
+		Vout: vout,
+		Fee:  minTxFee.Clone(),
+	}
+	err = tx.SetTxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Sign object
+	err = utxo1.valueStore.Sign(txin1, ownerSigner)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Calculate correct value
+	txCost, err := tx.Cost()
+	if err != nil {
+		t.Fatal(err)
+	}
+	trueScaleFeeCostRatio, err := new(uint256.Uint256).Mul(uint256.TwoPower64(), tx.Fee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = trueScaleFeeCostRatio.Div(trueScaleFeeCostRatio, txCost)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Test; should fail because not cleanup tx
+	isCleanup := false
+	scaledFeeCostRatio, err := tx.ScaledFeeCostRatio(isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if scaledFeeCostRatio.Cmp(trueScaleFeeCostRatio) != 0 {
+		t.Fatal("invalid scaledFeeCostRatio")
+	}
+}
+
+func TestTxScaledFeeCostRatioGood2(t *testing.T) {
+	// Initial set up
+	vsFeeBig := big.NewInt(1)
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+
+	// Setup fees
+	vsfee, err := new(uint256.Uint256).FromBigInt(vsFeeBig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txFeeCostRatio := uint256.TwoPower128()
+	_, err = txFeeCostRatio.Add(txFeeCostRatio, uint256.One())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make input
+	valueIn := uint256.Max()
+	utxo1 := makeVSWithValueFee(t, ownerSigner, 1, valueIn, vsfee)
+	txin1, err := utxo1.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Sum value of inputs
+	totalInput := uint256.Zero()
+	_, err = totalInput.Add(totalInput, valueIn)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make output
+	valueOut := totalInput.Clone()
+	_, err = valueOut.Sub(valueOut, txFeeCostRatio)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = valueOut.Sub(valueOut, vsfee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo2 := makeVSWithValueFee(t, ownerSigner, 1, valueOut, vsfee)
+
+	// Setup Tx
+	vin := []*TXIn{txin1}
+	vout := []*TXOut{utxo2}
+	tx := &Tx{
+		Vin:  vin,
+		Vout: vout,
+		Fee:  txFeeCostRatio.Clone(),
+	}
+	err = tx.SetTxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Sign object
+	err = utxo1.valueStore.Sign(txin1, ownerSigner)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Calculate correct value
+	txCost, err := tx.Cost()
+	if err != nil {
+		t.Fatal(err)
+	}
+	// We have to change the TxFee because we "overflow"; that is, we are larger than max possible
+	trueScaleFeeCostRatio, err := new(uint256.Uint256).Mul(uint256.TwoPower64(), uint256.TwoPower128())
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = trueScaleFeeCostRatio.Div(trueScaleFeeCostRatio, txCost)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Test; should fail because not cleanup tx
+	isCleanup := false
+	scaledFeeCostRatio, err := tx.ScaledFeeCostRatio(isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if scaledFeeCostRatio.Cmp(trueScaleFeeCostRatio) != 0 {
+		t.Fatal("invalid scaledFeeCostRatio")
+	}
+}
+
+func TestTxScaledFeeCostRatioGood3(t *testing.T) {
+	// Here, we have a valid cleanup tx.
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+
+	fee := uint256.Zero()
+	index := make([]byte, constants.HashLen)
+	index[0] = 1
+	rawData := make([]byte, 1)
+	iat := uint32(1)
+	numEpochs := uint32(1)
+	utxo1 := makeDSWithValueFee(t, ownerSigner, 0, rawData, index, iat, numEpochs, fee)
+	txin1, err := utxo1.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Compute remainingValue to have correct ValueStore
+	currentHeight := constants.EpochLength*(iat+numEpochs) + 1
+	remainingValue, err := utxo1.RemainingValue(currentHeight)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo2 := makeVSWithValueFee(t, ownerSigner, 1, remainingValue, fee)
+
+	vin := []*TXIn{txin1}
+	refUTXOs := []*TXOut{utxo1}
+	vout := []*TXOut{utxo2}
+	tx := &Tx{
+		Vin:  vin,
+		Vout: vout,
+		Fee:  uint256.Zero(),
+	}
+	if !tx.IsCleanupTx(currentHeight, refUTXOs) {
+		t.Fatal("Should be valid CleanupTx")
+	}
+
+	// Test; should fail because not cleanup tx
+	isCleanup := true
+	scaledFeeCostRatio, err := tx.ScaledFeeCostRatio(isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if scaledFeeCostRatio.Cmp(uint256.Max()) != 0 {
+		t.Fatal("invalid scaledFeeCostRatio")
+	}
+}
+
+func TestTxScaledFeeCostRatioBad0(t *testing.T) {
+	tx := &Tx{}
+	_, err := tx.ScaledFeeCostRatio(false)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxScaledFeeCostRatioBad1(t *testing.T) {
+	tx := &Tx{}
+	tx.Fee = uint256.Zero()
+	_, err := tx.ScaledFeeCostRatio(false)
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+	tx.Vin = Vin{&TXIn{}}
+	_, err = tx.ScaledFeeCostRatio(false)
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+}
+
+func TestTxScaledFeeCostRatioBad2(t *testing.T) {
+	// Initial set up
+	vsFeeBig := big.NewInt(1)
+	tfFeeCostRatioBig := big.NewInt(4)
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+
+	// Setup fees
+	vsfee, err := new(uint256.Uint256).FromBigInt(vsFeeBig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	minTxFee, err := new(uint256.Uint256).FromBigInt(tfFeeCostRatioBig)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make input
+	value64 := uint64(constants.MaxUint64)
+	valueIn, err := new(uint256.Uint256).FromUint64(value64)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo1 := makeVSWithValueFee(t, ownerSigner, 1, valueIn, vsfee)
+	txin1, err := utxo1.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Sum value of inputs
+	totalInput := uint256.Zero()
+	_, err = totalInput.Add(totalInput, valueIn)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make output
+	valueOut := totalInput.Clone()
+	_, err = valueOut.Sub(valueOut, minTxFee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = valueOut.Sub(valueOut, vsfee)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo2 := makeVSWithValueFee(t, ownerSigner, 1, valueOut, vsfee)
+
+	// Setup Tx
+	vin := []*TXIn{txin1}
+	vout := []*TXOut{utxo2}
+	tx := &Tx{
+		Vin:  vin,
+		Vout: vout,
+		Fee:  minTxFee.Clone(),
+	}
+	err = tx.SetTxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Sign object
+	err = utxo1.valueStore.Sign(txin1, ownerSigner)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Test; should fail because not cleanup tx
+	isCleanup := true
+	_, err = tx.ScaledFeeCostRatio(isCleanup)
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}

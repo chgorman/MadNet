@@ -509,6 +509,12 @@ func (b *Tx) Cost() (*uint256.Uint256, error) {
 	if b == nil {
 		return nil, errorz.ErrInvalid{}.New("tx.Cost: tx not initialized")
 	}
+	if len(b.Vin) == 0 {
+		return nil, errorz.ErrInvalid{}.New("tx.Cost: tx.vin not initialized")
+	}
+	if len(b.Vout) == 0 {
+		return nil, errorz.ErrInvalid{}.New("tx.Cost: tx.vout not initialized")
+	}
 	costSize, err := b.costSize()
 	if err != nil {
 		return nil, err
@@ -520,6 +526,9 @@ func (b *Tx) Cost() (*uint256.Uint256, error) {
 	costTotal, err := new(uint256.Uint256).Add(costSize, costComputation)
 	if err != nil {
 		return nil, err
+	}
+	if costTotal.IsZero() {
+		return nil, errorz.ErrInvalid{}.New("tx.Cost: cost is zero")
 	}
 	return costTotal, nil
 }
@@ -559,9 +568,6 @@ func (b *Tx) ScaledFeeCostRatio(isCleanup bool) (*uint256.Uint256, error) {
 	cost, err := b.Cost()
 	if err != nil {
 		return nil, err
-	}
-	if cost.IsZero() {
-		return nil, errorz.ErrInvalid{}.New("tx.ScaledFeeCostRatio: tx cost is zero")
 	}
 	if isCleanup {
 		if !b.Fee.IsZero() {
