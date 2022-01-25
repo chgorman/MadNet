@@ -470,9 +470,6 @@ func (b *Tx) ValidatePreSignature() error {
 
 // ValidateFees validates the fees of the object.
 // currentHeight and refUTXOs are needed to verify if we have a cleanup tx.
-//
-// TODO: this needs to be changed so that we specificy minimum FeeCostRatio
-// 		 values, *not* min tx fee.
 func (b *Tx) ValidateFees(currentHeight uint32, refUTXOs Vout, storage *wrapper.Storage) error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("tx.validateFees: tx not initialized")
@@ -487,7 +484,8 @@ func (b *Tx) ValidateFees(currentHeight uint32, refUTXOs Vout, storage *wrapper.
 		return errorz.ErrInvalid{}.New("tx.validateFees: tx.fee not initialized")
 	}
 	if b.IsCleanupTx(currentHeight, refUTXOs) {
-		// Tx is a valid Cleanup Tx, so we do not worry about fees.
+		// Tx is a valid Cleanup Tx, so we do not worry about fees;
+		// the specific cleanup tx fees are already performed in this call.
 		return nil
 	}
 	if err := b.Vout.ValidateFees(storage); err != nil {
