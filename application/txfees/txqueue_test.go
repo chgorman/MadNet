@@ -204,7 +204,7 @@ func TestTxFeeQueueAddGood(t *testing.T) {
 		t.Fatal("utxoID2 not present")
 	}
 
-	tfq.drop(txhash)
+	tfq.Drop(txhash)
 	if len(tfq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}
@@ -214,7 +214,7 @@ func TestTxFeeQueueAddGood(t *testing.T) {
 	if len(tfq.utxoIDs) != 0 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	tfq.drop(txhash)
+	tfq.Drop(txhash)
 }
 
 // In depth test adding items and dropping them.
@@ -332,7 +332,7 @@ func TestTxFeeQueueAddGood2(t *testing.T) {
 	}
 
 	// Drop item2; confirm missing
-	tfq.drop(item2.txhash)
+	tfq.Drop(item2.txhash)
 	if len(tfq.txheap) != 2 {
 		t.Fatal("invalid length of txheap")
 	}

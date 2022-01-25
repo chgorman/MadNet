@@ -2012,7 +2012,7 @@ func TestTxCostGood(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	totalCost, err := tx.Cost()
+	totalCost, err := tx.cost()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2023,7 +2023,7 @@ func TestTxCostGood(t *testing.T) {
 
 func TestTxCostBad1(t *testing.T) {
 	tx := &Tx{}
-	_, err := tx.Cost()
+	_, err := tx.cost()
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}
@@ -2196,7 +2196,7 @@ func TestTxScaledFeeCostRatioGood1(t *testing.T) {
 	}
 
 	// Calculate correct value
-	txCost, err := tx.Cost()
+	txCost, err := tx.cost()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2286,7 +2286,7 @@ func TestTxScaledFeeCostRatioGood2(t *testing.T) {
 	}
 
 	// Calculate correct value
-	txCost, err := tx.Cost()
+	txCost, err := tx.cost()
 	if err != nil {
 		t.Fatal(err)
 	}

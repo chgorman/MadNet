@@ -493,19 +493,24 @@ func (b *Tx) ValidateFees(currentHeight uint32, refUTXOs Vout, storage *wrapper.
 	if err := b.Vout.ValidateFees(storage); err != nil {
 		return err
 	}
-	// Ensure Fee is above minimum
-	minTxFee, err := storage.GetMinTxFeeCostRatio()
+	// Ensure FeeCostRatio is above minimum
+	minTxFeeCostRatio, err := storage.GetMinTxFeeCostRatio()
 	if err != nil {
 		return err
 	}
-	if b.Fee.Lt(minTxFee) {
-		return errorz.ErrInvalid{}.New("tx.validateFees; tx.fee below minTxFeeCostRatio")
+	// isCleanup is false because it is not a cleanup tx
+	feeCostRatio, err := b.ScaledFeeCostRatio(false)
+	if err != nil {
+		return err
+	}
+	if feeCostRatio.Lt(minTxFeeCostRatio) {
+		return errorz.ErrInvalid{}.New("tx.validateFees; feeCostRatio below minimum")
 	}
 	return nil
 }
 
 // Cost computes the total transaction complexity
-func (b *Tx) Cost() (*uint256.Uint256, error) {
+func (b *Tx) cost() (*uint256.Uint256, error) {
 	if b == nil {
 		return nil, errorz.ErrInvalid{}.New("tx.Cost: tx not initialized")
 	}
@@ -565,7 +570,7 @@ func (b *Tx) ScaledFeeCostRatio(isCleanup bool) (*uint256.Uint256, error) {
 	if b.Fee == nil {
 		return nil, errorz.ErrInvalid{}.New("tx.ScaledFeeCostRatio: tx.Fee not initialized")
 	}
-	cost, err := b.Cost()
+	cost, err := b.cost()
 	if err != nil {
 		return nil, err
 	}

@@ -159,7 +159,7 @@ func (tfq *TxFeeQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]by
 			// thus, we do not add it to the queue.
 			return false, nil
 		}
-		tfq.bulkDrop(conflictingTxHashes)
+		tfq.BulkDrop(conflictingTxHashes)
 	}
 	txString := string(txhash)
 	for k := 0; k < len(utxoIDs); k++ {
@@ -265,15 +265,16 @@ func (tfq *TxFeeQueue) dropReferences(item *TxItem) {
 	delete(tfq.refmap, string(item.txhash))
 }
 
-func (tfq *TxFeeQueue) bulkDrop(txhashes [][]byte) {
+// BulkDrop drops a collection of txs from the TxFeeQueue
+func (tfq *TxFeeQueue) BulkDrop(txhashes [][]byte) {
 	for k := 0; k < len(txhashes); k++ {
 		txhash := utils.CopySlice(txhashes[k])
-		tfq.drop(txhash)
+		tfq.Drop(txhash)
 	}
 }
 
-// drop drops a tx from the TxFeeQueue and all associated utxoIDs
-func (tfq *TxFeeQueue) drop(txhash []byte) error {
+// Drop drops a tx from the TxFeeQueue and all associated utxoIDs
+func (tfq *TxFeeQueue) Drop(txhash []byte) error {
 	txString := string(txhash)
 	item, ok := tfq.refmap[txString]
 	if !ok {
@@ -297,7 +298,7 @@ func (tfq *TxFeeQueue) DeleteMined(utxoIDs [][]byte) {
 			continue
 		}
 		// Drop the tx which contains it
-		tfq.drop([]byte(refTxHash))
+		tfq.Drop([]byte(refTxHash))
 	}
 }
 
