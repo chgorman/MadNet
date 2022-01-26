@@ -260,15 +260,12 @@ func (pt *Handler) GetTxsForGossip(txnState *badger.Txn, ctx context.Context, cu
 
 // AddTxsToQueue adds additional txs to the TxFeeQueue
 func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, currentHeight uint32) error {
-	pt.logger.Info("Inside AddTxsToQueue")
 	err := pt.db.View(func(txn *badger.Txn) error {
 		it, prefix := pt.indexer.GetOrderedIter(txn)
-		pt.logger.Info("After GetOrderedIter")
 		err := func() error {
 			defer it.Close()
 			isTimedOut := false
 			for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
-				pt.logger.Info("Start of TxQueue loop")
 				select {
 				case <-ctx.Done():
 					isTimedOut = true
@@ -278,11 +275,9 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 				if isTimedOut {
 					break
 				}
-				pt.logger.Info("After switch guard")
 				if pt.txqueue.IsFull() {
 					break
 				}
-				pt.logger.Info("TxQueue is not full")
 				itm := it.Item()
 				vBytes, err := itm.ValueCopy(nil)
 				if err != nil {
@@ -329,13 +324,11 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 					utils.DebugTrace(pt.logger, err)
 					return err
 				}
-				pt.logger.Info("Added Tx to queue :)")
 			}
 			return nil
 		}()
 		return err
 	})
-	pt.logger.Info("End of AddTxsToQueue")
 	return err
 }
 
@@ -407,7 +400,6 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 			utils.DebugTrace(pt.logger, err)
 			return nil, 0, err
 		}
-		pt.logger.Info("Popped Tx from Queue :) :) :)")
 		txhash := item.TxHash()
 		if conflict && conflictHashMap[string(txhash)] {
 			// There is a conflict in the consumed utxo set;
