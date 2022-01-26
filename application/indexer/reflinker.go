@@ -1,28 +1,29 @@
 package indexer
 
 import (
+	"github.com/MadBase/MadNet/application/objs/uint256"
+	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/utils"
 	"github.com/dgraph-io/badger/v2"
 )
 
 /*
-
-provides reference linking for pending transactions
+Provides reference linking for pending transactions
 
 a refcounter is maintained
 
 for each referenced mined utxo there is a custom prefix - utxoID
-k1: <prefix1>|<utxoID>|<current txHash>
-  <utxoID>
+k1: <prefix1>|<utxoID>|<value>|<current txHash>
+  <current txHash>|<utxoID>
 
-k2: <prefix2>|<current txHash>|<utxoID >
-  <utxoID>|<current txHash>
+k2: <prefix2>|<current txHash>|<utxoID>
+  <utxoID>|<value>
 
-onAdd:
+on Add:
       create k1
       create k2
 
-onDeleteOne:
+on DeleteOne:
       iterate k2, do for each: create k1 from k2, delete k1, delete k2
 
 on mined tx:
@@ -33,14 +34,15 @@ on mined tx:
             iterate <prefix1>|<mined utxoID>, do for each:
                 get <current txHash> from each item
                 invoke deleteOne on item
-
 */
 
+// NewRefLinkerIndex makes a new RefLinker struct
 func NewRefLinkerIndex(p, pp, ppp prefixFunc) *RefLinker {
 	refCounter := NewRefCounter(ppp)
 	return &RefLinker{3, p, pp, refCounter}
 }
 
+// RefLinker is a struct which stores references to utxos
 type RefLinker struct {
 	threshold    int64
 	prefixRef    prefixFunc
@@ -78,6 +80,9 @@ func (rlrrk *RefLinkerRevRefKey) UnmarshalBinary(data []byte) {
 
 func (rlrrk *RefLinkerRevRefKey) XXXIsKey() {}
 
+// evictOne removes one txhash which references the specified utxoID.
+// The txhash which gets evicted is the one with the smallest feeCostRatio.
+// If feeCostRatios are equal, then the one with the smallest txhash is removed.
 func (rl *RefLinker) evictOne(txn *badger.Txn, utxoID []byte) ([]byte, error) {
 	utxoIDCopy := utils.CopySlice(utxoID)
 	var evictedHash []byte
@@ -100,7 +105,13 @@ func (rl *RefLinker) evictOne(txn *badger.Txn, utxoID []byte) ([]byte, error) {
 	return evictedHash, nil
 }
 
-func (rl *RefLinker) Add(txn *badger.Txn, txHash []byte, utxoIDs [][]byte) (bool, [][]byte, error) {
+// Add adds a txhash and all consumed utxoIDs to the RefLinker.
+// It also evicts txhashes if too many txhashes reference a single utxoID.
+func (rl *RefLinker) Add(txn *badger.Txn, txHash []byte, utxoIDs [][]byte, feeCostRatio *uint256.Uint256) (bool, [][]byte, error) {
+	feeCostRatioBytes, err := feeCostRatio.MarshalBinary()
+	if err != nil {
+		return false, nil, err
+	}
 	evictions := [][]byte{}
 	for i := 0; i < len(utxoIDs); i++ {
 		utxoID := utils.CopySlice(utxoIDs[i])
@@ -117,9 +128,10 @@ func (rl *RefLinker) Add(txn *badger.Txn, txHash []byte, utxoIDs [][]byte) (bool
 		}
 		rlRefKey := rl.makeRefKey(txHash, utxoID)
 		refKey := rlRefKey.MarshalBinary()
-		rlRevRefKey := rl.makeRevRefKey(txHash, utxoID)
+		refValue := append(utils.CopySlice(utxoID), utils.CopySlice(feeCostRatioBytes)...)
+		rlRevRefKey := rl.makeRevRefKey(txHash, utxoID, feeCostRatioBytes)
 		revRefKey := rlRevRefKey.MarshalBinary()
-		err = utils.SetValue(txn, refKey, utxoID)
+		err = utils.SetValue(txn, refKey, refValue)
 		if err != nil {
 			return false, nil, err
 		}
@@ -134,6 +146,8 @@ func (rl *RefLinker) Add(txn *badger.Txn, txHash []byte, utxoIDs [][]byte) (bool
 	return true, evictions, nil
 }
 
+// DeleteMined removes a mined txhash from the RefLinker.
+// It also removes any other txhashes which refence the same utxoIDs.
 func (rl *RefLinker) DeleteMined(txn *badger.Txn, txHash []byte) ([][]byte, [][]byte, error) {
 	txHashCopy := utils.CopySlice(txHash)
 	utxoIDs := [][]byte{}
@@ -147,10 +161,11 @@ func (rl *RefLinker) DeleteMined(txn *badger.Txn, txHash []byte) ([][]byte, [][]
 		defer iter.Close()
 		for iter.Seek(prefix); iter.ValidForPrefix(prefix); iter.Next() {
 			itm := iter.Item()
-			utxoID, err := itm.ValueCopy(nil)
+			refValue, err := itm.ValueCopy(nil)
 			if err != nil {
 				return err
 			}
+			utxoID := utils.CopySlice(refValue[:constants.HashLen])
 			utxoIDs = append(utxoIDs, utxoID)
 		}
 		return nil
@@ -202,6 +217,7 @@ func (rl *RefLinker) DeleteMined(txn *badger.Txn, txHash []byte) ([][]byte, [][]
 	return txHashes, utxoIDs, nil
 }
 
+// Delete removes a txhash from the RefLinker
 func (rl *RefLinker) Delete(txn *badger.Txn, txHash []byte) error {
 	txHashCopy := utils.CopySlice(txHash)
 	opts := badger.DefaultIteratorOptions
@@ -212,15 +228,17 @@ func (rl *RefLinker) Delete(txn *badger.Txn, txHash []byte) error {
 	for iter.Seek(prefix); iter.ValidForPrefix(prefix); iter.Next() {
 		itm := iter.Item()
 		refKey := itm.KeyCopy(nil)
-		utxoID, err := itm.ValueCopy(nil)
+		refValue, err := itm.ValueCopy(nil)
 		if err != nil {
 			return err
 		}
+		utxoID := utils.CopySlice(refValue[:constants.HashLen])
+		feeCostRatioBytes := utils.CopySlice(refValue[constants.HashLen:])
 		_, err = rl.refCounter.Decrement(txn, utxoID)
 		if err != nil {
 			return err
 		}
-		rlRevRefKey := rl.makeRevRefKey(txHash, utxoID)
+		rlRevRefKey := rl.makeRevRefKey(txHash, utxoID, feeCostRatioBytes)
 		revRefKey := rlRevRefKey.MarshalBinary()
 		err = utils.DeleteValue(txn, refKey)
 		if err != nil {
@@ -244,10 +262,11 @@ func (rl *RefLinker) makeRefKey(txHash []byte, utxoID []byte) *RefLinkerRefKey {
 	return rlRefKey
 }
 
-func (rl *RefLinker) makeRevRefKey(txHash []byte, utxoID []byte) *RefLinkerRevRefKey {
+func (rl *RefLinker) makeRevRefKey(txHash []byte, utxoID []byte, feeCostRatioBytes []byte) *RefLinkerRevRefKey {
 	revRefKey := []byte{}
 	revRefKey = append(revRefKey, rl.prefixRevRef()...)
 	revRefKey = append(revRefKey, utils.CopySlice(utxoID)...)
+	revRefKey = append(revRefKey, utils.CopySlice(feeCostRatioBytes)...)
 	revRefKey = append(revRefKey, utils.CopySlice(txHash)...)
 	rlRevRefKey := &RefLinkerRevRefKey{}
 	rlRevRefKey.UnmarshalBinary(revRefKey)

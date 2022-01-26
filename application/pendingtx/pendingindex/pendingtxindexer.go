@@ -35,7 +35,7 @@ func (pti *PendingTxIndexer) Add(txn *badger.Txn, epoch uint32, txHash []byte, f
 	if err != nil {
 		return nil, err
 	}
-	eviction, evicted, err := pti.reflink.Add(txn, txHash, utxoIDs)
+	eviction, evicted, err := pti.reflink.Add(txn, txHash, utxoIDs, feeCostRatio)
 	if err != nil {
 		return nil, err
 	}

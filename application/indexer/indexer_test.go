@@ -305,6 +305,10 @@ func TestRefLinker(t *testing.T) {
 	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("a")))
 	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("b")))
 	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("c")))
+	value1, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// object to be deleted due to overlap of utxoID
 	txHash2 := trie.Hasher([]byte("bar"))
@@ -312,6 +316,10 @@ func TestRefLinker(t *testing.T) {
 	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("a")))
 	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("f")))
 	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("g")))
+	value2, err := new(uint256.Uint256).FromUint64(2)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// object that should remain
 	txHash3 := trie.Hasher([]byte("baz"))
@@ -319,6 +327,10 @@ func TestRefLinker(t *testing.T) {
 	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("h")))
 	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("i")))
 	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("j")))
+	value3, err := new(uint256.Uint256).FromUint64(3)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// object that is deleted as single element
 	txHash4 := trie.Hasher([]byte("boo"))
@@ -326,24 +338,52 @@ func TestRefLinker(t *testing.T) {
 	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("a")))
 	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("f")))
 	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("i")))
+	value4, err := new(uint256.Uint256).FromUint64(4)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	rl := NewRefLinkerIndex(prefix1, prefix2, prefix3)
 	err = db.Update(func(txn *badger.Txn) error {
-		_, _, err := rl.Add(txn, txHash1, utxoIDs1)
+		eviction, evicted, err := rl.Add(txn, txHash1, utxoIDs1, value1)
 		if err != nil {
 			t.Fatal(err)
 		}
-		_, _, err = rl.Add(txn, txHash2, utxoIDs2)
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		eviction, evicted, err = rl.Add(txn, txHash2, utxoIDs2, value2)
 		if err != nil {
 			t.Fatal(err)
 		}
-		_, _, err = rl.Add(txn, txHash3, utxoIDs3)
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		eviction, evicted, err = rl.Add(txn, txHash3, utxoIDs3, value3)
 		if err != nil {
 			t.Fatal(err)
 		}
-		_, _, err = rl.Add(txn, txHash4, utxoIDs4)
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		eviction, evicted, err = rl.Add(txn, txHash4, utxoIDs4, value4)
 		if err != nil {
 			t.Fatal(err)
+		}
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
 		}
 		err = rl.Delete(txn, txHash4)
 		if err != nil {
@@ -369,7 +409,7 @@ func TestRefLinker(t *testing.T) {
 	}
 }
 
-func TestRefLinkerEvict(t *testing.T) {
+func TestRefLinkerEvict1(t *testing.T) {
 	dir, err := ioutil.TempDir("", "badger-test")
 	if err != nil {
 		t.Fatal(err)
@@ -404,6 +444,10 @@ func TestRefLinkerEvict(t *testing.T) {
 	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("a")))
 	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("b")))
 	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("c")))
+	value1, err := new(uint256.Uint256).FromUint64(128)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// object to be deleted due to overlap of utxoID
 	txHash2 := trie.Hasher([]byte("bar"))
@@ -411,6 +455,10 @@ func TestRefLinkerEvict(t *testing.T) {
 	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("a")))
 	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("b")))
 	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("c")))
+	value2, err := new(uint256.Uint256).FromUint64(512)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// object that should remain
 	txHash3 := trie.Hasher([]byte("baz"))
@@ -418,6 +466,10 @@ func TestRefLinkerEvict(t *testing.T) {
 	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("a")))
 	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("b")))
 	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("c")))
+	value3, err := new(uint256.Uint256).FromUint64(256)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// object that is deleted as single element
 	txHash4 := trie.Hasher([]byte("boo"))
@@ -425,40 +477,376 @@ func TestRefLinkerEvict(t *testing.T) {
 	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("a")))
 	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("b")))
 	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("c")))
+	value4, err := new(uint256.Uint256).FromUint64(64)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	rl := NewRefLinkerIndex(prefix1, prefix2, prefix3)
 	err = db.Update(func(txn *badger.Txn) error {
-		_, _, err := rl.Add(txn, txHash1, utxoIDs1)
+		eviction, evicted, err := rl.Add(txn, txHash1, utxoIDs1, value1)
 		if err != nil {
 			t.Fatal(err)
 		}
-		_, _, err = rl.Add(txn, txHash2, utxoIDs2)
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		eviction, evicted, err = rl.Add(txn, txHash2, utxoIDs2, value2)
 		if err != nil {
 			t.Fatal(err)
 		}
-		_, _, err = rl.Add(txn, txHash3, utxoIDs3)
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		eviction, evicted, err = rl.Add(txn, txHash3, utxoIDs3, value3)
 		if err != nil {
 			t.Fatal(err)
 		}
-		_, _, err = rl.Add(txn, txHash4, utxoIDs4)
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		// Add txHash4; should evict txHash1
+		eviction, evicted, err = rl.Add(txn, txHash4, utxoIDs4, value4)
 		if err != nil {
 			t.Fatal(err)
 		}
-		txHashes, _, err := rl.DeleteMined(txn, txHash4)
+		if !eviction {
+			t.Fatal("should have eviction!")
+		}
+		if len(evicted) != 1 {
+			t.Fatal("should only have one txhash")
+		}
+		if !bytes.Equal(evicted[0], txHash1) {
+			t.Fatal("txHash1 should be evicted")
+		}
+		// Add txHash1; should evict txHash4
+		eviction, evicted, err = rl.Add(txn, txHash1, utxoIDs1, value1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !eviction {
+			t.Fatal("should have eviction!")
+		}
+		if len(evicted) != 1 {
+			t.Fatal("should only have one txhash")
+		}
+		if !bytes.Equal(evicted[0], txHash4) {
+			t.Fatal("txHash4 should be evicted")
+		}
+
+		// Mine tx3; the txs are deleted in order of increasing value (feeCostRatio)
+		txHashes, _, err := rl.DeleteMined(txn, txHash3)
 		if err != nil {
 			t.Fatal(err)
 		}
 		if len(txHashes) != 3 {
 			t.Fatal("wrong txHashes length", len(txHashes))
 		}
-		if !bytes.Equal(txHashes[0], txHash2) {
-			t.Fatal("txHash2 not at index zero")
+		if !bytes.Equal(txHashes[0], txHash1) {
+			t.Fatal("txHash1 not at index zero")
 		}
-		if !bytes.Equal(txHashes[1], txHash4) {
-			t.Fatal("txHash4 not at index one")
+		if !bytes.Equal(txHashes[1], txHash3) {
+			t.Fatal("txHash3 not at index one")
 		}
-		if !bytes.Equal(txHashes[2], txHash3) {
-			t.Fatal("txHash3 not at index two")
+		if !bytes.Equal(txHashes[2], txHash2) {
+			t.Fatal("txHash2 not at index two")
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRefLinkerEvict2(t *testing.T) {
+	dir, err := ioutil.TempDir("", "badger-test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		if err := os.RemoveAll(dir); err != nil {
+			t.Fatal(err)
+		}
+	}()
+	opts := badger.DefaultOptions(dir)
+	db, err := badger.Open(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	prefix1 := func() []byte {
+		return []byte("za")
+	}
+
+	prefix2 := func() []byte {
+		return []byte("zb")
+	}
+
+	prefix3 := func() []byte {
+		return []byte("zk")
+	}
+
+	// object to delete
+	txHash1 := trie.Hasher([]byte("foo"))
+	utxoIDs1 := [][]byte{}
+	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("a")))
+	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("b")))
+	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("c")))
+	value1, err := new(uint256.Uint256).FromUint64(1024)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// object to be deleted due to overlap of utxoID
+	txHash2 := trie.Hasher([]byte("bar"))
+	utxoIDs2 := [][]byte{}
+	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("a")))
+	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("b")))
+	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("c")))
+	value2, err := new(uint256.Uint256).FromUint64(512)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// object that should remain
+	txHash3 := trie.Hasher([]byte("baz"))
+	utxoIDs3 := [][]byte{}
+	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("a")))
+	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("b")))
+	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("c")))
+	value3, err := new(uint256.Uint256).FromUint64(256)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// object that is deleted as single element
+	txHash4 := trie.Hasher([]byte("boo"))
+	utxoIDs4 := [][]byte{}
+	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("a")))
+	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("b")))
+	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("c")))
+	value4, err := new(uint256.Uint256).FromUint64(128)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rl := NewRefLinkerIndex(prefix1, prefix2, prefix3)
+	err = db.Update(func(txn *badger.Txn) error {
+		eviction, evicted, err := rl.Add(txn, txHash1, utxoIDs1, value1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		eviction, evicted, err = rl.Add(txn, txHash2, utxoIDs2, value2)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		eviction, evicted, err = rl.Add(txn, txHash3, utxoIDs3, value3)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		// Add txHash4; should evict txHash3
+		eviction, evicted, err = rl.Add(txn, txHash4, utxoIDs4, value4)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !eviction {
+			t.Fatal("should have eviction!")
+		}
+		if len(evicted) != 1 {
+			t.Fatal("should only have one txhash")
+		}
+		if !bytes.Equal(evicted[0], txHash3) {
+			t.Fatal("txHash3 should be evicted")
+		}
+		// Add txHash3; should evict txHash4
+		eviction, evicted, err = rl.Add(txn, txHash3, utxoIDs3, value3)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !eviction {
+			t.Fatal("should have eviction!")
+		}
+		if len(evicted) != 1 {
+			t.Fatal("should only have one txhash")
+		}
+		if !bytes.Equal(evicted[0], txHash4) {
+			t.Fatal("txHash4 should be evicted")
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRefLinkerEvict3(t *testing.T) {
+	dir, err := ioutil.TempDir("", "badger-test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		if err := os.RemoveAll(dir); err != nil {
+			t.Fatal(err)
+		}
+	}()
+	opts := badger.DefaultOptions(dir)
+	db, err := badger.Open(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	prefix1 := func() []byte {
+		return []byte("za")
+	}
+
+	prefix2 := func() []byte {
+		return []byte("zb")
+	}
+
+	prefix3 := func() []byte {
+		return []byte("zk")
+	}
+
+	// object to delete
+	txHash1 := trie.Hasher([]byte("foo"))
+	utxoIDs1 := [][]byte{}
+	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("a")))
+	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("b")))
+	utxoIDs1 = append(utxoIDs1, trie.Hasher([]byte("c")))
+	value1, err := new(uint256.Uint256).FromUint64(128)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// object to be deleted due to overlap of utxoID
+	txHash2 := trie.Hasher([]byte("bar"))
+	utxoIDs2 := [][]byte{}
+	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("a")))
+	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("b")))
+	utxoIDs2 = append(utxoIDs2, trie.Hasher([]byte("c")))
+	value2, err := new(uint256.Uint256).FromUint64(128)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// object that should remain
+	txHash3 := trie.Hasher([]byte("baz"))
+	utxoIDs3 := [][]byte{}
+	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("a")))
+	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("b")))
+	utxoIDs3 = append(utxoIDs3, trie.Hasher([]byte("c")))
+	value3, err := new(uint256.Uint256).FromUint64(128)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// object that is deleted as single element
+	txHash4 := trie.Hasher([]byte("boo"))
+	utxoIDs4 := [][]byte{}
+	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("a")))
+	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("b")))
+	utxoIDs4 = append(utxoIDs4, trie.Hasher([]byte("c")))
+	value4, err := new(uint256.Uint256).FromUint64(128)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("txhash1: %x\n", txHash1)
+	t.Logf("txhash2: %x\n", txHash2)
+	t.Logf("txhash3: %x\n", txHash3)
+	t.Logf("txhash4: %x\n", txHash4)
+	t.Logf("\n\n")
+
+	rl := NewRefLinkerIndex(prefix1, prefix2, prefix3)
+	err = db.Update(func(txn *badger.Txn) error {
+		eviction, evicted, err := rl.Add(txn, txHash1, utxoIDs1, value1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		eviction, evicted, err = rl.Add(txn, txHash2, utxoIDs2, value2)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		eviction, evicted, err = rl.Add(txn, txHash3, utxoIDs3, value3)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if eviction {
+			t.Fatal("should not have eviction")
+		}
+		if len(evicted) > 0 {
+			t.Fatal("should have no evicted txhashes")
+		}
+		// Add txHash4; should evict txHash3
+		eviction, evicted, err = rl.Add(txn, txHash4, utxoIDs4, value4)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !eviction {
+			t.Fatal("should have eviction!")
+		}
+		if len(evicted) != 1 {
+			t.Fatal("should only have one txhash")
+		}
+		t.Logf("evicted[0]: %x\n", evicted[0])
+		if !bytes.Equal(evicted[0], txHash1) {
+			t.Logf("evicted[0]: %x\n", evicted[0])
+			t.Fatal("txHash1 should be evicted")
+		}
+		// Add txHash1; should evict txHash2
+		eviction, evicted, err = rl.Add(txn, txHash1, utxoIDs1, value1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !eviction {
+			t.Fatal("should have eviction!")
+		}
+		if len(evicted) != 1 {
+			t.Fatal("should only have one txhash")
+		}
+		t.Logf("evicted[0]: %x\n", evicted[0])
+		if !bytes.Equal(evicted[0], txHash2) {
+			t.Fatal("txHash2 should be evicted")
 		}
 		return nil
 	})
