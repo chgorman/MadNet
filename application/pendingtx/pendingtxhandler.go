@@ -395,7 +395,7 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 		if ok := pt.checkSize(maxBytes, byteCount); !ok {
 			break
 		}
-		item, err := pt.txqueue.Pop()
+		item, err := pt.txqueue.PopMax()
 		if err != nil {
 			utils.DebugTrace(pt.logger, err)
 			return nil, 0, err

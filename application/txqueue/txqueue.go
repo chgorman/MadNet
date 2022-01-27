@@ -1,8 +1,9 @@
 package txqueue
 
 import (
-	"container/heap"
 	"errors"
+
+	"github.com/aalpar/deheap"
 
 	"github.com/MadBase/MadNet/application/objs/uint256"
 	"github.com/MadBase/MadNet/utils"
@@ -181,7 +182,7 @@ func (tq *TxQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]byte, 
 		}
 	}
 	tq.refmap[txString] = item
-	heap.Push(&tq.txheap, item)
+	deheap.Push(&tq.txheap, item)
 	return true, nil
 }
 
@@ -223,13 +224,13 @@ func (tq *TxQueue) ConflictingUTXOIDs(utxoIDs [][]byte) ([][]byte, bool) {
 	return conflictingTxHashes, len(conflictingTxHashes) > 0
 }
 
-// Pop returns the txhash of the highest valued item in the TxQueue
-func (tq *TxQueue) Pop() (*Item, error) {
+// PopMax returns the txhash of the highest valued item in the TxQueue
+func (tq *TxQueue) PopMax() (*Item, error) {
 	if tq.IsEmpty() {
-		return nil, errors.New("TxQueue.Pop: queue is empty")
+		return nil, errors.New("TxQueue.PopMax: queue is empty")
 	}
-	// Pop item from TxHeap
-	item := heap.Pop(&tq.txheap).(*Item)
+	// Pop max item from TxHeap
+	item := deheap.PopMax(&tq.txheap).(*Item)
 	// Drop references to item in reference maps
 	tq.dropReferences(item)
 	if item.isCleanup {
@@ -242,6 +243,40 @@ func (tq *TxQueue) Pop() (*Item, error) {
 		}
 	}
 	return item, nil
+}
+
+// PopMin returns the txhash of the lowest valued item in the TxQueue
+func (tq *TxQueue) PopMin() (*Item, error) {
+	if tq.IsEmpty() {
+		return nil, errors.New("TxQueue.PopMin: queue is empty")
+	}
+	// Pop min item from TxHeap
+	item := deheap.Pop(&tq.txheap).(*Item)
+	// Drop references to item in reference maps
+	tq.dropReferences(item)
+	if item.isCleanup {
+		tq.numCleanupTxs--
+	} else {
+		// Subtract the value from the total feeCostSum
+		_, err := tq.feeCostSum.Sub(tq.feeCostSum, item.value)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return item, nil
+}
+
+// MinValue returns the minimum value in TxQueue
+func (tq *TxQueue) MinValue() (*uint256.Uint256, error) {
+	if tq.IsEmpty() {
+		return nil, errors.New("TxQueue.MinValue: queue is empty")
+	}
+	minValue := new(uint256.Uint256)
+	err := minValue.Set(tq.txheap[0].value)
+	if err != nil {
+		return nil, err
+	}
+	return minValue, nil
 }
 
 // Contains checks if tx is present in queue
@@ -282,7 +317,7 @@ func (tq *TxQueue) Drop(txhash []byte) error {
 	}
 	tq.dropReferences(item)
 	// Remove element from TxHeap
-	_ = heap.Remove(&tq.txheap, item.index)
+	_ = deheap.Remove(&tq.txheap, item.index)
 	// Subtract the value from the total feeCostSum
 	_, err := tq.feeCostSum.Sub(tq.feeCostSum, item.value)
 	return err

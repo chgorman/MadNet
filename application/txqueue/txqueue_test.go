@@ -630,7 +630,7 @@ func TestTxQueueValidAdd3(t *testing.T) {
 		t.Fatal("averageFeeCostRatio should be 0")
 	}
 
-	_, err = tq.Pop()
+	_, err = tq.PopMax()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -648,6 +648,282 @@ func TestTxQueueValidAdd3(t *testing.T) {
 	}
 	if !tq.feeCostSum.IsZero() {
 		t.Fatal("feeCostSum should be 0")
+	}
+}
+
+func TestTxQueueValidAdd4(t *testing.T) {
+	// In-depth test about adding/popping multiple txs.
+	tq := &TxQueue{}
+	queueSize := 128
+	err := tq.Init(queueSize)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make and add tx
+	txhash1 := crypto.Hasher([]byte("TxHash1"))
+	utxoID11 := crypto.Hasher([]byte("utxoID11"))
+	utxoID12 := crypto.Hasher([]byte("utxoID12"))
+	utxoIDs1 := [][]byte{utxoID11, utxoID12}
+	value1, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	isCleanup := false
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs1); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err := tq.Add(txhash1, value1, utxoIDs1, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	txhash2 := crypto.Hasher([]byte("TxHash2"))
+	utxoID21 := crypto.Hasher([]byte("utxoID21"))
+	utxoID22 := crypto.Hasher([]byte("utxoID22"))
+	utxoIDs2 := [][]byte{utxoID21, utxoID22}
+	value2, err := new(uint256.Uint256).FromUint64(2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs2); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err = tq.Add(txhash2, value2, utxoIDs2, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	txhash3 := crypto.Hasher([]byte("TxHash3"))
+	utxoID31 := crypto.Hasher([]byte("utxoID31"))
+	utxoID32 := crypto.Hasher([]byte("utxoID32"))
+	utxoIDs3 := [][]byte{utxoID31, utxoID32}
+	value3, err := new(uint256.Uint256).FromUint64(3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs3); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err = tq.Add(txhash3, value3, utxoIDs3, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	txhash4 := crypto.Hasher([]byte("TxHash4"))
+	utxoID41 := crypto.Hasher([]byte("utxoID41"))
+	utxoID42 := crypto.Hasher([]byte("utxoID42"))
+	utxoIDs4 := [][]byte{utxoID41, utxoID42}
+	value4, err := new(uint256.Uint256).FromUint64(4)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs4); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err = tq.Add(txhash4, value4, utxoIDs4, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	txhash5 := crypto.Hasher([]byte("TxHash5"))
+	utxoID51 := crypto.Hasher([]byte("utxoID51"))
+	utxoID52 := crypto.Hasher([]byte("utxoID52"))
+	utxoIDs5 := [][]byte{utxoID51, utxoID52}
+	value5, err := new(uint256.Uint256).FromUint64(5)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs5); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err = tq.Add(txhash5, value5, utxoIDs5, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	// Now to remove items from heap.
+	retItem, err := tq.PopMax()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(retItem.txhash, txhash5) {
+		t.Fatal("invalid PopMax item")
+	}
+	retItem, err = tq.PopMin()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(retItem.txhash, txhash1) {
+		t.Fatal("invalid PopMin item")
+	}
+	retItem, err = tq.PopMax()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(retItem.txhash, txhash4) {
+		t.Fatal("invalid PopMax item")
+	}
+	retItem, err = tq.PopMin()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(retItem.txhash, txhash2) {
+		t.Fatal("invalid PopMin item")
+	}
+	retItem, err = tq.PopMax()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(retItem.txhash, txhash3) {
+		t.Fatal("invalid PopMax item")
+	}
+	if !tq.IsEmpty() {
+		t.Fatal("Should be empty")
+	}
+}
+
+func TestTxQueueMinValue(t *testing.T) {
+	tq := &TxQueue{}
+	queueSize := 128
+	err := tq.Init(queueSize)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make and add tx
+	txhash1 := crypto.Hasher([]byte("TxHash1"))
+	utxoID11 := crypto.Hasher([]byte("utxoID11"))
+	utxoID12 := crypto.Hasher([]byte("utxoID12"))
+	utxoIDs1 := [][]byte{utxoID11, utxoID12}
+	value1, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	isCleanup := false
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs1); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err := tq.Add(txhash1, value1, utxoIDs1, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	txhash2 := crypto.Hasher([]byte("TxHash2"))
+	utxoID21 := crypto.Hasher([]byte("utxoID21"))
+	utxoID22 := crypto.Hasher([]byte("utxoID22"))
+	utxoIDs2 := [][]byte{utxoID21, utxoID22}
+	value2, err := new(uint256.Uint256).FromUint64(2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs2); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err = tq.Add(txhash2, value2, utxoIDs2, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	txhash3 := crypto.Hasher([]byte("TxHash3"))
+	utxoID31 := crypto.Hasher([]byte("utxoID31"))
+	utxoID32 := crypto.Hasher([]byte("utxoID32"))
+	utxoIDs3 := [][]byte{utxoID31, utxoID32}
+	value3, err := new(uint256.Uint256).FromUint64(3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs3); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err = tq.Add(txhash3, value3, utxoIDs3, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	txhash4 := crypto.Hasher([]byte("TxHash4"))
+	utxoID41 := crypto.Hasher([]byte("utxoID41"))
+	utxoID42 := crypto.Hasher([]byte("utxoID42"))
+	utxoIDs4 := [][]byte{utxoID41, utxoID42}
+	value4, err := new(uint256.Uint256).FromUint64(4)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs4); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err = tq.Add(txhash4, value4, utxoIDs4, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	txhash5 := crypto.Hasher([]byte("TxHash5"))
+	utxoID51 := crypto.Hasher([]byte("utxoID51"))
+	utxoID52 := crypto.Hasher([]byte("utxoID52"))
+	utxoIDs5 := [][]byte{utxoID51, utxoID52}
+	value5, err := new(uint256.Uint256).FromUint64(5)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs5); conflict {
+		t.Fatal("Should not have conflict")
+	}
+	ok, err = tq.Add(txhash5, value5, utxoIDs5, isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+
+	trueMinValue := new(uint256.Uint256)
+	trueMinValue.Set(value1)
+	minValue, err := tq.MinValue()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !minValue.Eq(trueMinValue) {
+		t.Fatal("Did not return correct min value")
+	}
+}
+
+func TestTxQueueMinValueBad(t *testing.T) {
+	tq := &TxQueue{}
+	queueSize := 128
+	err := tq.Init(queueSize)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = tq.MinValue()
+	if err == nil {
+		t.Fatal("Should have raised error")
 	}
 }
 
@@ -739,15 +1015,15 @@ func TestTxQueueAddAboveThreshold(t *testing.T) {
 	}
 }
 
-func TestTxQueuePopBad(t *testing.T) {
+func TestTxQueuePopMaxBad(t *testing.T) {
 	tq := &TxQueue{}
-	_, err := tq.Pop()
+	_, err := tq.PopMax()
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}
 }
 
-func TestTxQueuePopGood(t *testing.T) {
+func TestTxQueuePopMaxGood(t *testing.T) {
 	tq := &TxQueue{}
 	queueSize := 128
 	err := tq.Init(queueSize)
@@ -782,7 +1058,7 @@ func TestTxQueuePopGood(t *testing.T) {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	retItem, err := tq.Pop()
+	retItem, err := tq.PopMax()
 	if err != nil {
 		t.Fatal(err)
 	}

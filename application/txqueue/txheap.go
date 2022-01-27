@@ -45,7 +45,7 @@ func (txh TxHeap) Len() int {
 }
 
 func (txh TxHeap) Less(i, j int) bool {
-	return txh[i].value.Gt(txh[j].value)
+	return txh[i].value.Lt(txh[j].value)
 }
 
 func (txh TxHeap) Swap(i, j int) {
