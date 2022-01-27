@@ -106,6 +106,11 @@ func (pt *Handler) Add(txnState *badger.Txn, txs []*objs.Tx, currentHeight uint3
 						utils.DebugTrace(pt.logger, err)
 						return err
 					}
+					_, err = pt.txqueue.Add(txHash, feeCostRatio, utxoIDs, isCleanup)
+					if err != nil {
+						utils.DebugTrace(pt.logger, err)
+						return err
+					}
 					continue
 				}
 				utils.DebugTrace(pt.logger, err)

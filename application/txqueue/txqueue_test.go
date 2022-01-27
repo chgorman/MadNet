@@ -101,7 +101,7 @@ func TestTxQueueEmptyFull(t *testing.T) {
 
 func TestTxQueueDropAll(t *testing.T) {
 	tq := &TxQueue{}
-	err := tq.Init(1)
+	err := tq.Init(128)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -156,6 +156,18 @@ func TestTxQueueAddBad1(t *testing.T) {
 	_, err = tq.Add(nil, uint256.Zero(), nil, false)
 	if err == nil {
 		t.Fatal("Should have raised error (3)")
+	}
+}
+
+func TestTxQueueAddBad2(t *testing.T) {
+	tq := &TxQueue{}
+	txhash := crypto.Hasher([]byte("TxHash1"))
+	utxoID1 := crypto.Hasher([]byte("utxoID1"))
+	utxoID2 := crypto.Hasher([]byte("utxoID2"))
+	utxoIDs := [][]byte{utxoID1, utxoID2}
+	_, err := tq.Add(txhash, uint256.Zero(), utxoIDs, false)
+	if err == nil {
+		t.Fatal("Should have raised error")
 	}
 }
 
@@ -422,6 +434,113 @@ func TestTxQueueAddGood2(t *testing.T) {
 	}
 }
 
+func TestTxQueueAddGood3(t *testing.T) {
+	tq := &TxQueue{}
+	queueSize := 1
+	err := tq.Init(queueSize)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Make and add 3 txs
+	txhash1 := crypto.Hasher([]byte("TxHash1"))
+	utxoID11 := crypto.Hasher([]byte("utxoID11"))
+	utxoID12 := crypto.Hasher([]byte("utxoID12"))
+	value1, err := new(uint256.Uint256).FromUint64(19)
+	if err != nil {
+		t.Fatal(err)
+	}
+	item1 := &Item{
+		txhash:    txhash1,
+		value:     value1,
+		utxoIDs:   [][]byte{utxoID11, utxoID12},
+		isCleanup: false,
+	}
+	ok, err := tq.Add(item1.txhash, item1.value, item1.utxoIDs, item1.isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+	if len(tq.txheap) != 1 {
+		t.Fatal("invalid length of txheap")
+	}
+	if len(tq.refmap) != 1 {
+		t.Fatal("invalid length of refmap")
+	}
+	if len(tq.utxoIDs) != 2 {
+		t.Fatal("invalid length of utxoIDs")
+	}
+
+	// Attempt to add 2; will not be able to
+	txhash2 := crypto.Hasher([]byte("TxHash2"))
+	utxoID21 := crypto.Hasher([]byte("utxoID21"))
+	utxoID22 := crypto.Hasher([]byte("utxoID22"))
+	value2, err := new(uint256.Uint256).FromUint64(15)
+	if err != nil {
+		t.Fatal(err)
+	}
+	item2 := &Item{
+		txhash:    txhash2,
+		value:     value2,
+		utxoIDs:   [][]byte{utxoID21, utxoID22},
+		isCleanup: false,
+	}
+	ok, err = tq.Add(item2.txhash, item2.value, item2.utxoIDs, item2.isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ok {
+		t.Fatal("should not add")
+	}
+	if !tq.Contains(item1.txhash) {
+		t.Fatal("Should contain txhash1")
+	}
+	if tq.Contains(item2.txhash) {
+		t.Fatal("Should not contain txhash2")
+	}
+
+	txhash3 := crypto.Hasher([]byte("TxHash3"))
+	utxoID31 := crypto.Hasher([]byte("utxoID31"))
+	utxoID32 := crypto.Hasher([]byte("utxoID32"))
+	value3, err := new(uint256.Uint256).FromUint64(21)
+	if err != nil {
+		t.Fatal(err)
+	}
+	item3 := &Item{
+		txhash:    txhash3,
+		value:     value3,
+		utxoIDs:   [][]byte{utxoID31, utxoID32},
+		isCleanup: false,
+	}
+	ok, err = tq.Add(item3.txhash, item3.value, item3.utxoIDs, item3.isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ok {
+		t.Fatal("did not add")
+	}
+	if !tq.Contains(item3.txhash) {
+		t.Fatal("Should contain txhash3")
+	}
+	if tq.Contains(item1.txhash) {
+		t.Fatal("Should not contain txhash1")
+	}
+	if tq.Contains(item2.txhash) {
+		t.Fatal("Should not contain txhash2")
+	}
+
+	// Attempt to add tx3 again; should not add again
+	ok, err = tq.Add(item3.txhash, item3.value, item3.utxoIDs, item3.isCleanup)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ok {
+		t.Fatal("did not add again")
+	}
+}
+
 func TestTxQueueValidAdd1(t *testing.T) {
 	tq := &TxQueue{}
 	queueSize := 128
@@ -620,14 +739,6 @@ func TestTxQueueValidAdd3(t *testing.T) {
 	}
 	if !tq.feeCostSum.IsZero() {
 		t.Fatal("feeCostSum should be 0")
-	}
-
-	avgFeeCostRatio, err := tq.averageFeeCostRatio()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !avgFeeCostRatio.IsZero() {
-		t.Fatal("averageFeeCostRatio should be 0")
 	}
 
 	_, err = tq.PopMax()
@@ -1067,6 +1178,14 @@ func TestTxQueuePopMaxGood(t *testing.T) {
 	}
 }
 
+func TestTxQueuePopMinBad(t *testing.T) {
+	tq := &TxQueue{}
+	_, err := tq.PopMin()
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
 func TestTxQueueDropMined1(t *testing.T) {
 	tq := &TxQueue{}
 	queueSize := 128
@@ -1163,101 +1282,4 @@ func TestTxQueueDropMined2(t *testing.T) {
 func TestTxQueueDropRefernces(t *testing.T) {
 	tq := &TxQueue{}
 	tq.dropReferences(nil)
-}
-
-func TestTxQueueFeeCostThresholdGood(t *testing.T) {
-	tq := &TxQueue{}
-	queueSize := 128
-	err := tq.Init(queueSize)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Make and add tx
-	txhash := crypto.Hasher([]byte("TxHash1"))
-	utxoID1 := crypto.Hasher([]byte("utxoID11"))
-	utxoID2 := crypto.Hasher([]byte("utxoID12"))
-	utxoIDs := [][]byte{utxoID1, utxoID2}
-	value, err := new(uint256.Uint256).FromUint64(1000000)
-	if err != nil {
-		t.Fatal(err)
-	}
-	iscleanup := false
-	ok, err := tq.Add(txhash, value, utxoIDs, iscleanup)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !ok {
-		t.Fatal("did not add")
-	}
-
-	retFeeCostThreshold, err := tq.feeCostThreshold()
-	if err != nil {
-		t.Fatal(err)
-	}
-	feeCostThresholdTrue := new(uint256.Uint256)
-	err = feeCostThresholdTrue.Set(value)
-	if err != nil {
-		t.Fatal(err)
-	}
-	num, err := new(uint256.Uint256).FromUint64(uint64(tq.queueAcceptanceNum))
-	if err != nil {
-		t.Fatal(err)
-	}
-	denum, err := new(uint256.Uint256).FromUint64(uint64(tq.queueAcceptanceDenum))
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = feeCostThresholdTrue.Mul(feeCostThresholdTrue, num)
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = feeCostThresholdTrue.Div(feeCostThresholdTrue, denum)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !retFeeCostThreshold.Eq(feeCostThresholdTrue) {
-		t.Fatal("invalid feeCostRatioThreshold")
-	}
-}
-
-func TestTxQueueFeeCostThresholdBad(t *testing.T) {
-	tq := &TxQueue{}
-	_, err := tq.feeCostThreshold()
-	if err == nil {
-		t.Fatal("Should have raised error")
-	}
-}
-
-func TestTxQueueAverageFeeCostRatioBad(t *testing.T) {
-	tq := &TxQueue{}
-	_, err := tq.averageFeeCostRatio()
-	if err == nil {
-		t.Fatal("Should have raised error (1)")
-	}
-
-	tq.feeCostSum = uint256.Zero()
-	tq.numCleanupTxs = -1
-	_, err = tq.averageFeeCostRatio()
-	if err == nil {
-		t.Fatal("Should have raised error (2)")
-	}
-
-	tq.numCleanupTxs = 1
-	_, err = tq.averageFeeCostRatio()
-	if err == nil {
-		t.Fatal("Should have raised error (3)")
-	}
-}
-
-func TestTxQueueAverageFeeCostRatioGood(t *testing.T) {
-	tq := &TxQueue{}
-	tq.feeCostSum = uint256.Zero()
-	avg, err := tq.averageFeeCostRatio()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !avg.IsZero() {
-		t.Fatal("avg should be 0")
-	}
 }

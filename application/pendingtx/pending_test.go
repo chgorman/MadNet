@@ -505,7 +505,7 @@ func TestGetProposal(t *testing.T) {
 	tx4 := makeTxConsuming(c2)
 	mustAddTx(t, hndlr, tx4, 1)
 	maxBytes := constants.MaxUint32
-	txs, _, err := hndlr.GetTxsForProposal(nil, context.TODO(), 1, maxBytes, nil)
+	txs, _, err := hndlr.GetTxsForProposal(hndlr.db.NewTransaction(false), context.TODO(), 1, maxBytes, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

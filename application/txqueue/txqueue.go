@@ -105,29 +105,31 @@ func (tq *TxQueue) QueueSize() int {
 	return tq.queueSize
 }
 
-// Add adds a txhash to the TxQueue.
+// Add adds a tx to the TxQueue.
 // If there are no consumedUTXO conflicts, we add to queue and exit;
 // if there are consumedUTXO conflicts, we check values and replace only if
 // value is greater.
 // Here, value specifies the feeCostRatio of the corresponding tx.
+// At the end, txs are removed until TxQueue is no longer full.
 func (tq *TxQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]byte, isCleanup bool) (bool, error) {
-	if tq.IsFull() {
-		return false, errors.New("TxQueue.Add: queue is full")
-	}
 	if value == nil {
 		return false, errors.New("TxQueue.Add: value is nil")
 	}
 	if len(utxoIDs) == 0 {
 		return false, errors.New("TxQueue.Add: len(uxtoIDs) == 0")
 	}
-	if !tq.IsEmpty() && tq.aboveThreshold() {
-		// The queue is close to being full, so we are more selective
-		// in the txs that we add.
-		feeCostThreshold, err := tq.feeCostThreshold()
+	if tq.Contains(txhash) {
+		// We do not add a tx that is already present
+		return false, nil
+	}
+	if tq.IsFull() {
+		// The queue is full, so we do not attempt to add the tx to the queue
+		// if it is below the minimum value.
+		minValue, err := tq.MinValue()
 		if err != nil {
 			return false, err
 		}
-		if value.Lte(feeCostThreshold) {
+		if value.Lt(minValue) {
 			return false, nil
 		}
 	}
@@ -183,30 +185,13 @@ func (tq *TxQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]byte, 
 	}
 	tq.refmap[txString] = item
 	deheap.Push(&tq.txheap, item)
+	// Remove items until not overflowing
+	for tq.overflowed() {
+		if _, err := tq.PopMin(); err != nil {
+			return false, err
+		}
+	}
 	return true, nil
-}
-
-// feeCostThreshold computes the minimum feeCostRatio value which is required
-// to add a tx to the queue once we have reached a threshold number of txs.
-func (tq *TxQueue) feeCostThreshold() (*uint256.Uint256, error) {
-	averageFeeCostRatio, err := tq.averageFeeCostRatio()
-	if err != nil {
-		return nil, err
-	}
-	if (tq.queueAcceptanceNum <= 0) || (tq.queueAcceptanceDenum <= 0) {
-		return nil, errors.New("TxQueue.feeCostThreshold: invalid queueAcceptance values")
-	}
-	num, _ := new(uint256.Uint256).FromUint64(uint64(tq.queueAcceptanceNum))
-	denum, _ := new(uint256.Uint256).FromUint64(uint64(tq.queueAcceptanceDenum))
-	thresholdFeeCostRatio, err := new(uint256.Uint256).Mul(averageFeeCostRatio, num)
-	if err != nil {
-		return nil, err
-	}
-	_, err = thresholdFeeCostRatio.Div(thresholdFeeCostRatio, denum)
-	if err != nil {
-		return nil, err
-	}
-	return thresholdFeeCostRatio, nil
 }
 
 // ConflictingUTXOIDs determines if the proposed additional utxos conflict
@@ -350,36 +335,12 @@ func (tq *TxQueue) IsFull() bool {
 	return len(tq.refmap) >= tq.queueSize
 }
 
-// aboveThreshold returns true if queue is above threshold.
-// At this point, we want to only prioritize txs above
-func (tq *TxQueue) aboveThreshold() bool {
-	return len(tq.refmap) >= tq.queueThreshold
+// overflowed returns true if queue is above capacity
+func (tq *TxQueue) overflowed() bool {
+	return len(tq.refmap) >= tq.queueSize+1
 }
 
 // IsEmpty returns true if queue is empty
 func (tq *TxQueue) IsEmpty() bool {
 	return len(tq.refmap) == 0
-}
-
-// averageFeeCostRatio computes the average feeCostRatio of the txs in the queue
-func (tq *TxQueue) averageFeeCostRatio() (*uint256.Uint256, error) {
-	if tq == nil {
-		return nil, errors.New("TxQueue.averageFeeCostRatio: tq not initialized")
-	}
-	if tq.feeCostSum == nil {
-		return nil, errors.New("TxQueue.averageFeeCostRatio: feeCostSum is nil")
-	}
-	if tq.numCleanupTxs < 0 {
-		return nil, errors.New("TxQueue.averageFeeCostRatio: negative cleanup txs; impossible")
-	}
-	numStdTxs := tq.txheap.Len() - tq.numCleanupTxs
-	if numStdTxs < 0 {
-		return nil, errors.New("TxQueue.averageFeeCostRatio: more cleanup txs than total txs in queue; impossible")
-	}
-	if numStdTxs == 0 {
-		// All txs in queue are cleanup txs, so the average is zero
-		return uint256.Zero(), nil
-	}
-	uintNumStdTxs, _ := new(uint256.Uint256).FromUint64(uint64(numStdTxs))
-	return new(uint256.Uint256).Div(tq.feeCostSum, uintNumStdTxs)
 }
