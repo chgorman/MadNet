@@ -1,4 +1,4 @@
-package txfees
+package txqueue
 
 import (
 	"bytes"
@@ -8,67 +8,67 @@ import (
 	"github.com/MadBase/MadNet/crypto"
 )
 
-func TestTxFeeQueueInitGood(t *testing.T) {
+func TestTxQueueInitGood(t *testing.T) {
 	queueSize := 128
-	tfq := &TxFeeQueue{}
-	err := tfq.Init(queueSize)
+	tq := &TxQueue{}
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
-func TestTxFeeQueueInitBad(t *testing.T) {
+func TestTxQueueInitBad(t *testing.T) {
 	queueSize := 0
-	tfq := &TxFeeQueue{}
-	err := tfq.Init(queueSize)
+	tq := &TxQueue{}
+	err := tq.Init(queueSize)
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}
 }
 
-func TestTxFeeQueueQueueSize(t *testing.T) {
-	tfq := &TxFeeQueue{}
-	qs := tfq.QueueSize()
+func TestTxQueueQueueSize(t *testing.T) {
+	tq := &TxQueue{}
+	qs := tq.QueueSize()
 	if qs != 0 {
 		t.Fatal("invalid QueueSize (1)")
 	}
 	queueSize := 0
-	err := tfq.SetQueueSize(queueSize)
+	err := tq.SetQueueSize(queueSize)
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}
 	queueSize = 128
-	err = tfq.SetQueueSize(queueSize)
+	err = tq.SetQueueSize(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
-	qs = tfq.QueueSize()
+	qs = tq.QueueSize()
 	if qs != queueSize {
 		t.Fatal("invalid QueueSize (2)")
 	}
 }
 
-func TestTxFeeQueueEmptyFull(t *testing.T) {
-	tfq := &TxFeeQueue{}
-	if !tfq.IsEmpty() {
+func TestTxQueueEmptyFull(t *testing.T) {
+	tq := &TxQueue{}
+	if !tq.IsEmpty() {
 		t.Fatal("Should be empty (1)")
 	}
-	if !tfq.IsFull() {
+	if !tq.IsFull() {
 		t.Fatal("Should be full")
 	}
 	queueSize := 128
-	err := tfq.SetQueueSize(queueSize)
+	err := tq.SetQueueSize(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !tfq.IsEmpty() {
+	if !tq.IsEmpty() {
 		t.Fatal("Should be empty (2)")
 	}
-	if tfq.IsFull() {
+	if tq.IsFull() {
 		t.Fatal("Should not be full (1)")
 	}
 
-	err = tfq.Init(queueSize)
+	err = tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,7 +83,7 @@ func TestTxFeeQueueEmptyFull(t *testing.T) {
 	}
 	isCleanup := false
 
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,17 +91,17 @@ func TestTxFeeQueueEmptyFull(t *testing.T) {
 		t.Fatal("did not add")
 	}
 
-	if tfq.IsEmpty() {
+	if tq.IsEmpty() {
 		t.Fatal("Should not be empty")
 	}
-	if tfq.IsFull() {
+	if tq.IsFull() {
 		t.Fatal("Should not be full (2)")
 	}
 }
 
-func TestTxFeeQueueDropAll(t *testing.T) {
-	tfq := &TxFeeQueue{}
-	err := tfq.Init(1)
+func TestTxQueueDropAll(t *testing.T) {
+	tq := &TxQueue{}
+	err := tq.Init(1)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,54 +115,54 @@ func TestTxFeeQueueDropAll(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup := false
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	if tfq.IsEmpty() {
+	if tq.IsEmpty() {
 		t.Fatal("Should not be empty")
 	}
 }
 
-func TestTxFeeQueueAddBad1(t *testing.T) {
-	tfq := &TxFeeQueue{}
-	_, err := tfq.Add(nil, nil, nil, false)
+func TestTxQueueAddBad1(t *testing.T) {
+	tq := &TxQueue{}
+	_, err := tq.Add(nil, nil, nil, false)
 	if err == nil {
 		t.Fatal("Should have raised error (1)")
 	}
 
 	queueSize := 128
-	err = tfq.Init(queueSize)
+	err = tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = tfq.Add(nil, nil, nil, false)
+	_, err = tq.Add(nil, nil, nil, false)
 	if err == nil {
 		t.Fatal("Should have raised error (2)")
 	}
-	_, err = tfq.Add(nil, uint256.Zero(), nil, false)
+	_, err = tq.Add(nil, uint256.Zero(), nil, false)
 	if err == nil {
 		t.Fatal("Should have raised error (3)")
 	}
 }
 
-func TestTxFeeQueueAddGood(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueueAddGood(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 128
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -177,44 +177,44 @@ func TestTxFeeQueueAddGood(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup := false
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	if !tfq.Contains(txhash) {
+	if !tq.Contains(txhash) {
 		t.Fatal("Queue should contain txhash")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID1)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID1)]; !ok {
 		t.Fatal("utxoID1 not present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID2)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID2)]; !ok {
 		t.Fatal("utxoID2 not present")
 	}
 
-	tfq.Drop(txhash)
-	if len(tfq.txheap) != 0 {
+	tq.Drop(txhash)
+	if len(tq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 0 {
+	if len(tq.refmap) != 0 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 0 {
+	if len(tq.utxoIDs) != 0 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	tfq.Drop(txhash)
+	tq.Drop(txhash)
 }
 
 // In depth test adding items and dropping them.
@@ -223,10 +223,10 @@ func TestTxFeeQueueAddGood(t *testing.T) {
 // Add item2 again;
 // Make item4 which contains utxoIDs from item1 and item2;
 // item4 is mined, so remove all information conflicting with it.
-func TestTxFeeQueueAddGood2(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueueAddGood2(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 128
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -239,29 +239,29 @@ func TestTxFeeQueueAddGood2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	item1 := &TxItem{
+	item1 := &Item{
 		txhash:    txhash1,
 		value:     value1,
 		utxoIDs:   [][]byte{utxoID11, utxoID12},
 		isCleanup: false,
 	}
-	if _, conflict := tfq.ConflictingUTXOIDs(item1.utxoIDs); conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(item1.utxoIDs); conflict {
 		t.Fatal("Should not have conflict")
 	}
-	ok, err := tfq.Add(item1.txhash, item1.value, item1.utxoIDs, item1.isCleanup)
+	ok, err := tq.Add(item1.txhash, item1.value, item1.utxoIDs, item1.isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
@@ -272,29 +272,29 @@ func TestTxFeeQueueAddGood2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	item2 := &TxItem{
+	item2 := &Item{
 		txhash:    txhash2,
 		value:     value2,
 		utxoIDs:   [][]byte{utxoID21, utxoID22},
 		isCleanup: false,
 	}
-	if _, conflict := tfq.ConflictingUTXOIDs(item2.utxoIDs); conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(item2.utxoIDs); conflict {
 		t.Fatal("Should not have conflict")
 	}
-	ok, err = tfq.Add(item2.txhash, item2.value, item2.utxoIDs, item2.isCleanup)
+	ok, err = tq.Add(item2.txhash, item2.value, item2.utxoIDs, item2.isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 2 {
+	if len(tq.txheap) != 2 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 2 {
+	if len(tq.refmap) != 2 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 4 {
+	if len(tq.utxoIDs) != 4 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
@@ -305,80 +305,80 @@ func TestTxFeeQueueAddGood2(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	item3 := &TxItem{
+	item3 := &Item{
 		txhash:    txhash3,
 		value:     value3,
 		utxoIDs:   [][]byte{utxoID31, utxoID32},
 		isCleanup: false,
 	}
-	if _, conflict := tfq.ConflictingUTXOIDs(item3.utxoIDs); conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(item3.utxoIDs); conflict {
 		t.Fatal("Should not have conflict")
 	}
-	ok, err = tfq.Add(item3.txhash, item3.value, item3.utxoIDs, item3.isCleanup)
+	ok, err = tq.Add(item3.txhash, item3.value, item3.utxoIDs, item3.isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 3 {
+	if len(tq.txheap) != 3 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 3 {
+	if len(tq.refmap) != 3 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 6 {
+	if len(tq.utxoIDs) != 6 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
 	// Drop item2; confirm missing
-	tfq.Drop(item2.txhash)
-	if len(tfq.txheap) != 2 {
+	tq.Drop(item2.txhash)
+	if len(tq.txheap) != 2 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 2 {
+	if len(tq.refmap) != 2 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 4 {
+	if len(tq.utxoIDs) != 4 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	if !tfq.Contains(item1.txhash) {
+	if !tq.Contains(item1.txhash) {
 		t.Fatal("does not contain item1")
 	}
-	if tfq.Contains(item2.txhash) {
+	if tq.Contains(item2.txhash) {
 		t.Fatal("contains item2")
 	}
-	if !tfq.Contains(item3.txhash) {
+	if !tq.Contains(item3.txhash) {
 		t.Fatal("does not contain item3")
 	}
 
 	// Add item2 again
-	if _, conflict := tfq.ConflictingUTXOIDs(item2.utxoIDs); conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(item2.utxoIDs); conflict {
 		t.Fatal("Should not have conflict")
 	}
-	ok, err = tfq.Add(item2.txhash, item2.value, item2.utxoIDs, item2.isCleanup)
+	ok, err = tq.Add(item2.txhash, item2.value, item2.utxoIDs, item2.isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 3 {
+	if len(tq.txheap) != 3 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 3 {
+	if len(tq.refmap) != 3 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 6 {
+	if len(tq.utxoIDs) != 6 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	if !tfq.Contains(item1.txhash) {
+	if !tq.Contains(item1.txhash) {
 		t.Fatal("does not contain item1")
 	}
-	if !tfq.Contains(item2.txhash) {
+	if !tq.Contains(item2.txhash) {
 		t.Fatal("does not contain item2")
 	}
-	if !tfq.Contains(item3.txhash) {
+	if !tq.Contains(item3.txhash) {
 		t.Fatal("does not contain item3")
 	}
 
@@ -389,43 +389,43 @@ func TestTxFeeQueueAddGood2(t *testing.T) {
 		t.Fatal(err)
 	}
 	newUtxoIDs := [][]byte{utxoID11, utxoID22}
-	item4 := &TxItem{
+	item4 := &Item{
 		txhash:  txhash4,
 		value:   value4,
 		utxoIDs: newUtxoIDs,
 	}
 	// We should not be able to add item4 because of conflicts
-	if _, conflict := tfq.ConflictingUTXOIDs(item4.utxoIDs); !conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(item4.utxoIDs); !conflict {
 		t.Fatal("Should have conflict")
 	}
 
 	// Drop item4; confirm missing.
 	// This should kick out item1 and item2.
-	tfq.DeleteMined(item4.utxoIDs)
-	if len(tfq.txheap) != 1 {
+	tq.DeleteMined(item4.utxoIDs)
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	if tfq.Contains(item1.txhash) {
+	if tq.Contains(item1.txhash) {
 		t.Fatal("contains item1")
 	}
-	if tfq.Contains(item2.txhash) {
+	if tq.Contains(item2.txhash) {
 		t.Fatal("contains item2")
 	}
-	if !tfq.Contains(item3.txhash) {
+	if !tq.Contains(item3.txhash) {
 		t.Fatal("does not contain item3")
 	}
 }
 
-func TestTxFeeQueueValidAdd1(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueueValidAdd1(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 128
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -440,25 +440,25 @@ func TestTxFeeQueueValidAdd1(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup := false
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs); conflict {
 		t.Fatal("Should not have conflict")
 	}
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); !conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs); !conflict {
 		t.Fatal("Should have conflict")
 	}
 }
 
-func TestTxFeeQueueValidAdd2(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueueValidAdd2(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 128
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -473,35 +473,35 @@ func TestTxFeeQueueValidAdd2(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup := false
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs); conflict {
 		t.Fatal("Should not have conflict")
 	}
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); !conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs); !conflict {
 		t.Fatal("Should have conflict")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	if _, ok := tfq.refmap[string(txhash)]; !ok {
+	if _, ok := tq.refmap[string(txhash)]; !ok {
 		t.Fatal("txhash1 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID1)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID1)]; !ok {
 		t.Fatal("utxoID1 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID2)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID2)]; !ok {
 		t.Fatal("utxoID2 should be present")
 	}
 
@@ -513,35 +513,35 @@ func TestTxFeeQueueValidAdd2(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup2 := false
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs2); !conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs2); !conflict {
 		t.Fatal("Should have conflict")
 	}
-	ok, err = tfq.Add(txhash2, value2, utxoIDs2, isCleanup2)
+	ok, err = tq.Add(txhash2, value2, utxoIDs2, isCleanup2)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 1 {
+	if len(tq.utxoIDs) != 1 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	if _, ok := tfq.refmap[string(txhash)]; ok {
+	if _, ok := tq.refmap[string(txhash)]; ok {
 		t.Fatal("txhash1 should not be present")
 	}
-	if _, ok := tfq.refmap[string(txhash2)]; !ok {
+	if _, ok := tq.refmap[string(txhash2)]; !ok {
 		t.Fatal("txhash2 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID1)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID1)]; !ok {
 		t.Fatal("utxoID1 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID2)]; ok {
+	if _, ok := tq.utxoIDs[string(utxoID2)]; ok {
 		t.Fatal("utxoID2 should not be present")
 	}
 
@@ -553,10 +553,10 @@ func TestTxFeeQueueValidAdd2(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup3 := false
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs3); !conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs3); !conflict {
 		t.Fatal("Should have conflict")
 	}
-	ok, err = tfq.Add(txhash3, value3, utxoIDs3, isCleanup3)
+	ok, err = tq.Add(txhash3, value3, utxoIDs3, isCleanup3)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -565,10 +565,10 @@ func TestTxFeeQueueValidAdd2(t *testing.T) {
 	}
 }
 
-func TestTxFeeQueueValidAdd3(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueueValidAdd3(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 128
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -583,46 +583,46 @@ func TestTxFeeQueueValidAdd3(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup := true
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs); conflict {
 		t.Fatal("Should not have conflict")
 	}
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); !conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs); !conflict {
 		t.Fatal("Should have conflict")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	if _, ok := tfq.refmap[string(txhash)]; !ok {
+	if _, ok := tq.refmap[string(txhash)]; !ok {
 		t.Fatal("txhash1 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID1)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID1)]; !ok {
 		t.Fatal("utxoID1 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID2)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID2)]; !ok {
 		t.Fatal("utxoID2 should be present")
 	}
 
-	if tfq.numCleanupTxs != 1 {
+	if tq.numCleanupTxs != 1 {
 		t.Fatal("numCleanupTxs should be 1")
 	}
-	if !tfq.feeCostSum.IsZero() {
+	if !tq.feeCostSum.IsZero() {
 		t.Fatal("feeCostSum should be 0")
 	}
 
-	avgFeeCostRatio, err := tfq.averageFeeCostRatio()
+	avgFeeCostRatio, err := tq.averageFeeCostRatio()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -630,92 +630,31 @@ func TestTxFeeQueueValidAdd3(t *testing.T) {
 		t.Fatal("averageFeeCostRatio should be 0")
 	}
 
-	_, err = tfq.Pop()
+	_, err = tq.Pop()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(tfq.txheap) != 0 {
+	if len(tq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 0 {
+	if len(tq.refmap) != 0 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 0 {
+	if len(tq.utxoIDs) != 0 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	if tfq.numCleanupTxs != 0 {
+	if tq.numCleanupTxs != 0 {
 		t.Fatal("numCleanupTxs should be 0")
 	}
-	if !tfq.feeCostSum.IsZero() {
+	if !tq.feeCostSum.IsZero() {
 		t.Fatal("feeCostSum should be 0")
 	}
-
-	/*
-		// Add another tx with higher value, kicking out the first tx
-		txhash2 := crypto.Hasher([]byte("TxHash2"))
-		utxoIDs2 := [][]byte{utxoID1}
-		value2, err := new(uint256.Uint256).FromUint64(2)
-		if err != nil {
-			t.Fatal(err)
-		}
-		isCleanup2 := false
-		if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs2); !conflict {
-			t.Fatal("Should have conflict")
-		}
-		ok, err = tfq.Add(txhash2, value2, utxoIDs2, isCleanup2)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if !ok {
-			t.Fatal("did not add")
-		}
-		if len(tfq.txheap) != 1 {
-			t.Fatal("invalid length of txheap")
-		}
-		if len(tfq.refmap) != 1 {
-			t.Fatal("invalid length of refmap")
-		}
-		if len(tfq.utxoIDs) != 1 {
-			t.Fatal("invalid length of utxoIDs")
-		}
-		if _, ok := tfq.refmap[string(txhash)]; ok {
-			t.Fatal("txhash1 should not be present")
-		}
-		if _, ok := tfq.refmap[string(txhash2)]; !ok {
-			t.Fatal("txhash2 should be present")
-		}
-		if _, ok := tfq.utxoIDs[string(utxoID1)]; !ok {
-			t.Fatal("utxoID1 should be present")
-		}
-		if _, ok := tfq.utxoIDs[string(utxoID2)]; ok {
-			t.Fatal("utxoID2 should not be present")
-		}
-
-		// Attempt to add another tx with lower value
-		txhash3 := crypto.Hasher([]byte("TxHash3"))
-		utxoIDs3 := [][]byte{utxoID1}
-		value3, err := new(uint256.Uint256).FromUint64(1)
-		if err != nil {
-			t.Fatal(err)
-		}
-		isCleanup3 := false
-		if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs3); !conflict {
-			t.Fatal("Should have conflict")
-		}
-		ok, err = tfq.Add(txhash3, value3, utxoIDs3, isCleanup3)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if ok {
-			t.Fatal("Should not have added")
-		}
-	*/
 }
 
-func TestTxFeeQueueAddAboveThreshold(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueueAddAboveThreshold(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 2
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -730,35 +669,35 @@ func TestTxFeeQueueAddAboveThreshold(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup := false
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs); conflict {
 		t.Fatal("Should not have conflict")
 	}
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs); !conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs); !conflict {
 		t.Fatal("Should have conflict")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	if _, ok := tfq.refmap[string(txhash)]; !ok {
+	if _, ok := tq.refmap[string(txhash)]; !ok {
 		t.Fatal("txhash1 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID1)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID1)]; !ok {
 		t.Fatal("utxoID1 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID2)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID2)]; !ok {
 		t.Fatal("utxoID2 should be present")
 	}
 
@@ -770,48 +709,48 @@ func TestTxFeeQueueAddAboveThreshold(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup2 := false
-	if _, conflict := tfq.ConflictingUTXOIDs(utxoIDs2); !conflict {
+	if _, conflict := tq.ConflictingUTXOIDs(utxoIDs2); !conflict {
 		t.Fatal("Should have conflict")
 	}
-	ok, err = tfq.Add(txhash2, value2, utxoIDs2, isCleanup2)
+	ok, err = tq.Add(txhash2, value2, utxoIDs2, isCleanup2)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if ok {
 		t.Fatal("should not add")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
-	if _, ok := tfq.refmap[string(txhash)]; !ok {
+	if _, ok := tq.refmap[string(txhash)]; !ok {
 		t.Fatal("txhash1 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID1)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID1)]; !ok {
 		t.Fatal("utxoID1 should be present")
 	}
-	if _, ok := tfq.utxoIDs[string(utxoID2)]; !ok {
+	if _, ok := tq.utxoIDs[string(utxoID2)]; !ok {
 		t.Fatal("utxoID2 should be present")
 	}
 }
 
-func TestTxFeeQueuePopBad(t *testing.T) {
-	tfq := &TxFeeQueue{}
-	_, err := tfq.Pop()
+func TestTxQueuePopBad(t *testing.T) {
+	tq := &TxQueue{}
+	_, err := tq.Pop()
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}
 }
 
-func TestTxFeeQueuePopGood(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueuePopGood(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 128
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -826,24 +765,24 @@ func TestTxFeeQueuePopGood(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup := false
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	retItem, err := tfq.Pop()
+	retItem, err := tq.Pop()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -852,10 +791,10 @@ func TestTxFeeQueuePopGood(t *testing.T) {
 	}
 }
 
-func TestTxFeeQueueDropMined1(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueueDropMined1(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 128
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -869,39 +808,39 @@ func TestTxFeeQueueDropMined1(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup := false
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 1 {
+	if len(tq.utxoIDs) != 1 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	tfq.DeleteMined(utxoIDs)
-	if len(tfq.txheap) != 0 {
+	tq.DeleteMined(utxoIDs)
+	if len(tq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 0 {
+	if len(tq.refmap) != 0 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 0 {
+	if len(tq.utxoIDs) != 0 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 }
 
-func TestTxFeeQueueDropMined2(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueueDropMined2(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 128
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -916,44 +855,44 @@ func TestTxFeeQueueDropMined2(t *testing.T) {
 		t.Fatal(err)
 	}
 	isCleanup := false
-	ok, err := tfq.Add(txhash, value, utxoIDs, isCleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, isCleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok {
 		t.Fatal("did not add")
 	}
-	if len(tfq.txheap) != 1 {
+	if len(tq.txheap) != 1 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 1 {
+	if len(tq.refmap) != 1 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 2 {
+	if len(tq.utxoIDs) != 2 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 
-	tfq.DeleteMined(utxoIDs)
-	if len(tfq.txheap) != 0 {
+	tq.DeleteMined(utxoIDs)
+	if len(tq.txheap) != 0 {
 		t.Fatal("invalid length of txheap")
 	}
-	if len(tfq.refmap) != 0 {
+	if len(tq.refmap) != 0 {
 		t.Fatal("invalid length of refmap")
 	}
-	if len(tfq.utxoIDs) != 0 {
+	if len(tq.utxoIDs) != 0 {
 		t.Fatal("invalid length of utxoIDs")
 	}
 }
 
-func TestTxFeeQueueDropRefernces(t *testing.T) {
-	tfq := &TxFeeQueue{}
-	tfq.dropReferences(nil)
+func TestTxQueueDropRefernces(t *testing.T) {
+	tq := &TxQueue{}
+	tq.dropReferences(nil)
 }
 
-func TestTxFeeQueueFeeCostThresholdGood(t *testing.T) {
-	tfq := &TxFeeQueue{}
+func TestTxQueueFeeCostThresholdGood(t *testing.T) {
+	tq := &TxQueue{}
 	queueSize := 128
-	err := tfq.Init(queueSize)
+	err := tq.Init(queueSize)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -968,7 +907,7 @@ func TestTxFeeQueueFeeCostThresholdGood(t *testing.T) {
 		t.Fatal(err)
 	}
 	iscleanup := false
-	ok, err := tfq.Add(txhash, value, utxoIDs, iscleanup)
+	ok, err := tq.Add(txhash, value, utxoIDs, iscleanup)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -976,7 +915,7 @@ func TestTxFeeQueueFeeCostThresholdGood(t *testing.T) {
 		t.Fatal("did not add")
 	}
 
-	retFeeCostThreshold, err := tfq.feeCostThreshold()
+	retFeeCostThreshold, err := tq.feeCostThreshold()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -985,11 +924,11 @@ func TestTxFeeQueueFeeCostThresholdGood(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	num, err := new(uint256.Uint256).FromUint64(uint64(tfq.queueAcceptanceNum))
+	num, err := new(uint256.Uint256).FromUint64(uint64(tq.queueAcceptanceNum))
 	if err != nil {
 		t.Fatal(err)
 	}
-	denum, err := new(uint256.Uint256).FromUint64(uint64(tfq.queueAcceptanceDenum))
+	denum, err := new(uint256.Uint256).FromUint64(uint64(tq.queueAcceptanceDenum))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1006,39 +945,39 @@ func TestTxFeeQueueFeeCostThresholdGood(t *testing.T) {
 	}
 }
 
-func TestTxFeeQueueFeeCostThresholdBad(t *testing.T) {
-	tfq := &TxFeeQueue{}
-	_, err := tfq.feeCostThreshold()
+func TestTxQueueFeeCostThresholdBad(t *testing.T) {
+	tq := &TxQueue{}
+	_, err := tq.feeCostThreshold()
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}
 }
 
-func TestTxFeeQueueAverageFeeCostRatioBad(t *testing.T) {
-	tfq := &TxFeeQueue{}
-	_, err := tfq.averageFeeCostRatio()
+func TestTxQueueAverageFeeCostRatioBad(t *testing.T) {
+	tq := &TxQueue{}
+	_, err := tq.averageFeeCostRatio()
 	if err == nil {
 		t.Fatal("Should have raised error (1)")
 	}
 
-	tfq.feeCostSum = uint256.Zero()
-	tfq.numCleanupTxs = -1
-	_, err = tfq.averageFeeCostRatio()
+	tq.feeCostSum = uint256.Zero()
+	tq.numCleanupTxs = -1
+	_, err = tq.averageFeeCostRatio()
 	if err == nil {
 		t.Fatal("Should have raised error (2)")
 	}
 
-	tfq.numCleanupTxs = 1
-	_, err = tfq.averageFeeCostRatio()
+	tq.numCleanupTxs = 1
+	_, err = tq.averageFeeCostRatio()
 	if err == nil {
 		t.Fatal("Should have raised error (3)")
 	}
 }
 
-func TestTxFeeQueueAverageFeeCostRatioGood(t *testing.T) {
-	tfq := &TxFeeQueue{}
-	tfq.feeCostSum = uint256.Zero()
-	avg, err := tfq.averageFeeCostRatio()
+func TestTxQueueAverageFeeCostRatioGood(t *testing.T) {
+	tq := &TxQueue{}
+	tq.feeCostSum = uint256.Zero()
+	avg, err := tq.averageFeeCostRatio()
 	if err != nil {
 		t.Fatal(err)
 	}

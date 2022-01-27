@@ -1,4 +1,4 @@
-package txfees
+package txqueue
 
 import (
 	"container/heap"
@@ -7,8 +7,8 @@ import (
 	"github.com/MadBase/MadNet/utils"
 )
 
-// TxItem is an item storing tx information for the tx heap
-type TxItem struct {
+// Item is an item storing tx information for the tx heap
+type Item struct {
 	// txhash is the transaction hash
 	txhash []byte
 	// value is the scaled transaction fee per cost
@@ -22,12 +22,12 @@ type TxItem struct {
 }
 
 // TxHash returns a copy of the txhash for the item
-func (ti *TxItem) TxHash() []byte {
+func (ti *Item) TxHash() []byte {
 	return utils.CopySlice(ti.txhash)
 }
 
 // UTXOIDs returns a copy of all the utxoIDs which are consumed by the item
-func (ti *TxItem) UTXOIDs() [][]byte {
+func (ti *Item) UTXOIDs() [][]byte {
 	utxoIDsCopy := [][]byte{}
 	for k := 0; k < len(ti.utxoIDs); k++ {
 		utxoIDsCopy = append(utxoIDsCopy, utils.CopySlice(ti.utxoIDs[k]))
@@ -36,7 +36,7 @@ func (ti *TxItem) UTXOIDs() [][]byte {
 }
 
 // TxHeap is a slice of TxItems
-type TxHeap []*TxItem
+type TxHeap []*Item
 
 var _ heap.Interface = (*TxHeap)(nil)
 
@@ -57,7 +57,7 @@ func (txh TxHeap) Swap(i, j int) {
 // Push adds another item to the heap
 func (txh *TxHeap) Push(x interface{}) {
 	n := len(*txh)
-	item := x.(*TxItem)
+	item := x.(*Item)
 	item.index = n
 	*txh = append(*txh, item)
 }

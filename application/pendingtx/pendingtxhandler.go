@@ -11,7 +11,7 @@ import (
 	"github.com/MadBase/MadNet/application/objs"
 	"github.com/MadBase/MadNet/application/objs/uint256"
 	index "github.com/MadBase/MadNet/application/pendingtx/pendingindex"
-	"github.com/MadBase/MadNet/application/txfees"
+	"github.com/MadBase/MadNet/application/txqueue"
 	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/logging"
 	"github.com/MadBase/MadNet/utils"
@@ -30,7 +30,7 @@ type depositHandler interface {
 
 // NewPendingTxHandler creates a new Handler object
 func NewPendingTxHandler(db *badger.DB, queueSize int) (*Handler, error) {
-	txqueue := &txfees.TxFeeQueue{}
+	txqueue := &txqueue.TxQueue{}
 	err := txqueue.Init(queueSize)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ type Handler struct {
 	UTXOHandler    utxoHandler
 	logger         *logrus.Logger
 	DepositHandler depositHandler
-	txqueue        *txfees.TxFeeQueue
+	txqueue        *txqueue.TxQueue
 }
 
 // Add stores a tx in the tx pool and possibly evicts other txs if the ref
@@ -258,7 +258,7 @@ func (pt *Handler) GetTxsForGossip(txnState *badger.Txn, ctx context.Context, cu
 	return utxos, nil
 }
 
-// AddTxsToQueue adds additional txs to the TxFeeQueue
+// AddTxsToQueue adds additional txs to the TxQueue
 func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, currentHeight uint32) error {
 	err := pt.db.View(func(txn *badger.Txn) error {
 		it, prefix := pt.indexer.GetOrderedIter(txn)
@@ -332,7 +332,7 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 	return err
 }
 
-// SetQueueSize sets the queue size for TxFeeQueue
+// SetQueueSize sets the queue size for TxQueue
 func (pt *Handler) SetQueueSize(queueSize int) error {
 	return pt.txqueue.SetQueueSize(queueSize)
 }
@@ -342,7 +342,7 @@ func (pt *Handler) SetQueueSize(queueSize int) error {
 /////////PRIVATE METHODS////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// getTxsFromQueue returns a list of txs from TxFeeQueue
+// getTxsFromQueue returns a list of txs from TxQueue
 func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, currentHeight uint32, maxBytes uint32, utxos []*objs.Tx) ([]*objs.Tx, uint32, error) {
 	txs := objs.TxVec{}
 	byteCount := uint32(0)

@@ -358,7 +358,7 @@ func (a *Application) AddTxsToQueue(txn *badger.Txn, currentHeight uint32) error
 	return a.txHandler.pTxHdlr.AddTxsToQueue(txn, subCtx, currentHeight)
 }
 
-// SetQueueSize sets the size of the TxFeeQueue;
+// SetQueueSize sets the size of the TxQueue;
 // this determines how many txs we store in memory to quickly form a proposal.
 func (a *Application) SetQueueSize(queueSize int) error {
 	return a.txHandler.pTxHdlr.SetQueueSize(queueSize)

@@ -1,4 +1,4 @@
-package txfees
+package txqueue
 
 import (
 	"container/heap"
@@ -16,7 +16,7 @@ func TestTxHeap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	item1 := &TxItem{
+	item1 := &Item{
 		txhash:  txhash1,
 		value:   value1,
 		utxoIDs: [][]byte{utxoID11, utxoID12},
@@ -29,7 +29,7 @@ func TestTxHeap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	item2 := &TxItem{
+	item2 := &Item{
 		txhash:  txhash2,
 		value:   value2,
 		utxoIDs: [][]byte{utxoID21, utxoID22},
@@ -42,7 +42,7 @@ func TestTxHeap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	item3 := &TxItem{
+	item3 := &Item{
 		txhash:  txhash3,
 		value:   value3,
 		utxoIDs: [][]byte{utxoID31, utxoID32},
@@ -55,7 +55,7 @@ func TestTxHeap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	item4 := &TxItem{
+	item4 := &Item{
 		txhash:  txhash4,
 		value:   value4,
 		utxoIDs: [][]byte{utxoID41, utxoID42},
@@ -78,13 +78,13 @@ func TestTxHeap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	item5 := &TxItem{
+	item5 := &Item{
 		txhash:  txhash5,
 		value:   value5,
 		utxoIDs: [][]byte{utxoID51, utxoID52},
 	}
 
-	items := []*TxItem{}
+	items := []*Item{}
 	items = append(items, item1)
 	items = append(items, item2)
 	items = append(items, item3)
@@ -97,7 +97,7 @@ func TestTxHeap(t *testing.T) {
 		heap.Push(&txh, items[k])
 	}
 	t.Logf("Popping from heap:\n")
-	itemA := heap.Pop(&txh).(*TxItem)
+	itemA := heap.Pop(&txh).(*Item)
 	t.Logf("Hash: %x; Value: %v\n", itemA.txhash, itemA.value)
 	valueA := new(uint256.Uint256)
 	err = valueA.Set(itemA.value)
@@ -105,7 +105,7 @@ func TestTxHeap(t *testing.T) {
 		t.Fatal(err)
 	}
 	for txh.Len() > 0 {
-		itemB := heap.Pop(&txh).(*TxItem)
+		itemB := heap.Pop(&txh).(*Item)
 		t.Logf("Hash: %x; Value: %v\n", itemB.txhash, itemB.value)
 		valueB := new(uint256.Uint256)
 		err = valueA.Set(itemB.value)
