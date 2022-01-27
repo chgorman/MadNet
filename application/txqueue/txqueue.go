@@ -59,17 +59,6 @@ type TxQueue struct {
 	// queueSize is the size of TxQueue. No additional transactions are
 	// added if the total number reaches this level.
 	queueSize int
-	// queueThreshold is the size where we begin to be more selective the txs
-	// we add to the queue because we are getting full
-	queueThreshold int
-	// queueThresholdFrac is the fraction which specifies how full the queue
-	// must be before we are selective
-	queueThresholdFrac float32
-	// queueAcceptance is the proportionality constant above which we require
-	// all txs to satisfy once we have reached the threshold in order to add
-	// them to the queue.
-	queueAcceptanceNum   int
-	queueAcceptanceDenum int
 	// feeCostSum is the total sum of feeCostRatios of every object inside
 	// the queue
 	feeCostSum *uint256.Uint256
@@ -79,12 +68,10 @@ type TxQueue struct {
 
 // Init initializes the TxQueue
 func (tq *TxQueue) Init(queueSize int) error {
-	tq.queueThresholdFrac = 0.75
+	//tq.queueThresholdFrac = 0.75
 	if err := tq.SetQueueSize(queueSize); err != nil {
 		return err
 	}
-	tq.queueAcceptanceNum = 5
-	tq.queueAcceptanceDenum = 4
 	tq.ClearTxQueue()
 	return nil
 }
@@ -96,7 +83,6 @@ func (tq *TxQueue) SetQueueSize(queueSize int) error {
 		return errors.New("TxQueue.SetQueueSize: queueSize <= 0")
 	}
 	tq.queueSize = queueSize
-	tq.queueThreshold = int(tq.queueThresholdFrac * float32(tq.queueSize))
 	return nil
 }
 
