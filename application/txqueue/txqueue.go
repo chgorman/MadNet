@@ -59,11 +59,6 @@ type TxQueue struct {
 	// queueSize is the size of TxQueue. No additional transactions are
 	// added if the total number reaches this level.
 	queueSize int
-	// feeCostSum is the total sum of feeCostRatios of every object inside
-	// the queue
-	feeCostSum *uint256.Uint256
-	// numCleanupTxs counts the number of cleanup transactions in the queue
-	numCleanupTxs int
 }
 
 // Init initializes the TxQueue
@@ -161,14 +156,6 @@ func (tq *TxQueue) Add(txhash []byte, value *uint256.Uint256, utxoIDs [][]byte, 
 		utxoIDs:   utxoIDsCopy,
 		isCleanup: isCleanup,
 	}
-	if item.isCleanup {
-		tq.numCleanupTxs++
-	} else {
-		_, err := tq.feeCostSum.Add(tq.feeCostSum, item.value)
-		if err != nil {
-			return false, err
-		}
-	}
 	tq.refmap[txString] = item
 	deheap.Push(&tq.txheap, item)
 	// Remove items until not overflowing
@@ -204,15 +191,6 @@ func (tq *TxQueue) PopMax() (*Item, error) {
 	item := deheap.PopMax(&tq.txheap).(*Item)
 	// Drop references to item in reference maps
 	tq.dropReferences(item)
-	if item.isCleanup {
-		tq.numCleanupTxs--
-	} else {
-		// Subtract the value from the total feeCostSum
-		_, err := tq.feeCostSum.Sub(tq.feeCostSum, item.value)
-		if err != nil {
-			return nil, err
-		}
-	}
 	return item, nil
 }
 
@@ -225,15 +203,6 @@ func (tq *TxQueue) PopMin() (*Item, error) {
 	item := deheap.Pop(&tq.txheap).(*Item)
 	// Drop references to item in reference maps
 	tq.dropReferences(item)
-	if item.isCleanup {
-		tq.numCleanupTxs--
-	} else {
-		// Subtract the value from the total feeCostSum
-		_, err := tq.feeCostSum.Sub(tq.feeCostSum, item.value)
-		if err != nil {
-			return nil, err
-		}
-	}
 	return item, nil
 }
 
@@ -289,9 +258,7 @@ func (tq *TxQueue) Drop(txhash []byte) error {
 	tq.dropReferences(item)
 	// Remove element from TxHeap
 	_ = deheap.Remove(&tq.txheap, item.index)
-	// Subtract the value from the total feeCostSum
-	_, err := tq.feeCostSum.Sub(tq.feeCostSum, item.value)
-	return err
+	return nil
 }
 
 // DeleteMined drops all txs which include the listed utxoIDs
@@ -310,7 +277,6 @@ func (tq *TxQueue) DeleteMined(utxoIDs [][]byte) {
 
 // ClearTxQueue clears the tx queue.
 func (tq *TxQueue) ClearTxQueue() {
-	tq.feeCostSum = uint256.Zero()
 	tq.txheap = make(TxHeap, 0, tq.queueSize)
 	tq.refmap = make(map[string]*Item, tq.queueSize)
 	tq.utxoIDs = make(map[string]string, tq.queueSize)

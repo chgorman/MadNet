@@ -734,13 +734,6 @@ func TestTxQueueValidAdd3(t *testing.T) {
 		t.Fatal("utxoID2 should be present")
 	}
 
-	if tq.numCleanupTxs != 1 {
-		t.Fatal("numCleanupTxs should be 1")
-	}
-	if !tq.feeCostSum.IsZero() {
-		t.Fatal("feeCostSum should be 0")
-	}
-
 	_, err = tq.PopMax()
 	if err != nil {
 		t.Fatal(err)
@@ -753,12 +746,6 @@ func TestTxQueueValidAdd3(t *testing.T) {
 	}
 	if len(tq.utxoIDs) != 0 {
 		t.Fatal("invalid length of utxoIDs")
-	}
-	if tq.numCleanupTxs != 0 {
-		t.Fatal("numCleanupTxs should be 0")
-	}
-	if !tq.feeCostSum.IsZero() {
-		t.Fatal("feeCostSum should be 0")
 	}
 }
 
