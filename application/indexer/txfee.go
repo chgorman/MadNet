@@ -7,14 +7,11 @@ import (
 )
 
 /*
-Need double index
-First index is the fee ratio (transaction fee per cost)
-Second index is the size of the object
-
-<prefix>|<feeCostRatio>|<size>|<txHash>
+<prefix>|<feeCostRatio>|<txHash>
   <prefix|txHash>
 
-iterate in fwd direction
+iterate in reverse direction; this ensures we iterate from largest to smallest
+in terms of fee-dense transactions.
 */
 
 var numBytes int = 32
@@ -125,6 +122,7 @@ func (tfi *TxFeeIndex) makeRefValue(feeCostRatioBytes []byte) []byte {
 func (tfi *TxFeeIndex) NewIter(txn *badger.Txn) (*badger.Iterator, []byte) {
 	prefix := tfi.prefix()
 	opts := badger.DefaultIteratorOptions
+	opts.Reverse = true
 	opts.Prefix = prefix
 	return txn.NewIterator(opts), prefix
 }

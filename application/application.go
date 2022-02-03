@@ -352,10 +352,31 @@ func (a *Application) Cleanup() error {
 
 // AddTxsToQueue attempts to add additional txs to queue
 func (a *Application) AddTxsToQueue(txn *badger.Txn, currentHeight uint32) error {
+	if a.txHandler.pTxHdlr.TxQueueAddFinished() {
+		a.logger.Info("TxQueueAdd Iteration finished")
+		// We exit if we have already finished tx queue iteration
+		return nil
+	}
 	ctx := context.Background()
 	subCtx, cf := context.WithTimeout(ctx, 500*time.Millisecond)
 	defer cf()
 	return a.txHandler.pTxHdlr.AddTxsToQueue(txn, subCtx, currentHeight)
+}
+
+// TxQueueAddStart starts the process of adding txs to queue
+func (a *Application) TxQueueAddStart() {
+	a.txHandler.pTxHdlr.TxQueueAddStart()
+}
+
+// TxQueueAddStop stops the process of adding txs to queue
+func (a *Application) TxQueueAddStop() {
+	a.txHandler.pTxHdlr.TxQueueAddStop()
+}
+
+// TxQueueAddStatus returns true if we are currently adding adding txs to queue
+func (a *Application) TxQueueAddStatus() bool {
+	//a.logger.Infof("TxQueueAddStatus: %v\n", a.txHandler.pTxHdlr.TxQueueAddStatus())
+	return a.txHandler.pTxHdlr.TxQueueAddStatus()
 }
 
 // SetQueueSize sets the size of the TxQueue;

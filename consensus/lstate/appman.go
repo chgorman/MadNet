@@ -147,3 +147,28 @@ func (ce *Engine) SetQueueSize(queueSize int) error {
 	}
 	return nil
 }
+
+// AddTxsToQueueStart starts the process of adding txs to queue
+func (ce *Engine) AddTxsToQueueStart() {
+	ce.appHandler.TxQueueAddStart()
+}
+
+// AddTxsToQueueStop stops the process of adding txs to queue
+func (ce *Engine) AddTxsToQueueStop() {
+	ce.appHandler.TxQueueAddStop()
+}
+
+// AddTxsToQueueStatus returns true if we are in the process of adding txs to queue
+func (ce *Engine) AddTxsToQueueStatus() bool {
+	return ce.appHandler.TxQueueAddStatus()
+}
+
+// InitializeAddTxsToQueue returns true if we should start adding txs to queue
+func (ce *Engine) InitializeAddTxsToQueue(rs *RoundStates) bool {
+	return rs.TxQueueAddStart()
+}
+
+// FinalizeAddTxsToQueue returns true if we should stop adding txs to queue
+func (ce *Engine) FinalizeAddTxsToQueue(rs *RoundStates) bool {
+	return rs.TxQueueAddStop()
+}

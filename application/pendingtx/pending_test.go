@@ -505,10 +505,12 @@ func TestGetProposal(t *testing.T) {
 	tx4 := makeTxConsuming(c2)
 	mustAddTx(t, hndlr, tx4, 1)
 	maxBytes := constants.MaxUint32
+	hndlr.txqueue.ClearTxQueue()
 	txs, _, err := hndlr.GetTxsForProposal(hndlr.db.NewTransaction(false), context.TODO(), 1, maxBytes, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Logf("Length: %v\n", len(txs))
 	txHashes, err := objs.TxVec(txs).TxHash()
 	if err != nil {
 		t.Fatal(err)
@@ -530,6 +532,7 @@ func TestGetProposal(t *testing.T) {
 		trie.Remove(ut)
 	}
 	txs, err = hndlr.GetTxsForGossip(nil, context.Background(), 1, constants.MaxUint32)
+	//txs, err = hndlr.GetTxsForGossip(hndlr.db.NewTransaction(false), context.TODO(), 1, constants.MaxUint32)
 	if err != nil {
 		t.Fatal(err)
 	}

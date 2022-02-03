@@ -77,10 +77,23 @@ func (m *MockApplication) AddTxsToQueue(txn *badger.Txn, currentHeight uint32) e
 	return nil
 }
 
-// SetQueueSize sets the size of the TxFeeQueue;
+// SetQueueSize sets the size of the TxQueue;
 // this determines how many txs we store in memory to quickly form a proposal.
 func (m *MockApplication) SetQueueSize(queueSize int) error {
 	return nil
+}
+
+// TxQueueAddStart starts the process of adding txs to TxQueue
+func (m *MockApplication) TxQueueAddStart() {
+}
+
+// TxQueueAddStop stops the process of adding txs to TxQueue
+func (m *MockApplication) TxQueueAddStop() {
+}
+
+// TxQueueAddStatus returns if we are currently adding txs to queue
+func (m *MockApplication) TxQueueAddStatus() bool {
+	return false
 }
 
 // UnmarshalTx is defined on the interface object

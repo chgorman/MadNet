@@ -41,6 +41,37 @@ func (r *RoundStates) LocalIsProposer() bool {
 	return bytes.Equal(vAddr, ownVAddr)
 }
 
+// TxQueueAddStart returns true if we should start adding txs to queue.
+func (r *RoundStates) TxQueueAddStart() bool {
+	ownVAddr := r.OwnState.VAddr
+	numv := len(r.ValidatorSet.Validators)
+	// We set the height threshold for adding txs to queue based
+	// on the number of validators
+	var heightThreshold int
+	switch {
+	case numv < 8:
+		heightThreshold = 2
+	case numv < 16:
+		heightThreshold = 3
+	case numv >= 16:
+		heightThreshold = 4
+	}
+	for k := heightThreshold; k > 0; k-- {
+		idx := objs.GetProposerIdx(numv, r.height+uint32(k), 1)
+		proposerValObj := r.ValidatorSet.Validators[idx]
+		vAddr := proposerValObj.VAddr
+		if bytes.Equal(vAddr, ownVAddr) {
+			return true
+		}
+	}
+	return false
+}
+
+// TxQueueAddStop returns true if we should stop adding txs to queue.
+func (r *RoundStates) TxQueueAddStop() bool {
+	return !r.TxQueueAddStart()
+}
+
 func (r *RoundStates) IsCurrentValidator() bool {
 	vs := r.ValidatorSet
 	vsvvs := vs.ValidatorVAddrSet

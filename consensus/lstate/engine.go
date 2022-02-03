@@ -191,10 +191,20 @@ func (ce *Engine) UpdateLocalState() (bool, error) {
 				utils.DebugTrace(ce.logger, err)
 				return err
 			}
+			if isSync && !ce.AddTxsToQueueStatus() && ce.InitializeAddTxsToQueue(roundState) {
+				// We are not adding txs to queue and we should be,
+				// so we start that process.
+				ce.logger.Infof("AddTxsToQueueStart; Height: %v\n", roundState.height)
+				ce.AddTxsToQueueStart()
+			}
 		}
 		if err := ce.dm.CleanCache(txn, bHeight); err != nil {
 			utils.DebugTrace(ce.logger, err)
 			return err
+		}
+		if ce.FinalizeAddTxsToQueue(roundState) && ce.AddTxsToQueueStatus() {
+			ce.logger.Infof("AddTxsToQueueStop;  Height: %v\n", roundState.height)
+			ce.AddTxsToQueueStop()
 		}
 		return nil
 	})

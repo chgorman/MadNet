@@ -28,6 +28,12 @@ type depositHandler interface {
 	Get(txn *badger.Txn, utxoIDs [][]byte) ([]*objs.TXOut, [][]byte, []*objs.TXOut, error)
 }
 
+type iterationInfo struct {
+	iterationStarted  bool
+	iterationComplete bool
+	currentKey        []byte
+}
+
 // NewPendingTxHandler creates a new Handler object
 func NewPendingTxHandler(db *badger.DB, queueSize int) (*Handler, error) {
 	txqueue := &txqueue.TxQueue{}
@@ -36,10 +42,11 @@ func NewPendingTxHandler(db *badger.DB, queueSize int) (*Handler, error) {
 		return nil, err
 	}
 	return &Handler{
-		indexer: index.NewPendingTxIndexer(),
-		db:      db,
-		logger:  logging.GetLogger(constants.LoggerApp),
-		txqueue: txqueue,
+		indexer:  index.NewPendingTxIndexer(),
+		db:       db,
+		logger:   logging.GetLogger(constants.LoggerApp),
+		txqueue:  txqueue,
+		iterInfo: &iterationInfo{},
 	}, nil
 }
 
@@ -51,6 +58,7 @@ type Handler struct {
 	logger         *logrus.Logger
 	DepositHandler depositHandler
 	txqueue        *txqueue.TxQueue
+	iterInfo       *iterationInfo
 }
 
 // Add stores a tx in the tx pool and possibly evicts other txs if the ref
@@ -265,25 +273,36 @@ func (pt *Handler) GetTxsForGossip(txnState *badger.Txn, ctx context.Context, cu
 
 // AddTxsToQueue adds additional txs to the TxQueue
 func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, currentHeight uint32) error {
+	if pt.iterInfo.iterationComplete {
+		// We exit because iteration is complete
+		return nil
+	}
+	iterationFinished := true
 	err := pt.db.View(func(txn *badger.Txn) error {
 		it, prefix := pt.indexer.GetOrderedIter(txn)
+		var startKey []byte
+		if pt.iterInfo.currentKey == nil {
+			startKey = append(utils.CopySlice(prefix), []byte{255, 255, 255, 255, 255}...)
+		} else {
+			// overwrite with current key
+			startKey = utils.CopySlice(pt.iterInfo.currentKey)
+		}
 		err := func() error {
 			defer it.Close()
-			isTimedOut := false
-			for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			timedOut := false
+			for it.Seek(startKey); it.ValidForPrefix(prefix); it.Next() {
+				itm := it.Item()
 				select {
 				case <-ctx.Done():
-					isTimedOut = true
-					break
+					timedOut = true
 				default:
 				}
-				if isTimedOut {
+				if timedOut {
+					// Update currentKey for next iteration
+					pt.iterInfo.currentKey = itm.KeyCopy(nil)
+					iterationFinished = false
 					break
 				}
-				if pt.txqueue.IsFull() {
-					break
-				}
-				itm := it.Item()
 				vBytes, err := itm.ValueCopy(nil)
 				if err != nil {
 					utils.DebugTrace(pt.logger, err)
@@ -324,11 +343,29 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 					utils.DebugTrace(pt.logger, err)
 					continue
 				}
+				if pt.txqueue.IsFull() {
+					mv, err := pt.txqueue.MinValue()
+					if err != nil {
+						utils.DebugTrace(pt.logger, err)
+						return err
+					}
+					if feeCostRatio.Lte(mv) {
+						// The TxQueue is full and our current feeCostRatio
+						// is less than or equal to the minimum value of the queue.
+						// There is no point to continue, as all additional txs
+						// will be less valuable than what we have currently.
+						break
+					}
+				}
 				_, err = pt.txqueue.Add(txHash, feeCostRatio, consumedUTXOIDs, isCleanup)
 				if err != nil {
 					utils.DebugTrace(pt.logger, err)
 					return err
 				}
+			}
+			if iterationFinished {
+				pt.iterInfo.iterationComplete = true
+				pt.iterInfo.currentKey = nil
 			}
 			return nil
 		}()
@@ -340,6 +377,28 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 // SetQueueSize sets the queue size for TxQueue
 func (pt *Handler) SetQueueSize(queueSize int) error {
 	return pt.txqueue.SetQueueSize(queueSize)
+}
+
+// TxQueueAddStatus returns true if
+func (pt *Handler) TxQueueAddStatus() bool {
+	return pt.iterInfo.iterationStarted
+}
+
+// TxQueueAddStart sets the iteration to begin adding txs to queue
+func (pt *Handler) TxQueueAddStart() {
+	pt.iterInfo.iterationStarted = true
+}
+
+// TxQueueAddFinished returns true if iteration is complete
+func (pt *Handler) TxQueueAddFinished() bool {
+	return pt.iterInfo.iterationComplete
+}
+
+// TxQueueAddStop stops iteration and resets iteration information
+func (pt *Handler) TxQueueAddStop() {
+	pt.iterInfo.iterationStarted = false
+	pt.iterInfo.iterationComplete = false
+	pt.iterInfo.currentKey = nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -452,7 +511,8 @@ func (pt *Handler) getTxsInternal(txnState *badger.Txn, ctx context.Context, cur
 		it, prefix := pt.indexer.GetOrderedIter(txn)
 		err := func() error {
 			defer it.Close()
-			for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			startKey := append(utils.CopySlice(prefix), []byte{255, 255, 255, 255, 255}...)
+			for it.Seek(startKey); it.ValidForPrefix(prefix); it.Next() {
 				itm := it.Item()
 				vBytes, err := itm.ValueCopy(nil)
 				if err != nil {
@@ -460,14 +520,14 @@ func (pt *Handler) getTxsInternal(txnState *badger.Txn, ctx context.Context, cur
 					return err
 				}
 				txHash := vBytes[len(prefix):]
-				isTimedOut := false
+				timedOut := false
 				select {
 				case <-ctx.Done():
-					isTimedOut = true
+					timedOut = true
 					break
 				default:
 				}
-				if isTimedOut {
+				if timedOut {
 					break
 				}
 				tx, err := pt.getOneInternal(txn, utils.Epoch(currentHeight), txHash)

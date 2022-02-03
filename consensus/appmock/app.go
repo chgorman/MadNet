@@ -43,6 +43,12 @@ type Application interface {
 	AddTxsToQueue(txn *badger.Txn, currentHeight uint32) error
 	// SetQueueSize sets the size of the TxFeeQueue
 	SetQueueSize(queueSize int) error
+	// TxQueueAddStart sets the parameter to start adding txs to queue
+	TxQueueAddStart()
+	// TxQueueAddStop sets the parameter to stop adding txs to queue
+	TxQueueAddStop()
+	// TxQueueAddStatus returns if we are currently adding txs to queue
+	TxQueueAddStatus() bool
 	// GetSnapShotNode returns a snapshot node from the state trie to a peer
 	GetSnapShotNode(txn *badger.Txn, height uint32, key []byte) ([]byte, error)
 	// StoreSnapShotStateData stores a snapshot state element to the database
