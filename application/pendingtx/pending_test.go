@@ -588,3 +588,49 @@ func TestGetTxsFromQueue(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestAddTxsToQueueStatusChecks(t *testing.T) {
+	hndlr, _, cleanup := setup(t)
+	defer cleanup()
+
+	_, tx := makeTxInitial()
+	mustAddTx(t, hndlr, tx, 1)
+
+	_, tx2 := makeTxInitial()
+	mustAddTx(t, hndlr, tx2, 1)
+
+	hndlr.SetQueueSize(1)
+	if hndlr.TxQueueAddStatus() {
+		t.Fatal("Status should be false")
+	}
+	hndlr.TxQueueAddStart()
+	if !hndlr.TxQueueAddStatus() {
+		t.Fatal("Status should be true")
+	}
+	hndlr.TxQueueAddStart()
+	if !hndlr.TxQueueAddStatus() {
+		t.Fatal("Status should be true")
+	}
+	hndlr.TxQueueAddStop()
+	if hndlr.TxQueueAddStatus() {
+		t.Fatal("Status should be false")
+	}
+
+	if hndlr.TxQueueAddFinished() {
+		t.Fatal("StatusFinished should be false")
+	}
+	err := hndlr.AddTxsToQueue(hndlr.db.NewTransaction(false), context.TODO(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !hndlr.TxQueueAddFinished() {
+		t.Fatal("StatusFinished should be true")
+	}
+	err = hndlr.AddTxsToQueue(hndlr.db.NewTransaction(false), context.TODO(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !hndlr.TxQueueAddFinished() {
+		t.Fatal("StatusFinished should still be true")
+	}
+}

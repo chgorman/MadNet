@@ -353,7 +353,6 @@ func (a *Application) Cleanup() error {
 // AddTxsToQueue attempts to add additional txs to queue
 func (a *Application) AddTxsToQueue(txn *badger.Txn, currentHeight uint32) error {
 	if a.txHandler.pTxHdlr.TxQueueAddFinished() {
-		a.logger.Info("TxQueueAdd Iteration finished")
 		// We exit if we have already finished tx queue iteration
 		return nil
 	}

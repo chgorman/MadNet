@@ -10,6 +10,8 @@ import (
 	"github.com/MadBase/MadNet/utils"
 )
 
+// RoundStates keeps local information related to the validator's own state
+// as well as the state of the other validators.
 type RoundStates struct {
 	height             uint32
 	round              uint32
@@ -33,6 +35,8 @@ func (r *RoundStates) IsMe(vAddr []byte) bool {
 	return false
 }
 
+// LocalIsProposer returns true if local validator is supposed to propose
+// for the specified height and round
 func (r *RoundStates) LocalIsProposer() bool {
 	ownVAddr := r.OwnState.VAddr
 	idx := objs.GetProposerIdx(len(r.ValidatorSet.Validators), r.height, r.round)
@@ -41,8 +45,9 @@ func (r *RoundStates) LocalIsProposer() bool {
 	return bytes.Equal(vAddr, ownVAddr)
 }
 
-// TxQueueAddStart returns true if we should start adding txs to queue.
-func (r *RoundStates) TxQueueAddStart() bool {
+// TxQueueAddInitialize returns true if we should start adding txs to queue.
+// This happens if we are set to propose within the specified number of rounds.
+func (r *RoundStates) TxQueueAddInitialize() bool {
 	ownVAddr := r.OwnState.VAddr
 	numv := len(r.ValidatorSet.Validators)
 	// We set the height threshold for adding txs to queue based
@@ -67,9 +72,9 @@ func (r *RoundStates) TxQueueAddStart() bool {
 	return false
 }
 
-// TxQueueAddStop returns true if we should stop adding txs to queue.
-func (r *RoundStates) TxQueueAddStop() bool {
-	return !r.TxQueueAddStart()
+// TxQueueAddFinalize returns true if we should stop adding txs to queue.
+func (r *RoundStates) TxQueueAddFinalize() bool {
+	return !r.TxQueueAddInitialize()
 }
 
 func (r *RoundStates) IsCurrentValidator() bool {

@@ -28,10 +28,25 @@ type depositHandler interface {
 	Get(txn *badger.Txn, utxoIDs [][]byte) ([]*objs.TXOut, [][]byte, []*objs.TXOut, error)
 }
 
+// iterationInfo stores information related to the process of iterating
+// through PendingTxHandler to add txs to the TxQueue.
+// Because this process is time consuming, we do not run this continually;
+// we periodically check to see if we should begin.
+// Once we begin, we iterate from the fee-dense txs below.
+// If we run out of time, we store the currentKey and pick up the next iteration.
+// Once making it through the entire list or we have a full TxQueue
+// and we reach a tx which is below the minimum value, we stop;
+// at this point, we have finished our iteration.
 type iterationInfo struct {
-	iterationStarted  bool
+	// iterationStarted is true when we are ready to start AddTxsToQueue process;
+	// it is false otherwise.
+	iterationStarted bool
+	// iterationComplete is true when we have finished iterating the
+	// PendingTxHandler; it is false otherwise.
 	iterationComplete bool
-	currentKey        []byte
+	// currentKey is either nil (to signify no stored key) or holds
+	// the key where we need to continue iteration through PendingTxHandler.
+	currentKey []byte
 }
 
 // NewPendingTxHandler creates a new Handler object
@@ -235,6 +250,8 @@ func (pt *Handler) DeleteMined(txnState *badger.Txn, currentHeight uint32, txHas
 
 // GetTxsForProposal returns an set of txs that are mutually exclusive with
 // respect to the consumed UTXOs. This is used to generate new proposals.
+// It starts by attempting to get txs from the TxQueue.
+// If there is still time, it then attempts
 func (pt *Handler) GetTxsForProposal(txnState *badger.Txn, ctx context.Context, currentHeight uint32, maxBytes uint32, tx *objs.Tx) (objs.TxVec, uint32, error) {
 	var utxos objs.TxVec
 	var err error
@@ -282,9 +299,10 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 		it, prefix := pt.indexer.GetOrderedIter(txn)
 		var startKey []byte
 		if pt.iterInfo.currentKey == nil {
+			// Start iterating at the largest value
 			startKey = append(utils.CopySlice(prefix), []byte{255, 255, 255, 255, 255}...)
 		} else {
-			// overwrite with current key
+			// Start iterating with current key
 			startKey = utils.CopySlice(pt.iterInfo.currentKey)
 		}
 		err := func() error {
@@ -298,7 +316,7 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 				default:
 				}
 				if timedOut {
-					// Update currentKey for next iteration
+					// We ran out of time; store currentKey for next iteration
 					pt.iterInfo.currentKey = itm.KeyCopy(nil)
 					iterationFinished = false
 					break
@@ -310,6 +328,7 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 				}
 				txHash := vBytes[len(prefix):]
 				if pt.txqueue.Contains(txHash) {
+					// txHash is already included in TxQueue; skip
 					continue
 				}
 				tx, err := pt.getOneInternal(txn, utils.Epoch(currentHeight), txHash)
@@ -344,12 +363,15 @@ func (pt *Handler) AddTxsToQueue(txnState *badger.Txn, ctx context.Context, curr
 					continue
 				}
 				if pt.txqueue.IsFull() {
-					mv, err := pt.txqueue.MinValue()
+					// TxQueue is full; we need to make sure the tx we are
+					// attempting to add is more valuable than the
+					// minimum-value element already present
+					txqMinValue, err := pt.txqueue.MinValue()
 					if err != nil {
 						utils.DebugTrace(pt.logger, err)
 						return err
 					}
-					if feeCostRatio.Lte(mv) {
+					if feeCostRatio.Lte(txqMinValue) {
 						// The TxQueue is full and our current feeCostRatio
 						// is less than or equal to the minimum value of the queue.
 						// There is no point to continue, as all additional txs
@@ -445,15 +467,15 @@ func (pt *Handler) getTxsFromQueue(txnState *badger.Txn, ctx context.Context, cu
 		}
 	}
 
+	timedOut := false
 	for !pt.txqueue.IsEmpty() {
-		isTimedOut := false
 		select {
 		case <-ctx.Done():
-			isTimedOut = true
+			timedOut = true
 			break
 		default:
 		}
-		if isTimedOut {
+		if timedOut {
 			break
 		}
 		if ok := pt.checkSize(maxBytes, byteCount); !ok {

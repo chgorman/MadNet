@@ -165,10 +165,10 @@ func (ce *Engine) AddTxsToQueueStatus() bool {
 
 // InitializeAddTxsToQueue returns true if we should start adding txs to queue
 func (ce *Engine) InitializeAddTxsToQueue(rs *RoundStates) bool {
-	return rs.TxQueueAddStart()
+	return rs.TxQueueAddInitialize()
 }
 
 // FinalizeAddTxsToQueue returns true if we should stop adding txs to queue
 func (ce *Engine) FinalizeAddTxsToQueue(rs *RoundStates) bool {
-	return rs.TxQueueAddStop()
+	return rs.TxQueueAddFinalize()
 }
