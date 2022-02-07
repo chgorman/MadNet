@@ -401,6 +401,11 @@ func (pt *Handler) SetQueueSize(queueSize int) error {
 	return pt.txqueue.SetQueueSize(queueSize)
 }
 
+// QueueSize returns the queue size for TxQueue
+func (pt *Handler) QueueSize() int {
+	return pt.txqueue.QueueSize()
+}
+
 // TxQueueAddStatus returns true if
 func (pt *Handler) TxQueueAddStatus() bool {
 	return pt.iterInfo.iterationStarted

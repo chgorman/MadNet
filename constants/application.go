@@ -10,10 +10,9 @@ const (
 )
 
 const (
-	// MaxFeeSizeRatio is 2^123 as a float32.
-	// Any transaction with a FeeSizeRatio above this value will
-	// be rounded down to this value.
-	MaxFeeSizeRatio float32 = 10633823966279326983230456482242756608
+	// MinQueueSize is the minimum allowed size for TxQueue
+	// TODO: think about a better number to use
+	MinQueueSize int = 10000
 )
 
 const (

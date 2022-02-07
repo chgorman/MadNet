@@ -384,6 +384,11 @@ func (a *Application) SetQueueSize(queueSize int) error {
 	return a.txHandler.pTxHdlr.SetQueueSize(queueSize)
 }
 
+// QueueSize returns the size of the TxQueue.
+func (a *Application) QueueSize() int {
+	return a.txHandler.pTxHdlr.QueueSize()
+}
+
 // StoreSnapShotNode will store a node of the state trie during fast sync
 func (a *Application) StoreSnapShotNode(txn *badger.Txn, batch []byte, root []byte, layer int) ([][]byte, int, []trie.LeafNode, error) {
 	return a.txHandler.StoreSnapShotNode(txn, batch, root, layer)

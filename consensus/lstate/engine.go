@@ -202,6 +202,8 @@ func (ce *Engine) UpdateLocalState() (bool, error) {
 			return err
 		}
 		if ce.FinalizeAddTxsToQueue(roundState) && ce.AddTxsToQueueStatus() {
+			// We are potentially adding txs to queue and we should not,
+			// so we stop that process.
 			ce.AddTxsToQueueStop()
 		}
 		return nil

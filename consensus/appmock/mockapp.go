@@ -77,6 +77,11 @@ func (m *MockApplication) AddTxsToQueue(txn *badger.Txn, currentHeight uint32) e
 	return nil
 }
 
+// QueueSize returns the size of the TxQueue.
+func (m *MockApplication) QueueSize() int {
+	return 0
+}
+
 // SetQueueSize sets the size of the TxQueue;
 // this determines how many txs we store in memory to quickly form a proposal.
 func (m *MockApplication) SetQueueSize(queueSize int) error {

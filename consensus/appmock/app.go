@@ -41,6 +41,8 @@ type Application interface {
 	StoreSnapShotNode(txn *badger.Txn, batch []byte, root []byte, layer int) ([][]byte, int, []trie.LeafNode, error)
 	// AddTxsToQueue attempts to add additional txs to txqueue
 	AddTxsToQueue(txn *badger.Txn, currentHeight uint32) error
+	// QueueSize returns the size of the TxFeeQueue
+	QueueSize() int
 	// SetQueueSize sets the size of the TxFeeQueue
 	SetQueueSize(queueSize int) error
 	// TxQueueAddStart sets the parameter to start adding txs to queue
