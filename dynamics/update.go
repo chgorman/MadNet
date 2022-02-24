@@ -55,6 +55,12 @@ const (
 
 	// DataStoreValidVersionType is the UpdateType for updating DataStoreValidVersion
 	DataStoreValidVersionType
+
+	// ERCTokenFeeType is the UpdateType for updating ERCTokenFee
+	ERCTokenFeeType
+
+	// ERCTokenValidVersionType is the UpdateType for updating ERCTokenValidVersion
+	ERCTokenValidVersionType
 )
 
 // Updater specifies the interface we use for updating Storage

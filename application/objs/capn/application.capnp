@@ -7,6 +7,7 @@ const defaultDSPreImage :DSPreImage = (chainID = 0, index = 0x"00", issuedAt = 0
 const defaultDSLinker :DSLinker = (txHash = 0x"00", dSPreImage = .defaultDSPreImage);
 const defaultVSPreImage :VSPreImage = (chainID = 0, value = 0, owner = 0x"00", value1 = 0, value2 = 0, value3 = 0, value4 = 0, value5 = 0, value6 = 0, value7 = 0, fee0 = 0, fee1 = 0, fee2 = 0, fee3 = 0, fee4 = 0, fee5 = 0, fee6 = 0, fee7 = 0);
 const defaultASPreImage :ASPreImage = (chainID = 0, value = 0, owner = 0x"00", issuedAt = 0, exp = 0, value1 = 0, value2 = 0, value3 = 0, value4 = 0, value5 = 0, value6 = 0, value7 = 0, fee0 = 0, fee1 = 0, fee2 = 0, fee3 = 0, fee4 = 0, fee5 = 0, fee6 = 0, fee7 = 0);
+const defaultERCTPreImage :ERCTPreImage = (chainID = 0, exitChainID = 0, tXOutIdx = 0, withdraw = false, smartContractAddress = 0x"00", owner = 0x"00", value0 = 0, value1 = 0, value2 = 0, value3 = 0, value4 = 0, value5 = 0, value6 = 0, value7 = 0, fee0 = 0, fee1 = 0, fee2 = 0, fee3 = 0, fee4 = 0, fee5 = 0, fee6 = 0, fee7 = 0, tokenID0 = 0, tokenID1 = 0, tokenID2 = 0, tokenID3 = 0, tokenID4 = 0, tokenID5 = 0, tokenID6 = 0, tokenID7 = 0);
 const defaultTXInPreImage :TXInPreImage = (chainID = 0, consumedTxIdx = 0, consumedTxHash = 0x"00");
 const defaultTXInLinker :TXInLinker = (tXInPreImage = .defaultTXInPreImage, txHash = 0x"00");
 
@@ -159,6 +160,66 @@ struct AtomicSwap {
 
 ################################################################################
 
+struct ERCTPreImage {
+    chainID @0 :UInt32 = 0;
+    # The chainID of this object.
+
+    exitChainID @1 :UInt32 = 0;
+    # The ExitChainID of this object.
+
+    tXOutIdx @2 :UInt32 = 0;
+    # The index at which this element appears in the transaction output list.
+
+    withdraw @3 :Bool = false;
+    # The Withdraw flag respresents whether the tokens must be withdrawn.
+
+    smartContractAddress @4 :Data = 0x"00";
+    # The address of the smart contract which issued these tokens.
+
+    owner @5 :Data = 0x"00";
+    # The hash of the public key of the owner of this object.
+
+    value0 @6 :UInt32 = 0;
+    value1 @7 :UInt32 = 0;
+    value2 @8 :UInt32 = 0;
+    value3 @9 :UInt32 = 0;
+    value4 @10 :UInt32 = 0;
+    value5 @11 :UInt32 = 0;
+    value6 @12 :UInt32 = 0;
+    value7 @13 :UInt32 = 0;
+    # Value stores the value of the ERCToken object
+
+    fee0 @14 :UInt32 = 0;
+    fee1 @15 :UInt32 = 0;
+    fee2 @16 :UInt32 = 0;
+    fee3 @17 :UInt32 = 0;
+    fee4 @18 :UInt32 = 0;
+    fee5 @19 :UInt32 = 0;
+    fee6 @20 :UInt32 = 0;
+    fee7 @21 :UInt32 = 0;
+    # Fee stores the associated fee for an ERCToken object
+
+    tokenID0 @22 :UInt32 = 0;
+    tokenID1 @23 :UInt32 = 0;
+    tokenID2 @24 :UInt32 = 0;
+    tokenID3 @25 :UInt32 = 0;
+    tokenID4 @26 :UInt32 = 0;
+    tokenID5 @27 :UInt32 = 0;
+    tokenID6 @28 :UInt32 = 0;
+    tokenID7 @29 :UInt32 = 0;
+    # TokenID stores the tokenID of the ERCToken object
+}
+
+struct ERCToken {
+    eRCTPreImage @0 :ERCTPreImage = .defaultERCTPreImage;
+    # The structure containing particular information for this object.
+
+    txHash @1 :Data = 0x"00";
+    # The hash of the transaction that created this object.
+}
+
+################################################################################
+
 struct TXInPreImage {
     chainID @0 :UInt32 = 0;
     # Chain id on which this object was created.
@@ -201,6 +262,9 @@ struct TXOut {
 
         atomicSwap @2 :AtomicSwap;
         # The output if it is an atomicswap
+
+        ercToken @3 :ERCToken;
+        # The output if it is an ercToken
     }
 }
 
