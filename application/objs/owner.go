@@ -72,10 +72,10 @@ func (onr *Owner) NewFromValueStoreOwner(vso *ValueStoreOwner) error {
 	return onr.New(vso.Account, vso.CurveSpec)
 }
 
-// NewFromValueStoreOwner makes a new Owner from a ValueStoreOwner
+// NewFromERCTokenOwner makes a new Owner from an ERCTokenOwner
 func (onr *Owner) NewFromERCTokenOwner(eto *ERCTokenOwner) error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.NewFromValueStoreOwner; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.NewFromERCTokenOwner; owner not initialized")
 	}
 	if err := eto.Validate(); err != nil {
 		return err
@@ -98,7 +98,7 @@ func (onr *Owner) MarshalBinary() ([]byte, error) {
 // Validate validates the Owner object
 func (onr *Owner) Validate() error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.validate; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.Validate; owner not initialized")
 	}
 	if err := onr.validateCurveSpec(); err != nil {
 		return err
@@ -113,7 +113,7 @@ func (onr *Owner) Validate() error {
 // Owner object
 func (onr *Owner) UnmarshalBinary(o []byte) error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.unmarshalBinary; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.UnmarshalBinary; owner not initialized")
 	}
 	owner := utils.CopySlice(o)
 	curveSpec, owner, err := extractCurveSpec(owner)

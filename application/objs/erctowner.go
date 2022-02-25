@@ -3,10 +3,9 @@ package objs
 import (
 	"bytes"
 
-	"github.com/MadBase/MadNet/errorz"
-
 	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/crypto"
+	"github.com/MadBase/MadNet/errorz"
 	"github.com/MadBase/MadNet/utils"
 )
 
@@ -252,7 +251,7 @@ func (ets *ERCTokenSignature) MarshalBinary() ([]byte, error) {
 // Validate validates the ERCTokenSignature object
 func (ets *ERCTokenSignature) Validate() error {
 	if ets == nil {
-		return errorz.ErrInvalid{}.New("ets.validate; ets not initialized")
+		return errorz.ErrInvalid{}.New("ets.Validate; ets not initialized")
 	}
 	if err := ets.validateSVA(); err != nil {
 		return err

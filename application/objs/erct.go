@@ -22,7 +22,7 @@ type ERCToken struct {
 // New creates a new ERCToken
 func (b *ERCToken) New(chainID, exitChainID uint32, value, fee, tokenID *uint256.Uint256, acct []byte, curveSpec constants.CurveSpec, withdraw bool, txHash []byte, sca *SmartContract) error {
 	if b == nil {
-		return errorz.ErrInvalid{}.New("erct.New: vs not initialized")
+		return errorz.ErrInvalid{}.New("erct.New: erct not initialized")
 	}
 	if value == nil {
 		return errorz.ErrInvalid{}.New("erct.New: value is nil")
@@ -48,7 +48,7 @@ func (b *ERCToken) New(chainID, exitChainID uint32, value, fee, tokenID *uint256
 		return errorz.ErrInvalid{}.New("erct.New: ExitChainID is zero")
 	}
 	if len(txHash) != constants.HashLen {
-		return errorz.ErrInvalid{}.New("vs.new: invalid txHash; incorrect txhash length")
+		return errorz.ErrInvalid{}.New("erct.New: invalid txHash; incorrect txhash length")
 	}
 	erctp := &ERCTPreImage{
 		ChainID:              chainID,
