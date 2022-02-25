@@ -126,6 +126,151 @@ func TestERCTokenUnmarshalBinaryBad(t *testing.T) {
 	}
 }
 
+func TestERCTokenNew(t *testing.T) {
+	utxo := &TXOut{}
+	err := utxo.ercToken.New(0, 0, nil, nil, nil, nil, 0, false, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (0)")
+	}
+
+	erct := &ERCToken{}
+	err = erct.New(0, 0, nil, nil, nil, nil, 0, false, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+
+	value := uint256.Zero()
+	err = erct.New(0, 0, value, nil, nil, nil, 0, false, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+
+	value = uint256.One()
+	err = erct.New(0, 0, value, nil, nil, nil, 0, false, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+
+	fee := uint256.Zero()
+	err = erct.New(0, 0, value, fee, nil, nil, 0, false, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (4)")
+	}
+
+	tokenID := uint256.Zero()
+	err = erct.New(0, 0, value, fee, tokenID, nil, 0, false, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
+	}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("secret"))); err != nil {
+		t.Fatal(err)
+	}
+	ownerPubk, err := ownerSigner.Pubkey()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ownerAcct := crypto.GetAccount(ownerPubk)
+	owner := &ValueStoreOwner{}
+	owner.New(ownerAcct, constants.CurveSecp256k1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = erct.New(0, 0, value, fee, tokenID, owner.Account, owner.CurveSpec, false, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (6)")
+	}
+
+	chainID := uint32(1)
+	err = erct.New(chainID, 0, value, fee, tokenID, owner.Account, owner.CurveSpec, false, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (7)")
+	}
+
+	exitChainID := uint32(2)
+	err = erct.New(chainID, exitChainID, value, fee, tokenID, owner.Account, owner.CurveSpec, false, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (8)")
+	}
+
+	txhash := make([]byte, constants.HashLen)
+	err = erct.New(chainID, exitChainID, value, fee, tokenID, owner.Account, owner.CurveSpec, false, txhash, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestERCTokenNewFromDeposit(t *testing.T) {
+	utxo := &TXOut{}
+	err := utxo.ercToken.NewFromDeposit(0, 0, nil, nil, nil, 0, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (0)")
+	}
+
+	erct := &ERCToken{}
+	err = erct.NewFromDeposit(0, 0, nil, nil, nil, 0, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("secret"))); err != nil {
+		t.Fatal(err)
+	}
+	ownerPubk, err := ownerSigner.Pubkey()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ownerAcct := crypto.GetAccount(ownerPubk)
+	owner := &ValueStoreOwner{}
+	owner.New(ownerAcct, constants.CurveSecp256k1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = erct.NewFromDeposit(0, 0, nil, nil, owner.Account, owner.CurveSpec, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+
+	chainID := uint32(1)
+	err = erct.NewFromDeposit(chainID, 0, nil, nil, owner.Account, owner.CurveSpec, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+
+	exitChainID := uint32(2)
+	err = erct.NewFromDeposit(chainID, exitChainID, nil, nil, owner.Account, owner.CurveSpec, nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (4)")
+	}
+
+	nonce := make([]byte, constants.HashLen)
+	nonce[0] = 1
+	err = erct.NewFromDeposit(chainID, exitChainID, nil, nil, owner.Account, owner.CurveSpec, nonce, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
+	}
+
+	value := uint256.Zero()
+	err = erct.NewFromDeposit(chainID, exitChainID, value, nil, owner.Account, owner.CurveSpec, nonce, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (6)")
+	}
+
+	value = uint256.One()
+	err = erct.NewFromDeposit(chainID, exitChainID, value, nil, owner.Account, owner.CurveSpec, nonce, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (7)")
+	}
+
+	tokenID := uint256.Zero()
+	err = erct.NewFromDeposit(chainID, exitChainID, value, tokenID, owner.Account, owner.CurveSpec, nonce, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestERCTokenPreHashBad(t *testing.T) {
 	utxo := TXOut{}
 	_, err := utxo.ercToken.PreHash()

@@ -229,6 +229,18 @@ type SmartContract struct {
 	address []byte
 }
 
+// New makes a new SmartContract struct
+func (sc *SmartContract) New(address []byte) error {
+	if sc == nil {
+		return errorz.ErrInvalid{}.New("sc.New: sc not initialized")
+	}
+	if len(address) != constants.OwnerLen {
+		return errorz.ErrInvalid{}.New("sc.New: address has incorrect length")
+	}
+	sc.address = utils.CopySlice(address)
+	return nil
+}
+
 // MarshalBinary marshals the smart contract object
 func (sc *SmartContract) MarshalBinary() ([]byte, error) {
 	if sc == nil {

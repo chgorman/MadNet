@@ -19,6 +19,94 @@ type ERCToken struct {
 	utxoID []byte
 }
 
+// New creates a new ERCToken
+func (b *ERCToken) New(chainID, exitChainID uint32, value, fee, tokenID *uint256.Uint256, acct []byte, curveSpec constants.CurveSpec, withdraw bool, txHash []byte, sca *SmartContract) error {
+	if b == nil {
+		return errorz.ErrInvalid{}.New("erct.New: vs not initialized")
+	}
+	if value == nil {
+		return errorz.ErrInvalid{}.New("erct.New: value is nil")
+	}
+	if value.IsZero() {
+		return errorz.ErrInvalid{}.New("erct.New: value is zero")
+	}
+	if fee == nil {
+		return errorz.ErrInvalid{}.New("erct.New: fee is nil")
+	}
+	if tokenID == nil {
+		return errorz.ErrInvalid{}.New("erct.New: tokenID is nil")
+	}
+	erctowner := &ERCTokenOwner{}
+	erctowner.New(acct, curveSpec)
+	if err := erctowner.Validate(); err != nil {
+		return err
+	}
+	if chainID == 0 {
+		return errorz.ErrInvalid{}.New("erct.New: ChainID is zero")
+	}
+	if exitChainID == 0 {
+		return errorz.ErrInvalid{}.New("erct.New: ExitChainID is zero")
+	}
+	if len(txHash) != constants.HashLen {
+		return errorz.ErrInvalid{}.New("vs.new: invalid txHash; incorrect txhash length")
+	}
+	erctp := &ERCTPreImage{
+		ChainID:              chainID,
+		ExitChainID:          exitChainID,
+		TXOutIdx:             constants.MaxUint32,
+		Withdraw:             withdraw,
+		Value:                value.Clone(),
+		SmartContractAddress: sca,
+		Owner:                erctowner,
+		Fee:                  fee.Clone(),
+		TokenID:              tokenID.Clone(),
+	}
+	b.ERCTPreImage = erctp
+	b.TxHash = utils.CopySlice(txHash)
+	return nil
+}
+
+// NewFromDeposit creates a new ERCToken from a deposit event
+func (b *ERCToken) NewFromDeposit(chainID, exitChainID uint32, value, tokenID *uint256.Uint256, acct []byte, curveSpec constants.CurveSpec, nonce []byte, sca *SmartContract) error {
+	erctowner := &ERCTokenOwner{}
+	erctowner.New(acct, curveSpec)
+	if err := erctowner.Validate(); err != nil {
+		return err
+	}
+	if chainID == 0 {
+		return errorz.ErrInvalid{}.New("erct.NewFromDeposit: ChainID is zero")
+	}
+	if exitChainID == 0 {
+		return errorz.ErrInvalid{}.New("erct.NewFromDeposit: ExitChainID is zero")
+	}
+	if len(nonce) != constants.HashLen {
+		return errorz.ErrInvalid{}.New("erct.NewFromDeposit: invalid nonce; incorrect nonce length")
+	}
+	if value == nil {
+		return errorz.ErrInvalid{}.New("erct.NewFromDeposit: value is nil")
+	}
+	if value.IsZero() {
+		return errorz.ErrInvalid{}.New("erct.NewFromDeposit: value is zero")
+	}
+	if tokenID == nil {
+		return errorz.ErrInvalid{}.New("erct.NewFromDeposit: tokenID is nil")
+	}
+	erctp := &ERCTPreImage{
+		ChainID:              chainID,
+		ExitChainID:          exitChainID,
+		Withdraw:             false,
+		SmartContractAddress: sca,
+		TXOutIdx:             constants.MaxUint32,
+		Owner:                erctowner,
+		Value:                value.Clone(),
+		Fee:                  uint256.Zero(),
+		TokenID:              tokenID.Clone(),
+	}
+	b.ERCTPreImage = erctp
+	b.TxHash = utils.CopySlice(nonce)
+	return nil
+}
+
 // UnmarshalBinary takes a byte slice and returns the corresponding
 // ERCToken object
 func (b *ERCToken) UnmarshalBinary(data []byte) error {
