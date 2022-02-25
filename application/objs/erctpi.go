@@ -4,6 +4,7 @@ import (
 	mdefs "github.com/MadBase/MadNet/application/objs/capn"
 	"github.com/MadBase/MadNet/application/objs/erctpreimage"
 	"github.com/MadBase/MadNet/application/objs/uint256"
+	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/crypto"
 	"github.com/MadBase/MadNet/errorz"
 	"github.com/MadBase/MadNet/utils"
@@ -26,7 +27,7 @@ type ERCTPreImage struct {
 }
 
 // UnmarshalBinary takes a byte slice and returns the corresponding
-// VSPreImage object
+// ERCTPreImage object
 func (b *ERCTPreImage) UnmarshalBinary(data []byte) error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("erctpi.UnmarshalBinary: erctpi not initialized")
@@ -38,7 +39,7 @@ func (b *ERCTPreImage) UnmarshalBinary(data []byte) error {
 	return b.UnmarshalCapn(bc)
 }
 
-// MarshalBinary takes the VSPreImage object and returns the canonical
+// MarshalBinary takes the ERCTPreImage object and returns the canonical
 // byte slice
 func (b *ERCTPreImage) MarshalBinary() ([]byte, error) {
 	if b == nil {
@@ -215,7 +216,7 @@ func (b *ERCTPreImage) PreHash() ([]byte, error) {
 	return utils.CopySlice(b.preHash), nil
 }
 
-// ValidateSignature validates the signature for VSPreImage
+// ValidateSignature validates the signature for ERCTPreImage
 func (b *ERCTPreImage) ValidateSignature(msg []byte, sig *ERCTokenSignature) error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("erctpi.ValidateSignature: erctpi not initialized")
@@ -233,7 +234,7 @@ func (sc *SmartContract) MarshalBinary() ([]byte, error) {
 	if sc == nil {
 		return nil, errorz.ErrInvalid{}.New("sc.MarshalBinary: sc not initialized")
 	}
-	if len(sc.address) != 20 {
+	if len(sc.address) != constants.OwnerLen {
 		return nil, errorz.ErrInvalid{}.New("sc.MarshalBinary: sc.address has incorrect length")
 	}
 	return utils.CopySlice(sc.address), nil
@@ -244,7 +245,7 @@ func (sc *SmartContract) UnmarshalBinary(data []byte) error {
 	if sc == nil {
 		return errorz.ErrInvalid{}.New("sc.UnmarshalBinary: sc not initialized")
 	}
-	if len(data) != 20 {
+	if len(data) != constants.OwnerLen {
 		return errorz.ErrInvalid{}.New("sc.UnmarshalBinary: data has incorrect length")
 	}
 	sc.address = utils.CopySlice(data)

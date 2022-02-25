@@ -17,15 +17,15 @@ type ERCTokenOwner struct {
 	Account   []byte
 }
 
-// New makes a new ValueStoreOwner
+// New makes a new ERCTokenOwner
 func (eto *ERCTokenOwner) New(acct []byte, curveSpec constants.CurveSpec) {
-	eto.SVA = ValueStoreSVA
+	eto.SVA = ERCTokenSVA
 	eto.CurveSpec = curveSpec
 	eto.Account = utils.CopySlice(acct)
 }
 
 // NewFromOwner takes an Owner object and creates the corresponding
-// ValueStoreOwner
+// ERCTokenOwner
 func (eto *ERCTokenOwner) NewFromOwner(o *Owner) error {
 	if eto == nil {
 		return errorz.ErrInvalid{}.New("eto.NewFromOwner; eto not initialized")
@@ -56,7 +56,7 @@ func (eto *ERCTokenOwner) MarshalBinary() ([]byte, error) {
 	return owner, nil
 }
 
-// Validate validates the ValueStoreOwner object
+// Validate validates the ERCTokenOwner object
 func (eto *ERCTokenOwner) Validate() error {
 	if eto == nil {
 		return errorz.ErrInvalid{}.New("eto.Validate; eto not initialized")
@@ -104,7 +104,7 @@ func (eto *ERCTokenOwner) UnmarshalBinary(o []byte) error {
 	return nil
 }
 
-// ValidateSignature validates ValueStoreSignature sig for message msg
+// ValidateSignature validates ERCTokenSignature sig for message msg
 func (eto *ERCTokenOwner) ValidateSignature(msg []byte, sig *ERCTokenSignature) error {
 	if err := eto.Validate(); err != nil {
 		return errorz.ErrInvalid{}.New("eto.ValidateSignature; invalid ERCTokenOwner")
@@ -158,7 +158,7 @@ func (eto *ERCTokenOwner) validateSVA() error {
 	if eto == nil {
 		return errorz.ErrInvalid{}.New("eto.validateSVA; eto not initialized")
 	}
-	if eto.SVA != ValueStoreSVA {
+	if eto.SVA != ERCTokenSVA {
 		return errorz.ErrInvalid{}.New("eto.validateSVA; invalid signature verification algorithm")
 	}
 	return nil
@@ -177,7 +177,7 @@ func (eto *ERCTokenOwner) validateAccount() error {
 // Sign signs message msg with signer s
 func (eto *ERCTokenOwner) Sign(msg []byte, s Signer) (*ERCTokenSignature, error) {
 	sig := &ERCTokenSignature{
-		SVA: ValueStoreSVA,
+		SVA: ERCTokenSVA,
 	}
 	switch s.(type) {
 	case *crypto.Secp256k1Signer:
@@ -202,7 +202,7 @@ func (eto *ERCTokenOwner) Sign(msg []byte, s Signer) (*ERCTokenSignature, error)
 }
 
 // ERCTokenSignature is a struct which the necessary information
-// for signing a ValueStore
+// for signing an ERCToken
 type ERCTokenSignature struct {
 	SVA       SVA
 	CurveSpec constants.CurveSpec
@@ -210,7 +210,7 @@ type ERCTokenSignature struct {
 }
 
 // UnmarshalBinary takes a byte slice and returns the corresponding
-// ValueStoreSignature object
+// ERCTokenSignature object
 func (ets *ERCTokenSignature) UnmarshalBinary(signature []byte) error {
 	if ets == nil {
 		return errorz.ErrInvalid{}.New("ets.UnmarshalBinary; ets not initialized")
@@ -236,7 +236,7 @@ func (ets *ERCTokenSignature) UnmarshalBinary(signature []byte) error {
 	return ets.Validate()
 }
 
-// MarshalBinary takes the ValueStoreSignature object and returns the canonical
+// MarshalBinary takes the ERCTokenSignature object and returns the canonical
 // byte slice
 func (ets *ERCTokenSignature) MarshalBinary() ([]byte, error) {
 	if err := ets.Validate(); err != nil {
@@ -249,7 +249,7 @@ func (ets *ERCTokenSignature) MarshalBinary() ([]byte, error) {
 	return signature, nil
 }
 
-// Validate validates the ValueStoreSignature object
+// Validate validates the ERCTokenSignature object
 func (ets *ERCTokenSignature) Validate() error {
 	if ets == nil {
 		return errorz.ErrInvalid{}.New("ets.validate; ets not initialized")
@@ -267,7 +267,7 @@ func (ets *ERCTokenSignature) validateSVA() error {
 	if ets == nil {
 		return errorz.ErrInvalid{}.New("ets.validateSVA; ets not initialized")
 	}
-	if ets.SVA != ValueStoreSVA {
+	if ets.SVA != ERCTokenSVA {
 		return errorz.ErrInvalid{}.New("ets.validateSVA; invalid signature verification algorithm")
 	}
 	return nil

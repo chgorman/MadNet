@@ -240,7 +240,7 @@ func TestSmartContractMarshalBad(t *testing.T) {
 }
 
 func TestSmartContractMarshalGood(t *testing.T) {
-	sca := make([]byte, 20)
+	sca := make([]byte, constants.OwnerLen)
 	for k := 0; k < len(sca); k++ {
 		sca[k] = byte(k + 1)
 	}
@@ -269,7 +269,7 @@ func TestSmartContractUnmarshalBad(t *testing.T) {
 }
 
 func TestSmartContractUnmarshalGood(t *testing.T) {
-	sca := make([]byte, 20)
+	sca := make([]byte, constants.OwnerLen)
 	for k := 0; k < len(sca); k++ {
 		sca[k] = byte(k + 1)
 	}

@@ -247,7 +247,7 @@ func (b *ERCToken) IsDeposit() bool {
 	return b.ERCTPreImage.TXOutIdx == constants.MaxUint32
 }
 
-// Owner returns the ValueStoreOwner of the ValueStore
+// Owner returns the ERCTokenOwner of the ERCToken
 func (b *ERCToken) Owner() (*ERCTokenOwner, error) {
 	if b == nil {
 		return nil, errorz.ErrInvalid{}.New("erct.Owner: erct not initialized")
@@ -261,7 +261,7 @@ func (b *ERCToken) Owner() (*ERCTokenOwner, error) {
 	return b.ERCTPreImage.Owner, nil
 }
 
-// GenericOwner returns the Owner of the ValueStore
+// GenericOwner returns the Owner of the ERCToken
 func (b *ERCToken) GenericOwner() (*Owner, error) {
 	eto, err := b.Owner()
 	if err != nil {
@@ -274,7 +274,7 @@ func (b *ERCToken) GenericOwner() (*Owner, error) {
 	return onr, nil
 }
 
-// Sign generates the signature for a ValueStore at the time of consumption
+// Sign generates the signature for a ERCToken at the time of consumption
 func (b *ERCToken) Sign(txIn *TXIn, s Signer) error {
 	if txIn == nil {
 		return errorz.ErrInvalid{}.New("erct.Sign: txin not initialized")
@@ -321,7 +321,7 @@ func (b *ERCToken) ValidateFee(storage *wrapper.Storage) error {
 	return nil
 }
 
-// ValidateSignature validates the signature of the ValueStore at the time of
+// ValidateSignature validates the signature of the ERCToken at the time of
 // consumption
 func (b *ERCToken) ValidateSignature(txIn *TXIn) error {
 	if b == nil {

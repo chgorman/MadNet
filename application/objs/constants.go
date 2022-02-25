@@ -16,6 +16,10 @@ const (
 	// DataStoreSVA is the constant which specifies the
 	// Signature Verification Algorithm used for DataStore objects
 	DataStoreSVA
+
+	// ERCTokenSVA is the constant which specifies the
+	// Signature Verification Algorithm used for ERCToken objects
+	ERCTokenSVA
 )
 
 // SignerRole is the defined type utilized for designation for signers
