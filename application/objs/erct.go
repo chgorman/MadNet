@@ -262,8 +262,8 @@ func (b *ERCToken) ChainID() (uint32, error) {
 	return b.ERCTPreImage.ChainID, nil
 }
 
-// Value returns the Value of the object
-func (b *ERCToken) Value() (*uint256.Uint256, error) {
+// ERCValue returns the Value of the object
+func (b *ERCToken) ERCValue() (*uint256.Uint256, error) {
 	if b == nil {
 		return nil, errorz.ErrInvalid{}.New("erct.Value: erct not initialized")
 	}
@@ -306,26 +306,6 @@ func (b *ERCToken) TokenID() (*uint256.Uint256, error) {
 	}
 	return b.ERCTPreImage.TokenID.Clone(), nil
 }
-
-/*
-// TODO: needs fixed!
-// ValuePlusFee returns the Value of the object with the associated fee
-func (b *ERCToken) ValuePlusFee() (*uint256.Uint256, error) {
-	value, err := b.Value()
-	if err != nil {
-		return nil, err
-	}
-	fee, err := b.Fee()
-	if err != nil {
-		return nil, err
-	}
-	total, err := new(uint256.Uint256).Add(value, fee)
-	if err != nil {
-		return nil, err
-	}
-	return total, nil
-}
-*/
 
 // IsDeposit returns true if the object is a deposit
 func (b *ERCToken) IsDeposit() bool {
@@ -395,7 +375,7 @@ func (b *ERCToken) ValidateFee(storage *wrapper.Storage) error {
 	}
 	if b.IsDeposit() {
 		if !fee.IsZero() {
-			return errorz.ErrInvalid{}.New("erct.ValidateFee: invalid fee; deposits should have fee equal zero")
+			return errorz.ErrInvalid{}.New("erct.ValidateFee: invalid fee; erc deposits should have fee equal zero")
 		}
 		return nil
 	}

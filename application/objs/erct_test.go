@@ -8,6 +8,7 @@ import (
 	"github.com/MadBase/MadNet/application/objs/uint256"
 	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/crypto"
+	"github.com/MadBase/MadNet/utils"
 )
 
 func TestERCTokenGood(t *testing.T) {
@@ -284,6 +285,75 @@ func TestERCTokenPreHashBad(t *testing.T) {
 	}
 }
 
+func TestERCTokenPreHashGood(t *testing.T) {
+	cid := uint32(2)
+	ecid := uint32(3)
+	val, err := new(uint256.Uint256).FromUint64(65537)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fee, err := new(uint256.Uint256).FromUint64(65539)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tokenID, err := new(uint256.Uint256).FromUint64(65541)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txoid := uint32(17)
+	withdraw := false
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+	ownerPubk, err := ownerSigner.Pubkey()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ownerAcct := crypto.GetAccount(ownerPubk)
+	owner := &ERCTokenOwner{}
+	owner.New(ownerAcct, constants.CurveSecp256k1)
+
+	scaBytes := crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))
+	sca := &SmartContract{}
+	err = sca.UnmarshalBinary(scaBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	erctpi := &ERCTPreImage{
+		ChainID:              cid,
+		ExitChainID:          ecid,
+		Value:                val,
+		Withdraw:             withdraw,
+		TXOutIdx:             txoid,
+		Owner:                owner,
+		SmartContractAddress: sca,
+		Fee:                  fee,
+		TokenID:              tokenID,
+	}
+	erct := &ERCToken{
+		ERCTPreImage: erctpi,
+	}
+
+	preHash, err := erct.PreHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	preHash2, err := erct.PreHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(preHash, preHash2) {
+		t.Fatal("PreHash values do not match (1)")
+	}
+	if !bytes.Equal(preHash, erct.ERCTPreImage.preHash) {
+		t.Fatal("PreHash values do not match (2)")
+	}
+}
+
 func TestERCTokenUTXOIDBad(t *testing.T) {
 	utxo := TXOut{}
 	_, err := utxo.ercToken.UTXOID()
@@ -294,6 +364,54 @@ func TestERCTokenUTXOIDBad(t *testing.T) {
 	_, err = erct.UTXOID()
 	if err == nil {
 		t.Fatal("Should have raised error (2)")
+	}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	_, err = erct.UTXOID()
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+}
+
+func TestERCTokenUTXOIDGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	txhash := crypto.Hasher([]byte("txhash"))
+	trueUTXOID := make([]byte, constants.HashLen)
+	trueUTXOID[0] = 1
+	trueUTXOID[1] = 2
+	erct.TxHash = txhash
+	erct.utxoID = utils.CopySlice(trueUTXOID)
+	utxoID, err := erct.UTXOID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(trueUTXOID, utxoID) {
+		t.Fatal("utxoIDs do not math (1)")
+	}
+	utxoID2, err := erct.UTXOID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(trueUTXOID, utxoID2) {
+		t.Fatal("utxoIDs do not math (2)")
+	}
+}
+
+func TestERCTokenUTXOIDGood2(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	txhash := crypto.Hasher([]byte("txhash"))
+	erct.TxHash = txhash
+	trueUtxoID, err := erct.UTXOID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxoID, err := erct.UTXOID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(trueUtxoID, utxoID) {
+		t.Fatal("utxoIDs do not math")
 	}
 }
 
@@ -323,6 +441,23 @@ func TestERCTokenSetTxOutIdxBad(t *testing.T) {
 	}
 }
 
+func TestERCTokenSetTxOutIdxGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	idx := uint32(17)
+	err := erct.SetTxOutIdx(idx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txOutIdx, err := erct.TxOutIdx()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if txOutIdx != idx {
+		t.Fatal("invalid TxOutIdx")
+	}
+}
+
 func TestERCTokenSetTxHashBad(t *testing.T) {
 	utxo := TXOut{}
 	err := utxo.ercToken.SetTxHash(nil)
@@ -338,6 +473,19 @@ func TestERCTokenSetTxHashBad(t *testing.T) {
 	err = erct.SetTxHash(nil)
 	if err == nil {
 		t.Fatal("Should have raised error (3)")
+	}
+}
+
+func TestERCTokenSetTxHashGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	txhash := crypto.Hasher([]byte("txhash"))
+	err := erct.SetTxHash(txhash)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(txhash, erct.TxHash) {
+		t.Fatal("invalid txhash")
 	}
 }
 
@@ -359,26 +507,40 @@ func TestERCTokenChainIDBad(t *testing.T) {
 	}
 }
 
-func TestERCTokenValueBad(t *testing.T) {
+func TestERCTokenERCValueBad(t *testing.T) {
 	utxo := TXOut{}
-	_, err := utxo.ercToken.Value()
+	_, err := utxo.ercToken.ERCValue()
 	if err == nil {
 		t.Fatal("Should have raised error (1)")
 	}
 	erct := &ERCToken{}
-	_, err = erct.Value()
+	_, err = erct.ERCValue()
 	if err == nil {
 		t.Fatal("Should have raised error (2)")
 	}
 	erct.ERCTPreImage = &ERCTPreImage{}
-	_, err = erct.Value()
+	_, err = erct.ERCValue()
 	if err == nil {
 		t.Fatal("Should have raised error (3)")
 	}
 	erct.ERCTPreImage.Value = &uint256.Uint256{}
-	_, err = erct.Value()
+	_, err = erct.ERCValue()
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
+	}
+}
+
+func TestERCTokenERCValueGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	val := uint256.Two()
+	erct.ERCTPreImage.Value = val.Clone()
+	retValue, err := erct.ERCValue()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !retValue.Eq(val) {
+		t.Fatal("incorrect ERC Value")
 	}
 }
 
@@ -400,6 +562,20 @@ func TestERCTokenFeeBad(t *testing.T) {
 	}
 }
 
+func TestERCTokenFeeGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	fee := uint256.Two()
+	erct.ERCTPreImage.Fee = fee.Clone()
+	retFee, err := erct.Fee()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !retFee.Eq(fee) {
+		t.Fatal("invalid fee")
+	}
+}
+
 func TestERCTokenTokenIDBad(t *testing.T) {
 	utxo := TXOut{}
 	_, err := utxo.ercToken.TokenID()
@@ -415,6 +591,43 @@ func TestERCTokenTokenIDBad(t *testing.T) {
 	_, err = erct.TokenID()
 	if err == nil {
 		t.Fatal("Should have raised error (3)")
+	}
+}
+
+func TestERCTokenTokenIDGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	tokenID := uint256.Two()
+	erct.ERCTPreImage.TokenID = tokenID.Clone()
+	retTokenID, err := erct.TokenID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !tokenID.Eq(retTokenID) {
+		t.Fatal("invalid tokenID")
+	}
+}
+
+func TestERCTokenIsDeposit(t *testing.T) {
+	utxo := TXOut{}
+	isDeposit := utxo.ercToken.IsDeposit()
+	if isDeposit {
+		t.Fatal("should be false (1)")
+	}
+	erct := &ERCToken{}
+	isDeposit = erct.IsDeposit()
+	if isDeposit {
+		t.Fatal("should be false (2)")
+	}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	isDeposit = erct.IsDeposit()
+	if isDeposit {
+		t.Fatal("should be false (3)")
+	}
+	erct.ERCTPreImage.TXOutIdx = constants.MaxUint32
+	isDeposit = erct.IsDeposit()
+	if !isDeposit {
+		t.Fatal("should be true")
 	}
 }
 
@@ -436,6 +649,36 @@ func TestERCTokenOwnerBad(t *testing.T) {
 	}
 }
 
+func TestERCTokenOwnerGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	acct := crypto.Hasher([]byte("ercowner"))[12:]
+	ercowner := &ERCTokenOwner{}
+	curveSpec := constants.CurveSecp256k1
+	ercowner.New(acct, curveSpec)
+	ercoBytes, err := ercowner.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	erco2 := &ERCTokenOwner{}
+	err = erco2.UnmarshalBinary(ercoBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	erct.ERCTPreImage.Owner = erco2
+	retOwner, err := erct.Owner()
+	if err != nil {
+		t.Fatal(err)
+	}
+	retOwnerBytes, err := retOwner.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(retOwnerBytes, ercoBytes) {
+		t.Fatal("invalid erc owner")
+	}
+}
+
 func TestERCTokenGenericOwnerBad(t *testing.T) {
 	utxo := TXOut{}
 	_, err := utxo.ercToken.GenericOwner()
@@ -446,6 +689,45 @@ func TestERCTokenGenericOwnerBad(t *testing.T) {
 	_, err = erct.GenericOwner()
 	if err == nil {
 		t.Fatal("Should have raised error (2)")
+	}
+}
+
+func TestERCTokenGenericOwnerGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	acct := crypto.Hasher([]byte("ercowner"))[12:]
+	ercowner := &ERCTokenOwner{}
+	curveSpec := constants.CurveSecp256k1
+	ercowner.New(acct, curveSpec)
+	owner := &Owner{}
+	err := owner.NewFromERCTokenOwner(ercowner)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ownerBytes, err := owner.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	etoBytes, err := ercowner.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	eto2 := &ERCTokenOwner{}
+	err = eto2.UnmarshalBinary(etoBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	erct.ERCTPreImage.Owner = eto2
+	retOwner, err := erct.GenericOwner()
+	if err != nil {
+		t.Fatal(err)
+	}
+	retOwnerBytes, err := retOwner.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(ownerBytes, retOwnerBytes) {
+		t.Fatal("invalid generic owner")
 	}
 }
 

@@ -226,6 +226,33 @@ func TestERCTPreImagePreHashGood(t *testing.T) {
 	}
 }
 
+func TestSmartContractNew(t *testing.T) {
+	erctpi := &ERCTPreImage{}
+	err := erctpi.SmartContractAddress.New(nil)
+	if err == nil {
+		t.Fatal("Should have raised error (0)")
+	}
+	sc := &SmartContract{}
+	err = sc.New(nil)
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+
+	data := make([]byte, constants.OwnerLen)
+	data[0] = 1
+	err = sc.New(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	retData, err := sc.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(data, retData) {
+		t.Fatal("invalid sc")
+	}
+}
+
 func TestSmartContractMarshalBad(t *testing.T) {
 	erctpi := &ERCTPreImage{}
 	_, err := erctpi.SmartContractAddress.MarshalBinary()
