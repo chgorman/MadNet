@@ -2,6 +2,7 @@ package objs
 
 import (
 	"bytes"
+	"math/big"
 	"testing"
 
 	mdefs "github.com/MadBase/MadNet/application/objs/capn"
@@ -733,8 +734,8 @@ func TestERCTokenGenericOwnerGood(t *testing.T) {
 
 func TestERCTokenSignBad(t *testing.T) {
 	utxo := TXOut{}
-	txin := &TXIn{}
-	err := utxo.ercToken.Sign(txin, nil)
+	txIn := &TXIn{}
+	err := utxo.ercToken.Sign(txIn, nil)
 	if err == nil {
 		t.Fatal("Should have raised error (1)")
 	}
@@ -742,6 +743,62 @@ func TestERCTokenSignBad(t *testing.T) {
 	err = erct.Sign(nil, nil)
 	if err == nil {
 		t.Fatal("Should have raised error (2)")
+	}
+	txIn.TXInLinker = &TXInLinker{}
+	txIn.TXInLinker.TXInPreImage = &TXInPreImage{}
+	cid := uint32(1)
+	consumedTxOutIdx := uint32(13)
+	consumedTxHash := crypto.Hasher([]byte("ConsumedTxHash"))
+	txIn.TXInLinker.TXInPreImage.ChainID = cid
+	txIn.TXInLinker.TXInPreImage.ConsumedTxIdx = consumedTxOutIdx
+	txIn.TXInLinker.TXInPreImage.ConsumedTxHash = consumedTxHash
+	err = erct.Sign(txIn, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+	acct := crypto.Hasher([]byte("ercowner"))[12:]
+	ercowner := &ERCTokenOwner{}
+	curveSpec := constants.CurveSecp256k1
+	ercowner.New(acct, curveSpec)
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.Owner = ercowner
+	err = erct.Sign(txIn, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (4)")
+	}
+}
+
+func TestERCTokenSignGood(t *testing.T) {
+	txIn := &TXIn{}
+	txIn.TXInLinker = &TXInLinker{}
+	txIn.TXInLinker.TXInPreImage = &TXInPreImage{}
+	cid := uint32(1)
+	consumedTxOutIdx := uint32(13)
+	consumedTxHash := crypto.Hasher([]byte("ConsumedTxHash"))
+	txIn.TXInLinker.TXInPreImage.ChainID = cid
+	txIn.TXInLinker.TXInPreImage.ConsumedTxIdx = consumedTxOutIdx
+	txIn.TXInLinker.TXInPreImage.ConsumedTxHash = consumedTxHash
+	erct := &ERCToken{}
+	secpSigner := &crypto.Secp256k1Signer{}
+	privk := make([]byte, 32)
+	privk[0] = 1
+	privk[31] = 1
+	if err := secpSigner.SetPrivk(privk); err != nil {
+		t.Fatal(err)
+	}
+	pubkey, err := secpSigner.Pubkey()
+	if err != nil {
+		t.Fatal(err)
+	}
+	acct := crypto.GetAccount(pubkey)
+	ercowner := &ERCTokenOwner{}
+	curveSpec := constants.CurveSecp256k1
+	ercowner.New(acct, curveSpec)
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.Owner = ercowner
+	err = erct.Sign(txIn, secpSigner)
+	if err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -760,6 +817,103 @@ func TestERCTokenValidateSignatureBad(t *testing.T) {
 	err = erct.ValidateSignature(txIn)
 	if err == nil {
 		t.Fatal("Should have raised error (3)")
+	}
+	txIn.TXInLinker = &TXInLinker{}
+	txIn.TXInLinker.TXInPreImage = &TXInPreImage{}
+	cid := uint32(1)
+	consumedTxOutIdx := uint32(13)
+	consumedTxHash := crypto.Hasher([]byte("ConsumedTxHash"))
+	txIn.TXInLinker.TXInPreImage.ChainID = cid
+	txIn.TXInLinker.TXInPreImage.ConsumedTxIdx = consumedTxOutIdx
+	txIn.TXInLinker.TXInPreImage.ConsumedTxHash = consumedTxHash
+	err = erct.ValidateSignature(txIn)
+	if err == nil {
+		t.Fatal("Should have raised error (4)")
+	}
+}
+
+func TestERCTokenValidateSignatureGood(t *testing.T) {
+	txIn := &TXIn{}
+	txIn.TXInLinker = &TXInLinker{}
+	txIn.TXInLinker.TXInPreImage = &TXInPreImage{}
+	cid := uint32(1)
+	consumedTxOutIdx := uint32(13)
+	consumedTxHash := crypto.Hasher([]byte("ConsumedTxHash"))
+	txIn.TXInLinker.TXInPreImage.ChainID = cid
+	txIn.TXInLinker.TXInPreImage.ConsumedTxIdx = consumedTxOutIdx
+	txIn.TXInLinker.TXInPreImage.ConsumedTxHash = consumedTxHash
+	erct := &ERCToken{}
+	secpSigner := &crypto.Secp256k1Signer{}
+	privk := make([]byte, 32)
+	privk[0] = 1
+	privk[31] = 1
+	if err := secpSigner.SetPrivk(privk); err != nil {
+		t.Fatal(err)
+	}
+	pubkey, err := secpSigner.Pubkey()
+	if err != nil {
+		t.Fatal(err)
+	}
+	acct := crypto.GetAccount(pubkey)
+	ercowner := &ERCTokenOwner{}
+	curveSpec := constants.CurveSecp256k1
+	ercowner.New(acct, curveSpec)
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.Owner = ercowner
+	err = erct.Sign(txIn, secpSigner)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = erct.ValidateSignature(txIn)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestERCTokenValidateFeeBad(t *testing.T) {
+	erct := &ERCToken{}
+	err := erct.ValidateFee(nil)
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.Fee = uint256.One()
+	erct.ERCTPreImage.TXOutIdx = constants.MaxUint32
+	err = erct.ValidateFee(nil)
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+	erct.ERCTPreImage.TXOutIdx = 0
+	err = erct.ValidateFee(nil)
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+	msg := makeMockStorageGetter()
+	storage := makeStorage(msg)
+	err = erct.ValidateFee(storage)
+	if err == nil {
+		t.Fatal("Should have raised error (4)")
+	}
+}
+
+func TestERCTokenValidateFeeGood(t *testing.T) {
+	msg := makeMockStorageGetter()
+	ercFee := uint256.One()
+	msg.SetERCTokenFee(big.NewInt(1))
+	storage := makeStorage(msg)
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.Fee = uint256.Zero()
+	erct.ERCTPreImage.TXOutIdx = constants.MaxUint32
+	err := erct.ValidateFee(storage)
+	if err != nil {
+		t.Fatal(err)
+	}
+	erct.ERCTPreImage.Fee = ercFee.Clone()
+	erct.ERCTPreImage.TXOutIdx = 0
+	err = erct.ValidateFee(storage)
+	if err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -783,5 +937,41 @@ func TestERCTokenMakeTxInBad(t *testing.T) {
 	_, err = erct.MakeTxIn()
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
+	}
+}
+
+func TestERCTokenMakeTxInGood(t *testing.T) {
+	cid := uint32(1)
+	txOutIdx := uint32(2)
+	txhash := crypto.Hasher([]byte("TxHash"))
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.ChainID = cid
+	erct.ERCTPreImage.TXOutIdx = txOutIdx
+	erct.TxHash = txhash
+	txIn, err := erct.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	retCid, err := txIn.ChainID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if retCid != cid {
+		t.Fatal("invalid chainID")
+	}
+	retTxOutIdx, err := txIn.ConsumedTxIdx()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if retTxOutIdx != txOutIdx {
+		t.Fatal("invalid txOutIdx")
+	}
+	retConsumedTxHash, err := txIn.ConsumedTxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(retConsumedTxHash, txhash) {
+		t.Fatal("invalid consumedTxHash")
 	}
 }
