@@ -187,6 +187,9 @@ func (b *DSPreImage) RemainingValue(currentHeight uint32) (*uint256.Uint256, err
 	if b.Deposit == nil {
 		return nil, errorz.ErrInvalid{}.New("dspi.RemainingValue; dspi.deposit not initialized")
 	}
+	if b.Deposit.IsZero() {
+		return nil, errorz.ErrInvalid{}.New("dspi.RemainingValue; dspi.deposit is zero")
+	}
 	if len(b.RawData) == 0 {
 		return nil, errorz.ErrInvalid{}.New("dspi.RemainingValue; dspi.rawData has length zero")
 	}

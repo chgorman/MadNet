@@ -226,6 +226,19 @@ func TestERCTPreImagePreHashGood(t *testing.T) {
 	}
 }
 
+func TestERCTPreImageValidateSignatureBad(t *testing.T) {
+	erct := &ERCToken{}
+	err := erct.ERCTPreImage.ValidateSignature(nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+	erctpi := &ERCTPreImage{}
+	err = erctpi.ValidateSignature(nil, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+}
+
 func TestSmartContractNew(t *testing.T) {
 	erctpi := &ERCTPreImage{}
 	err := erctpi.SmartContractAddress.New(nil)

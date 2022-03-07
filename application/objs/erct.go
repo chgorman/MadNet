@@ -315,6 +315,14 @@ func (b *ERCToken) IsDeposit() bool {
 	return b.ERCTPreImage.TXOutIdx == constants.MaxUint32
 }
 
+// WithdrawTokens returns true if the tokens are to be withdrawn
+func (b *ERCToken) WithdrawTokens() bool {
+	if b == nil || b.ERCTPreImage == nil {
+		return false
+	}
+	return b.ERCTPreImage.Withdraw
+}
+
 // Owner returns the ERCTokenOwner of the ERCToken
 func (b *ERCToken) Owner() (*ERCTokenOwner, error) {
 	if b == nil {

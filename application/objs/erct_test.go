@@ -975,3 +975,26 @@ func TestERCTokenMakeTxInGood(t *testing.T) {
 		t.Fatal("invalid consumedTxHash")
 	}
 }
+
+func TestERCTokenWithdrawTokens(t *testing.T) {
+	utxo := TXOut{}
+	retWithdraw := utxo.ercToken.WithdrawTokens()
+	if retWithdraw {
+		t.Fatal("Should not withdraw tokens (1)")
+	}
+	erct := &ERCToken{}
+	retWithdraw = erct.WithdrawTokens()
+	if retWithdraw {
+		t.Fatal("Should not withdraw tokens (2)")
+	}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	retWithdraw = erct.WithdrawTokens()
+	if retWithdraw {
+		t.Fatal("Should not withdraw tokens (3)")
+	}
+	erct.ERCTPreImage.Withdraw = true
+	retWithdraw = erct.WithdrawTokens()
+	if !retWithdraw {
+		t.Fatal("Should withdraw tokens")
+	}
+}
