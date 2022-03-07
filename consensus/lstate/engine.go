@@ -191,10 +191,20 @@ func (ce *Engine) UpdateLocalState() (bool, error) {
 				utils.DebugTrace(ce.logger, err)
 				return err
 			}
+			if isSync && !ce.AddTxsToQueueStatus() && ce.InitializeAddTxsToQueue(roundState) {
+				// We are not adding txs to queue and we should be,
+				// so we start that process.
+				ce.AddTxsToQueueStart()
+			}
 		}
 		if err := ce.dm.CleanCache(txn, bHeight); err != nil {
 			utils.DebugTrace(ce.logger, err)
 			return err
+		}
+		if ce.FinalizeAddTxsToQueue(roundState) && ce.AddTxsToQueueStatus() {
+			// We are potentially adding txs to queue and we should not,
+			// so we stop that process.
+			ce.AddTxsToQueueStop()
 		}
 		return nil
 	})
@@ -633,7 +643,7 @@ func (ce *Engine) Sync() (bool, error) {
 }
 
 // Updates the loaded objects with information that were not applied in the past
-// due to the lack of information (e.g a new validator set that was received for
+// due to the lack of information (e.g. a new validator set that was received for
 // a block that was not committed to the db yet)
 func (ce *Engine) updateLoadedObjects(txn *badger.Txn, vs *objs.ValidatorSet, ownState *objs.OwnState, ownValidatingState *objs.OwnValidatingState) (bool, error) {
 	ok := true

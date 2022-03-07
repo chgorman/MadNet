@@ -142,9 +142,9 @@ func TestStorageInitialized(t *testing.T) {
 		t.Fatal("Incorrect downloadTimeout")
 	}
 
-	minTxFeeReturned := s.GetMinTxFee()
-	if minTxFeeReturned.Cmp(minTxFee) != 0 {
-		t.Fatal("Incorrect minTxFee")
+	minTxFeeCostRatioReturned := s.GetMinTxFeeCostRatio()
+	if minTxFeeCostRatioReturned.Cmp(minTxFeeCostRatio) != 0 {
+		t.Fatal("Incorrect minTxFeeCostRatio")
 	}
 
 	txValidVersion := s.GetTxValidVersion()
@@ -1335,13 +1335,13 @@ func TestStorageUpdateStorageValueBad4(t *testing.T) {
 
 func TestStorageGetMinTxFee(t *testing.T) {
 	s := initializeStorageWithFirstNode()
-	txFee := s.GetMinTxFee()
-	if txFee.Cmp(minTxFee) != 0 {
+	txFeeCostRatio := s.GetMinTxFeeCostRatio()
+	if txFeeCostRatio.Cmp(minTxFeeCostRatio) != 0 {
 		t.Fatal("txFee incorrect")
 	}
 
 	epoch := uint32(25519)
-	field := "minTxFee"
+	field := "minTxFeeCostRatio"
 	value := "123456789"
 	update, err := NewUpdate(field, value, epoch)
 	if err != nil {
@@ -1361,12 +1361,12 @@ func TestStorageGetMinTxFee(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	txFee = s.GetMinTxFee()
+	txFeeCostRatio = s.GetMinTxFeeCostRatio()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if txFee.Cmp(valueTrue) != 0 {
-		t.Fatal("incorrect txFee")
+	if txFeeCostRatio.Cmp(valueTrue) != 0 {
+		t.Fatal("incorrect txFeeCostRatio")
 	}
 }
 

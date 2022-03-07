@@ -2,6 +2,7 @@ package pendingindex
 
 import (
 	"github.com/MadBase/MadNet/application/indexer"
+	"github.com/MadBase/MadNet/application/objs/uint256"
 	"github.com/MadBase/MadNet/constants/dbprefix"
 	"github.com/MadBase/MadNet/utils"
 	"github.com/dgraph-io/badger/v2"
@@ -9,9 +10,9 @@ import (
 
 func NewPendingTxIndexer() *PendingTxIndexer {
 	return &PendingTxIndexer{
-		order: indexer.NewInsertionOrderIndex(
-			dbprefix.PrefixPendingTxInsertionOrderIndex,
-			dbprefix.PrefixPendingTxInsertionOrderReverseIndex),
+		order: indexer.NewTxFeeIndex(
+			dbprefix.PrefixPendingTxTxFeeIndex,
+			dbprefix.PrefixPendingTxTxFeeIndexRef),
 		reflink: indexer.NewRefLinkerIndex(
 			dbprefix.PrefixUTXORefLinker,
 			dbprefix.PrefixUTXORefLinkerRev,
@@ -24,17 +25,17 @@ func NewPendingTxIndexer() *PendingTxIndexer {
 }
 
 type PendingTxIndexer struct {
-	order      *indexer.InsertionOrderIndexer
+	order      *indexer.TxFeeIndex
 	reflink    *indexer.RefLinker
 	expiration *indexer.EpochConstrainedList
 }
 
-func (pti *PendingTxIndexer) Add(txn *badger.Txn, epoch uint32, txHash []byte, utxoIDs [][]byte) ([][]byte, error) {
-	err := pti.order.Add(txn, txHash)
+func (pti *PendingTxIndexer) Add(txn *badger.Txn, epoch uint32, txHash []byte, feeCostRatio *uint256.Uint256, utxoIDs [][]byte) ([][]byte, error) {
+	err := pti.order.Add(txn, feeCostRatio, txHash)
 	if err != nil {
 		return nil, err
 	}
-	eviction, evicted, err := pti.reflink.Add(txn, txHash, utxoIDs)
+	eviction, evicted, err := pti.reflink.Add(txn, txHash, utxoIDs, feeCostRatio)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +62,7 @@ func (pti *PendingTxIndexer) DeleteOne(txn *badger.Txn, txHash []byte) error {
 			return err
 		}
 	}
-	err = pti.order.Delete(txn, txHash)
+	err = pti.order.Drop(txn, txHash)
 	if err != nil {
 		if err != badger.ErrKeyNotFound {
 			return err
@@ -92,7 +93,7 @@ func (pti *PendingTxIndexer) DeleteMined(txn *badger.Txn, txHash []byte) ([][]by
 				return nil, nil, err
 			}
 		}
-		err = pti.order.Delete(txn, utils.CopySlice(txHash))
+		err = pti.order.Drop(txn, utils.CopySlice(txHash))
 		if err != nil {
 			if err != badger.ErrKeyNotFound {
 				return nil, nil, err

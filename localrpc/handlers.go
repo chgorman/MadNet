@@ -715,8 +715,8 @@ func (srpc *Handlers) HandleLocalStateGetFees(ctx context.Context, req *pb.FeeRe
 	}
 
 	sg := srpc.Storage
-	txFee := sg.GetMinTxFee()
-	txfs, err := bigIntToString(txFee)
+	txFeeCostRatio := sg.GetMinTxFeeCostRatio()
+	txfcrs, err := bigIntToString(txFeeCostRatio)
 	if err != nil {
 		return nil, err
 	}
@@ -737,7 +737,7 @@ func (srpc *Handlers) HandleLocalStateGetFees(ctx context.Context, req *pb.FeeRe
 		return nil, err
 	}
 	result := &pb.FeeResponse{
-		MinTxFee:      txfs,
+		MinTxFee:      txfcrs,
 		ValueStoreFee: vsfs,
 		DataStoreFee:  dsfs,
 		AtomicSwapFee: asfs,

@@ -35,6 +35,12 @@ func (b *Tx) UnmarshalBinary(data []byte) error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("tx.unmarshalBinary: tx not initialized")
 	}
+	if len(data) == 0 {
+		return errorz.ErrInvalid{}.New("tx.unmarshalBinary: len(data) == 0")
+	}
+	if len(data) > constants.MaxTxSize {
+		return errorz.ErrInvalid{}.New("tx.unmarshalBinary: len(data) > MaxTxSize")
+	}
 	bc, err := tx.Unmarshal(data)
 	if err != nil {
 		return err
@@ -61,7 +67,17 @@ func (b *Tx) MarshalBinary() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return tx.Marshal(bc)
+	txBytes, err := tx.Marshal(bc)
+	if err != nil {
+		return nil, err
+	}
+	if len(txBytes) == 0 {
+		return nil, errorz.ErrInvalid{}.New("tx.marshalBinary: len(txBytes) == 0")
+	}
+	if len(txBytes) > constants.MaxTxSize {
+		return nil, errorz.ErrInvalid{}.New("tx.marshalBinary: len(txBytes) > MaxTxSize")
+	}
+	return txBytes, nil
 }
 
 // UnmarshalCapn unmarshals the capnproto definition of the object
@@ -468,21 +484,120 @@ func (b *Tx) ValidateFees(currentHeight uint32, refUTXOs Vout, storage *wrapper.
 		return errorz.ErrInvalid{}.New("tx.validateFees: tx.fee not initialized")
 	}
 	if b.IsCleanupTx(currentHeight, refUTXOs) {
-		// Tx is a valid Cleanup Tx, so we do not worry about fees.
+		// Tx is a valid Cleanup Tx, so we do not worry about fees;
+		// the specific cleanup tx fees are already performed in this call.
 		return nil
 	}
 	if err := b.Vout.ValidateFees(storage); err != nil {
 		return err
 	}
-	// Ensure Fee is above minimum
-	minTxFee, err := storage.GetMinTxFee()
+	// Ensure FeeCostRatio is above minimum
+	minTxFeeCostRatio, err := storage.GetMinTxFeeCostRatio()
 	if err != nil {
 		return err
 	}
-	if b.Fee.Lt(minTxFee) {
-		return errorz.ErrInvalid{}.New("tx.validateFees; tx.fee below minTxFee")
+	// isCleanup is false because it is not a cleanup tx
+	feeCostRatio, err := b.ScaledFeeCostRatio(false)
+	if err != nil {
+		return err
+	}
+	if feeCostRatio.Lt(minTxFeeCostRatio) {
+		return errorz.ErrInvalid{}.New("tx.validateFees; feeCostRatio below minimum")
 	}
 	return nil
+}
+
+// Cost computes the total transaction complexity
+func (b *Tx) cost() (*uint256.Uint256, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.Cost: tx not initialized")
+	}
+	if len(b.Vin) == 0 {
+		return nil, errorz.ErrInvalid{}.New("tx.Cost: tx.vin not initialized")
+	}
+	if len(b.Vout) == 0 {
+		return nil, errorz.ErrInvalid{}.New("tx.Cost: tx.vout not initialized")
+	}
+	costSize, err := b.costSize()
+	if err != nil {
+		return nil, err
+	}
+	costComputation, err := b.costComputation()
+	if err != nil {
+		return nil, err
+	}
+	costTotal, err := new(uint256.Uint256).Add(costSize, costComputation)
+	if err != nil {
+		return nil, err
+	}
+	if costTotal.IsZero() {
+		return nil, errorz.ErrInvalid{}.New("tx.Cost: cost is zero")
+	}
+	return costTotal, nil
+}
+
+// costSize computes the total transaction complexity due to size (bytes)
+func (b *Tx) costSize() (*uint256.Uint256, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.costSize: tx not initialized")
+	}
+	txBytes, err := b.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+	size := len(txBytes)
+	costSize := &uint256.Uint256{}
+	costSize.FromUint64(uint64(size))
+	return costSize, nil
+}
+
+// costComputation computes the total transaction complexity due to computation
+func (b *Tx) costComputation() (*uint256.Uint256, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.costComputation: tx not initialized")
+	}
+	costComputation := uint256.Zero()
+	return costComputation, nil
+}
+
+// ScaledFeeCostRatio returns the fee cost ratio as a uint256
+func (b *Tx) ScaledFeeCostRatio(isCleanup bool) (*uint256.Uint256, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.ScaledFeeCostRatio: tx not initialized")
+	}
+	if b.Fee == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.ScaledFeeCostRatio: tx.Fee not initialized")
+	}
+	cost, err := b.cost()
+	if err != nil {
+		return nil, err
+	}
+	if isCleanup {
+		if !b.Fee.IsZero() {
+			return nil, errorz.ErrInvalid{}.New("tx.ScaledFeeCostRatio: is cleanup tx but tx.Fee is nonzero")
+		}
+		feeCostRatio := uint256.Max()
+		return feeCostRatio, nil
+	}
+	scaleFactor := uint256.TwoPower64()
+	maxFee := uint256.TwoPower128()
+	feeCopy := b.Fee.Clone()
+	// Ensure the fee is not too large
+	if feeCopy.Gt(maxFee) {
+		err := feeCopy.Set(maxFee)
+		if err != nil {
+			return nil, err
+		}
+	}
+	scaledFee, err := new(uint256.Uint256).Mul(feeCopy, scaleFactor)
+	if err != nil {
+		return nil, err
+	}
+	feeCostRatio, err := new(uint256.Uint256).Div(scaledFee, cost)
+	if err != nil {
+		return nil, err
+	}
+	return feeCostRatio, nil
 }
 
 // ValidateEqualVinVout checks the following
@@ -759,17 +874,16 @@ func (b *Tx) PostValidatePending(currentHeight uint32, consumedUTXOs Vout, stora
 	return nil
 }
 
-// IsCleanupTx checks if Tx is a cleanup transaction.
-// Cleanup transactions are unique in that there is no associated TxFee
-// or ValueStoreFee. The CleaupTx must consist of *expired* DataStores
-// with value equal to that in the only ValueStore in Vout.
-func (b *Tx) IsCleanupTx(currentHeight uint32, refUTXOs Vout) bool {
+// IsPotentialCleanupTx checks if the tx meets the minimal requriements
+// of a cleanup transaction. This potentially reduces total work by
+// not requiring currentHeight or referenced utxos.
+// There are no false negatives, only potential false positives.
+func (b *Tx) IsPotentialCleanupTx() bool {
 	if b == nil || b.Fee == nil {
 		return false
 	}
-	// Confirm Vin
-	cleanupVin := b.Vin.IsCleanupVin(currentHeight, refUTXOs)
-	if !cleanupVin {
+	// Confirm Fee is zero
+	if !b.Fee.IsZero() {
 		return false
 	}
 	// Confirm Vout
@@ -777,8 +891,21 @@ func (b *Tx) IsCleanupTx(currentHeight uint32, refUTXOs Vout) bool {
 	if !cleanupVout {
 		return false
 	}
-	// Confirm Fee is zero
-	if !b.Fee.IsZero() {
+	return true
+}
+
+// IsCleanupTx checks if Tx is a cleanup transaction.
+// Cleanup transactions are unique in that there is no associated TxFee
+// or ValueStoreFee. The CleaupTx must consist of *expired* DataStores
+// with value equal to that in the only ValueStore in Vout.
+func (b *Tx) IsCleanupTx(currentHeight uint32, refUTXOs Vout) bool {
+	// Confirm Fee is zero and Vout
+	if !b.IsPotentialCleanupTx() {
+		return false
+	}
+	// Confirm Vin
+	cleanupVin := b.Vin.IsCleanupVin(currentHeight, refUTXOs)
+	if !cleanupVin {
 		return false
 	}
 	// Confirm inputs equal outputs

@@ -57,7 +57,7 @@ type StorageGetter interface {
 	GetAtomicSwapFee() *big.Int
 	GetAtomicSwapValidStopEpoch() uint32
 
-	GetMinTxFee() *big.Int
+	GetMinTxFeeCostRatio() *big.Int
 	GetTxValidVersion() uint32
 }
 
@@ -688,14 +688,14 @@ func (s *Storage) GetDownloadTimeout() time.Duration {
 	return s.rawStorage.GetDownloadTimeout()
 }
 
-// GetMinTxFee returns the minimum transaction fee.
-func (s *Storage) GetMinTxFee() *big.Int {
+// GetMinTxFeeCostRatio returns the minimum transaction fee.
+func (s *Storage) GetMinTxFeeCostRatio() *big.Int {
 	select {
 	case <-s.startChan:
 	}
 	s.RLock()
 	defer s.RUnlock()
-	return s.rawStorage.GetMinTxFee()
+	return s.rawStorage.GetMinTxFeeCostRatio()
 }
 
 // GetTxValidVersion returns the transaction valid version
