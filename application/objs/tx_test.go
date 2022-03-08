@@ -188,6 +188,54 @@ func makeDSWithValueFee(t *testing.T, ownerSigner Signer, i int, rawData []byte,
 	return utxInputs
 }
 
+func makeERCToken(t *testing.T, ownerSigner Signer, value, fee, tokenID *uint256.Uint256, sca *SmartContract) *TXOut {
+	if value == nil || fee == nil || tokenID == nil {
+		panic("invalid value, fee, or tokenID")
+	}
+	cid := uint32(2)
+
+	ownerPubk, err := ownerSigner.Pubkey()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ownerAcct := crypto.GetAccount(ownerPubk)
+	owner := &ERCTokenOwner{}
+	owner.New(ownerAcct, constants.CurveSecp256k1)
+
+	erctp := &ERCTPreImage{
+		ChainID:              cid,
+		ExitChainID:          cid,
+		TXOutIdx:             0,
+		Withdraw:             false,
+		Value:                value.Clone(),
+		Owner:                owner,
+		Fee:                  fee.Clone(),
+		SmartContractAddress: sca,
+		TokenID:              tokenID.Clone(),
+	}
+	txHash := make([]byte, constants.HashLen)
+	erct := &ERCToken{
+		ERCTPreImage: erctp,
+		TxHash:       txHash,
+	}
+	erct2 := &ERCToken{}
+	erctBytes, err := erct.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = erct2.UnmarshalBinary(erctBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	erctEqual(t, erct, erct2)
+	utxo := &TXOut{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return utxo
+}
+
 func TestTx(t *testing.T) {
 	msg := makeMockStorageGetter()
 	storage := makeStorage(msg)
@@ -2455,6 +2503,311 @@ func TestTxScaledFeeCostRatioBad2(t *testing.T) {
 	// Test; should fail because not cleanup tx
 	isCleanup := true
 	_, err = tx.ScaledFeeCostRatio(isCleanup)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxContainsERCTokensGood1(t *testing.T) {
+	tx := &Tx{}
+	if tx.ContainsERCTokens(nil) {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxContainsERCTokensGood2(t *testing.T) {
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("secret"))); err != nil {
+		t.Fatal(err)
+	}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+
+	tx := &Tx{}
+	value1 := uint256.One()
+	fee := uint256.Zero()
+	tokenID := uint256.Two()
+	sca := &SmartContract{}
+	err := sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo1 := makeERCToken(t, ownerSigner, value1, fee, tokenID, sca)
+
+	tx.Vout = Vout{utxo1}
+	if !tx.ContainsERCTokens(nil) {
+		t.Fatal("Should have raised error (1)")
+	}
+
+	value2 := uint256.Two()
+	utxo2 := makeERCToken(t, ownerSigner, value2, fee, tokenID, sca)
+	txIn2, err := utxo2.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tx.Vin = Vin{txIn2}
+	tx.Vout = Vout{}
+	if !tx.ContainsERCTokens(Vout{utxo2}) {
+		t.Fatal("Should have raised error (2)")
+	}
+}
+
+func TestTxValidateERCTokensGood1(t *testing.T) {
+	// Testing empty tx
+	tx := &Tx{}
+	err := tx.ValidateERCTokens(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestTxValidateERCTokensGood2(t *testing.T) {
+	// Testing sending token to self
+	tx := &Tx{}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("secret"))); err != nil {
+		t.Fatal(err)
+	}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	sca := &SmartContract{}
+	err := sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	value := uint256.One()
+	fee := uint256.Zero()
+	tokenID := uint256.Two()
+	utxo := makeERCToken(t, ownerSigner, value, fee, tokenID, sca)
+	txIn, err := utxo.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo2 := makeERCToken(t, ownerSigner, value, fee, tokenID, sca)
+	refUTXOs := Vout{utxo}
+	tx.Vin = Vin{txIn}
+	tx.Vout = Vout{utxo2}
+	err = tx.ValidateERCTokens(refUTXOs)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestTxValidateERCTokensGood3(t *testing.T) {
+	// Testing combining tokens
+	tx := &Tx{}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("secret"))); err != nil {
+		t.Fatal(err)
+	}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	sca := &SmartContract{}
+	err := sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	value1 := uint256.One()
+	value2 := uint256.Two()
+	fee := uint256.Zero()
+	tokenID := uint256.Two()
+	utxo1 := makeERCToken(t, ownerSigner, value1, fee, tokenID, sca)
+	utxo2 := makeERCToken(t, ownerSigner, value2, fee, tokenID, sca)
+	txIn1, err := utxo1.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	txIn2, err := utxo2.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	value3, err := new(uint256.Uint256).Add(value1, value2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	utxo3 := makeERCToken(t, ownerSigner, value3, fee, tokenID, sca)
+	refUTXOs := Vout{utxo1, utxo2}
+	tx.Vin = Vin{txIn1, txIn2}
+	tx.Vout = Vout{utxo3}
+	err = tx.ValidateERCTokens(refUTXOs)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestTxValidateERCTokensGood4(t *testing.T) {
+	// Testing splitting tokens
+	tx := &Tx{}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("secret"))); err != nil {
+		t.Fatal(err)
+	}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	sca := &SmartContract{}
+	err := sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	value1 := uint256.One()
+	value2 := uint256.Two()
+	value3, err := new(uint256.Uint256).Add(value1, value2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fee := uint256.Zero()
+	tokenID := uint256.Two()
+	utxo1 := makeERCToken(t, ownerSigner, value1, fee, tokenID, sca)
+	utxo2 := makeERCToken(t, ownerSigner, value2, fee, tokenID, sca)
+	utxo3 := makeERCToken(t, ownerSigner, value3, fee, tokenID, sca)
+	txIn3, err := utxo3.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	refUTXOs := Vout{utxo3}
+	tx.Vin = Vin{txIn3}
+	tx.Vout = Vout{utxo1, utxo2}
+	err = tx.ValidateERCTokens(refUTXOs)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestTxValidateERCTokensBad1(t *testing.T) {
+	// Raise error for bad refUTXO
+	cid := uint32(1)
+	tx := &Tx{}
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.ChainID = cid
+	erct.TxHash = make([]byte, constants.HashLen)
+	utxo := &TXOut{}
+	err := utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txIn, err := utxo.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tx.Vin = Vin{txIn}
+	refUTXOs := Vout{utxo}
+	err = tx.ValidateERCTokens(refUTXOs)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxValidateERCTokensBad2(t *testing.T) {
+	// Raise error for bad utxo
+	cid := uint32(1)
+	tx := &Tx{}
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.ChainID = cid
+	erct.TxHash = make([]byte, constants.HashLen)
+	utxo := &TXOut{}
+	err := utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tx.Vout = Vout{utxo}
+	err = tx.ValidateERCTokens(nil)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxValidateERCTokensBad3(t *testing.T) {
+	// Raise error for mismatch between SCA-TokenID type lengths
+	tx := &Tx{}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("secret"))); err != nil {
+		t.Fatal(err)
+	}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	sca := &SmartContract{}
+	err := sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	value := uint256.One()
+	fee := uint256.Zero()
+	tokenID := uint256.Two()
+	utxo := makeERCToken(t, ownerSigner, value, fee, tokenID, sca)
+	txIn, err := utxo.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tx.Vin = Vin{txIn}
+	refUTXOs := Vout{utxo}
+	err = tx.ValidateERCTokens(refUTXOs)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxValidateERCTokensBad4(t *testing.T) {
+	// Raise error for inputERCT type not present in output
+	tx := &Tx{}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("secret"))); err != nil {
+		t.Fatal(err)
+	}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	sca := &SmartContract{}
+	err := sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	value := uint256.One()
+	fee := uint256.Zero()
+	tokenID := uint256.One()
+	utxo := makeERCToken(t, ownerSigner, value, fee, tokenID, sca)
+	txIn, err := utxo.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tokenID2 := uint256.Two()
+	utxo2 := makeERCToken(t, ownerSigner, value, fee, tokenID2, sca)
+	refUTXOs := Vout{utxo}
+	tx.Vin = Vin{txIn}
+	tx.Vout = Vout{utxo2}
+	err = tx.ValidateERCTokens(refUTXOs)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestTxValidateERCTokensBad5(t *testing.T) {
+	// Raise error for input and output value mismatch
+	tx := &Tx{}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("secret"))); err != nil {
+		t.Fatal(err)
+	}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	sca := &SmartContract{}
+	err := sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	value := uint256.One()
+	fee := uint256.Zero()
+	tokenID := uint256.One()
+	utxo := makeERCToken(t, ownerSigner, value, fee, tokenID, sca)
+	txIn, err := utxo.MakeTxIn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	value2 := uint256.Two()
+	utxo2 := makeERCToken(t, ownerSigner, value2, fee, tokenID, sca)
+	refUTXOs := Vout{utxo}
+	tx.Vin = Vin{txIn}
+	tx.Vout = Vout{utxo2}
+	err = tx.ValidateERCTokens(refUTXOs)
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}

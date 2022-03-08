@@ -293,6 +293,20 @@ func (b *ERCToken) Fee() (*uint256.Uint256, error) {
 	return b.ERCTPreImage.Fee.Clone(), nil
 }
 
+// SmartContractAddress returns the SmartCotnract address of the object
+func (b *ERCToken) SmartContractAddress() ([]byte, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("erct.SmartContractdAddress: erct not initialized")
+	}
+	if b.ERCTPreImage == nil {
+		return nil, errorz.ErrInvalid{}.New("erct.SmartContractAddress: erctpi not initialized")
+	}
+	if b.ERCTPreImage.SmartContractAddress == nil {
+		return nil, errorz.ErrInvalid{}.New("erct.SmartContractAddress: erctpi.sca not initialized")
+	}
+	return b.ERCTPreImage.SmartContractAddress.MarshalBinary()
+}
+
 // TokenID returns the TokenID of the object
 func (b *ERCToken) TokenID() (*uint256.Uint256, error) {
 	if b == nil {
@@ -415,6 +429,13 @@ func (b *ERCToken) ValidateSignature(txIn *TXIn) error {
 		return err
 	}
 	return b.ERCTPreImage.ValidateSignature(msg, sig)
+}
+
+func (b *ERCToken) ValidateToken() error {
+	if b == nil {
+		return errorz.ErrInvalid{}.New("erct.ValidateToken: erct not initialized")
+	}
+	return b.ERCTPreImage.ValidateToken()
 }
 
 // MakeTxIn constructs a TXIn object for the current object

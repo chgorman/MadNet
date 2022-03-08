@@ -1341,3 +1341,80 @@ func TestUTXOCannotBeMinedBeforeHeight(t *testing.T) {
 		t.Fatal("Incorrect height for ValueStore in CannotBeMinedBeforeHeight")
 	}
 }
+
+func TestUTXOErctKeyValueBad(t *testing.T) {
+	utxo := &TXOut{}
+	_, _, err := utxo.erctKeyValue()
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _, err = utxo.erctKeyValue()
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+
+	erct.ERCTPreImage = &ERCTPreImage{}
+	sca := &SmartContract{}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	err = sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	erct.ERCTPreImage.SmartContractAddress = sca
+	_, _, err = utxo.erctKeyValue()
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+
+	tokenID := uint256.Zero()
+	erct.ERCTPreImage.TokenID = tokenID
+	_, _, err = utxo.erctKeyValue()
+	if err == nil {
+		t.Fatal("Should have raised error (4)")
+	}
+}
+
+func TestUTXOErctKeyValueGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	sca := &SmartContract{}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	err := sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	erct.ERCTPreImage.SmartContractAddress = sca
+	tokenID := uint256.Zero()
+	erct.ERCTPreImage.TokenID = tokenID
+	ercValue := uint256.One()
+	erct.ERCTPreImage.Value = ercValue
+
+	tokenBytes, err := tokenID.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	keyBytesTrue := append(acct, tokenBytes...)
+	keyTrue := string(keyBytesTrue)
+
+	utxo := &TXOut{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	key, value, err := utxo.erctKeyValue()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if key != keyTrue {
+		t.Fatal("invalid ercToken key")
+	}
+	if !value.Eq(ercValue) {
+		t.Fatal("invalid ercToken value")
+	}
+}

@@ -224,6 +224,40 @@ func (b *ERCTPreImage) ValidateSignature(msg []byte, sig *ERCTokenSignature) err
 	return b.Owner.ValidateSignature(msg, sig)
 }
 
+func (b *ERCTPreImage) ValidateToken() error {
+	if b == nil {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi not initialized")
+	}
+	if b.ChainID == 0 {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.ChainID is zero")
+	}
+	if b.ExitChainID == 0 {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.ExitChainID is zero")
+	}
+	if err := b.Owner.Validate(); err != nil {
+		return err
+	}
+	if b.Value == nil {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.Value not initialized")
+	}
+	if b.Value.IsZero() {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.Value is zero")
+	}
+	if b.Fee == nil {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.Fee not initialized")
+	}
+	if b.TokenID == nil {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.TokenID not initialized")
+	}
+	if b.SmartContractAddress == nil {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SCA not initialized")
+	}
+	if len(b.SmartContractAddress.address) != constants.OwnerLen {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SCA has incorrect length")
+	}
+	return nil
+}
+
 // SmartContract is a value store preimage
 type SmartContract struct {
 	address []byte

@@ -790,3 +790,31 @@ func (b *TXOut) IsDeposit() bool {
 		return false
 	}
 }
+
+// erctKeyValue returns the key value pair for the ERCToken object
+func (b *TXOut) erctKeyValue() (string, *uint256.Uint256, error) {
+	switch {
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		sca, err := obj.SmartContractAddress()
+		if err != nil {
+			return "", nil, err
+		}
+		tokenID, err := obj.TokenID()
+		if err != nil {
+			return "", nil, err
+		}
+		tokenBytes, err := tokenID.MarshalBinary()
+		if err != nil {
+			return "", nil, err
+		}
+		key := string(append(sca, tokenBytes...))
+		value, err := obj.ERCValue()
+		if err != nil {
+			return "", nil, err
+		}
+		return key, value, nil
+	default:
+		return "", nil, errorz.ErrInvalid{}.New("txout.erctKeyValue; type not defined")
+	}
+}

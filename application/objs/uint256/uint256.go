@@ -3,7 +3,6 @@ package uint256
 import (
 	"encoding/hex"
 	"fmt"
-	"math"
 	"math/big"
 	"strings"
 
@@ -216,56 +215,6 @@ func (u *Uint256) ToUint32() (uint32, error) {
 		return uint32(0), errorz.ErrInvalid{}.New("Error in Uint256.ToUint32: overflow; failed conversion to uint32")
 	}
 	return uint32(u64), nil
-}
-
-// ToFloat64 returns the corresponding float64 value
-//
-// We do this by removing the leading all-zero bytes.
-// From there, we take the next 8 bytes;
-// if less than 8 bytes, we left-pad with zeros.
-// We treat this value as a uint64, convert it to float64,
-// and then scale by the appropriate power of 2.
-//
-// We start at the first nonzero byte.
-// This could entail that we lose 7 bits (if the first byte is 0x01)
-// of precision. Even so, there are 57 remaining bits in the uint64.
-// We remember that float64 has 53 bits of precision, so we have sufficient
-// bits to ensure we correctly round.
-func (u *Uint256) ToFloat64() (float64, error) {
-	if u == nil {
-		return float64(0), errorz.ErrInvalid{}.New("Error in Uint256.ToFloat64: not initialized")
-	}
-	if u.val == nil {
-		u.val = &uint256.Int{}
-	}
-	buf, err := u.MarshalBinary()
-	if err != nil {
-		return float64(0), err
-	}
-	// Count and remove leading zeros from byte slice
-	numLeadingZeros := 0
-	for k := 0; k < len(buf); k++ {
-		if buf[k] != 0 {
-			break
-		}
-		numLeadingZeros++
-	}
-	buf = buf[numLeadingZeros:]
-	length := len(buf)
-	var power int
-	if length > 8 {
-		power = length - 8
-		buf = buf[:8]
-	} else {
-		buf = utils.ForceSliceToLength(buf, 8)
-	}
-	u64, err := utils.UnmarshalUint64(buf)
-	if err != nil {
-		return float64(0), err
-	}
-	f64 := float64(u64)
-	f64 = f64 * math.Pow(2, float64(8*power))
-	return f64, nil
 }
 
 // Add returns u == a + b and returns an error on overflow

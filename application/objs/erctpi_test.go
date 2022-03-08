@@ -239,6 +239,108 @@ func TestERCTPreImageValidateSignatureBad(t *testing.T) {
 	}
 }
 
+func TestERCTPreImageValidateTokenBad(t *testing.T) {
+	erct := &ERCToken{}
+	err := erct.ERCTPreImage.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+
+	erctpi := &ERCTPreImage{}
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+
+	cid := uint32(1)
+	erctpi.ChainID = cid
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+
+	ecid := uint32(2)
+	erctpi.ExitChainID = ecid
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (4)")
+	}
+
+	eto := &ERCTokenOwner{}
+	acct := make([]byte, constants.OwnerLen)
+	eto.New(acct, constants.CurveSecp256k1)
+	erctpi.Owner = eto
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
+	}
+
+	value := uint256.Zero()
+	erctpi.Value = value
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (6)")
+	}
+
+	value = uint256.One()
+	erctpi.Value = value
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (7)")
+	}
+
+	fee := uint256.Zero()
+	erctpi.Fee = fee
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (8)")
+	}
+
+	tokenID := uint256.Two()
+	erctpi.TokenID = tokenID
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (9)")
+	}
+
+	sca := &SmartContract{}
+	erctpi.SmartContractAddress = sca
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (10)")
+	}
+}
+
+func TestERCTPreImageValidateTokenGood(t *testing.T) {
+	erctpi := &ERCTPreImage{}
+	cid := uint32(1)
+	erctpi.ChainID = cid
+	ecid := uint32(2)
+	erctpi.ExitChainID = ecid
+	eto := &ERCTokenOwner{}
+	acct := make([]byte, constants.OwnerLen)
+	eto.New(acct, constants.CurveSecp256k1)
+	erctpi.Owner = eto
+	value := uint256.One()
+	erctpi.Value = value
+	fee := uint256.Zero()
+	erctpi.Fee = fee
+	tokenID := uint256.Two()
+	erctpi.TokenID = tokenID
+	addr := make([]byte, constants.OwnerLen)
+	addr[0] = 1
+	sca := &SmartContract{}
+	err := sca.UnmarshalBinary(addr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	erctpi.SmartContractAddress = sca
+	err = erctpi.ValidateToken()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSmartContractNew(t *testing.T) {
 	erctpi := &ERCTPreImage{}
 	err := erctpi.SmartContractAddress.New(nil)

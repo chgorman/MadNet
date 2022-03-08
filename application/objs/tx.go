@@ -638,7 +638,7 @@ func (b *Tx) ValidateEqualVinVout(currentHeight uint32, refUTXOs Vout) error {
 	if err != nil {
 		return err
 	}
-	if valueOutPlusFee.Cmp(valueIn) != 0 {
+	if !valueOutPlusFee.Eq(valueIn) {
 		return errorz.ErrInvalid{}.New(fmt.Sprintf("tx.ValidateEqualVinVout: input value does not match output value: IN:%v  vs  OUT+FEE:%v", valueIn, valueOutPlusFee))
 	}
 	return nil
@@ -796,6 +796,10 @@ func (b *Tx) Validate(set map[string]bool, currentHeight uint32, consumedUTXOs V
 	if err != nil {
 		return nil, err
 	}
+	err = b.ValidateERCTokens(consumedUTXOs)
+	if err != nil {
+		return nil, err
+	}
 	err = b.ValidateFees(currentHeight, consumedUTXOs, storage)
 	if err != nil {
 		return nil, err
@@ -870,6 +874,93 @@ func (b *Tx) PostValidatePending(currentHeight uint32, consumedUTXOs Vout, stora
 	err = b.ValidateSignature(currentHeight, consumedUTXOs)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+// ContainsERCTokens returns true if the tx contains any ERCTOken objects
+func (b *Tx) ContainsERCTokens(consumedUTXOs Vout) bool {
+	if consumedUTXOs.ContainsERCTokens() {
+		return true
+	}
+	return b.Vout.ContainsERCTokens()
+}
+
+// ValidateERCTokens validates that the ERCToken inputs and outputs match
+func (b *Tx) ValidateERCTokens(consumedUTXOs Vout) error {
+	if !b.ContainsERCTokens(consumedUTXOs) {
+		return nil
+	}
+	inputERCTs := make(map[string]*uint256.Uint256)
+	for k := 0; k < len(consumedUTXOs); k++ {
+		refUTXO := consumedUTXOs[k]
+		if refUTXO.HasERCToken() {
+			err := refUTXO.ercToken.ValidateToken()
+			if err != nil {
+				return err
+			}
+			key, value, err := refUTXO.erctKeyValue()
+			if err != nil {
+				return err
+			}
+			prevValue, ok := inputERCTs[key]
+			if !ok {
+				inputERCTs[key] = value.Clone()
+				continue
+			}
+			newValue, err := new(uint256.Uint256).Add(prevValue, value)
+			if err != nil {
+				return err
+			}
+			inputERCTs[key] = newValue
+		}
+	}
+	outputERCTs := make(map[string]*uint256.Uint256)
+	for k := 0; k < len(b.Vout); k++ {
+		utxo := b.Vout[k]
+		if utxo.HasERCToken() {
+			err := utxo.ercToken.ValidateToken()
+			if err != nil {
+				return err
+			}
+			key, value, err := utxo.erctKeyValue()
+			if err != nil {
+				return err
+			}
+			prevValue, ok := outputERCTs[key]
+			if !ok {
+				outputERCTs[key] = value.Clone()
+				continue
+			}
+			newValue, err := new(uint256.Uint256).Add(prevValue, value)
+			if err != nil {
+				return err
+			}
+			outputERCTs[key] = newValue
+		}
+	}
+	// Loop through inputs and use to confirm outputs are equal.
+	// If not, invalid
+	if len(inputERCTs) != len(outputERCTs) {
+		return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: erctoken type mismatch; unequal lengths")
+	}
+	for key, inputValue := range inputERCTs {
+		if inputValue == nil {
+			return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: inputValue is nil")
+		}
+		if inputValue.IsZero() {
+			return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: inputValue is zero")
+		}
+		outputValue, ok := outputERCTs[key]
+		if !ok {
+			return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: erctoken type not present")
+		}
+		if outputValue == nil {
+			return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: outputValue is nil")
+		}
+		if !inputValue.Eq(outputValue) {
+			return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: erctoken input and output value mismatch")
+		}
 	}
 	return nil
 }

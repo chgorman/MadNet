@@ -172,6 +172,18 @@ func (vout Vout) MakeTxIn() (Vin, error) {
 	return txIns, nil
 }
 
+// ContainsERCTokens returns true if the Vout object contains
+// any UTXO-type of ERCToken.
+// This is needed because additional validation logic is required in this case.
+func (vout Vout) ContainsERCTokens() bool {
+	for i := 0; i < len(vout); i++ {
+		if vout[i].HasERCToken() {
+			return true
+		}
+	}
+	return false
+}
+
 // IsCleanupVout ensures we have a valid Vout object in Cleanup Tx.
 // In this case, Vout must be only one ValueStore with no fee.
 func (vout Vout) IsCleanupVout() bool {
