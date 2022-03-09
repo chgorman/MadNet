@@ -116,6 +116,9 @@ func TestUTXODataStoreGood(t *testing.T) {
 	if utxo.HasAtomicSwap() {
 		t.Fatal("Should not have AtomicSwap!")
 	}
+	if utxo.HasERCToken() {
+		t.Fatal("Should not have ERCToken!")
+	}
 
 	dsCopy, err := utxo.DataStore()
 	if err != nil {
@@ -131,6 +134,11 @@ func TestUTXODataStoreGood(t *testing.T) {
 	_, err = utxo.AtomicSwap()
 	if err == nil {
 		t.Fatal("Should raise error for no AtomicSwap!")
+	}
+
+	_, err = utxo.ERCToken()
+	if err == nil {
+		t.Fatal("Should raise error for no ERCToken!")
 	}
 
 	utxo2 := &TXOut{}
@@ -193,6 +201,9 @@ func TestUTXOValueStoreGood(t *testing.T) {
 	if utxo.HasAtomicSwap() {
 		t.Fatal("Should not have AtomicSwap!")
 	}
+	if utxo.HasERCToken() {
+		t.Fatal("Should not have ERCToken!")
+	}
 
 	_, err = utxo.DataStore()
 	if err == nil {
@@ -208,6 +219,11 @@ func TestUTXOValueStoreGood(t *testing.T) {
 	_, err = utxo.AtomicSwap()
 	if err == nil {
 		t.Fatal("Should raise error for no AtomicSwap!")
+	}
+
+	_, err = utxo.ERCToken()
+	if err == nil {
+		t.Fatal("Should raise error for no ERCToken!")
 	}
 
 	utxo2 := &TXOut{}
@@ -278,6 +294,9 @@ func TestUTXOAtomicSwapGood(t *testing.T) {
 	if !utxo.HasAtomicSwap() {
 		t.Fatal("Should have AtomicSwap!")
 	}
+	if utxo.HasERCToken() {
+		t.Fatal("Should not have ERCToken!")
+	}
 
 	_, err = utxo.DataStore()
 	if err == nil {
@@ -294,6 +313,111 @@ func TestUTXOAtomicSwapGood(t *testing.T) {
 		t.Fatal(err)
 	}
 	asEqual(t, as, asCopy)
+
+	_, err = utxo.ERCToken()
+	if err == nil {
+		t.Fatal("Should raise error for ERCToken!")
+	}
+}
+
+func TestUTXOERCTokenGood(t *testing.T) {
+	cid := uint32(2)
+	ecid := uint32(3)
+	val, err := new(uint256.Uint256).FromUint64(65537)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txoid := uint32(17)
+	tokenID, err := new(uint256.Uint256).FromUint64(1234)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+	ownerPubk, err := ownerSigner.Pubkey()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	sca := &SmartContract{}
+	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	err = sca.UnmarshalBinary(acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ownerAcct := crypto.GetAccount(ownerPubk)
+	owner := &ERCTokenOwner{}
+	owner.New(ownerAcct, constants.CurveSecp256k1)
+
+	erctp := &ERCTPreImage{
+		ChainID:              cid,
+		ExitChainID:          ecid,
+		Value:                val,
+		TXOutIdx:             txoid,
+		Owner:                owner,
+		Withdraw:             false,
+		Fee:                  new(uint256.Uint256).SetZero(),
+		SmartContractAddress: sca,
+		TokenID:              tokenID,
+	}
+	txHash := make([]byte, constants.HashLen)
+	erct := &ERCToken{
+		ERCTPreImage: erctp,
+		TxHash:       txHash,
+	}
+
+	utxo := &TXOut{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if utxo.HasDataStore() {
+		t.Fatal("Should not have DataStore!")
+	}
+	if utxo.HasValueStore() {
+		t.Fatal("Should not have ValueStore!")
+	}
+	if utxo.HasAtomicSwap() {
+		t.Fatal("Should not have AtomicSwap!")
+	}
+	if !utxo.HasERCToken() {
+		t.Fatal("Should have ERCToken!")
+	}
+
+	_, err = utxo.DataStore()
+	if err == nil {
+		t.Fatal("Should raise error for no DataStore!")
+	}
+
+	_, err = utxo.ValueStore()
+	if err == nil {
+		t.Fatal("Should raise error for no ValueStore!")
+	}
+
+	_, err = utxo.AtomicSwap()
+	if err == nil {
+		t.Fatal("Should raise error for no AtomicSwap!")
+	}
+
+	erctCopy, err := utxo.ERCToken()
+	if err != nil {
+		t.Fatal(err)
+	}
+	erctEqual(t, erct, erctCopy)
+
+	utxo2 := &TXOut{}
+	utxoBytes, err := utxo.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = utxo2.UnmarshalBinary(utxoBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestUTXOMarshalBinary(t *testing.T) {

@@ -551,7 +551,8 @@ func (b *Tx) costSize() (*uint256.Uint256, error) {
 	return costSize, nil
 }
 
-// costComputation computes the total transaction complexity due to computation
+// costComputation computes the total transaction complexity due to computation.
+// TODO: update this appropriately.
 func (b *Tx) costComputation() (*uint256.Uint256, error) {
 	if b == nil {
 		return nil, errorz.ErrInvalid{}.New("tx.costComputation: tx not initialized")
@@ -602,7 +603,10 @@ func (b *Tx) ScaledFeeCostRatio(isCleanup bool) (*uint256.Uint256, error) {
 
 // ValidateEqualVinVout checks the following
 // calc sum on inputs from utxos and currentHeight
-// sum inputs must equal sum outputs plus fee
+// sum inputs must equal sum outputs plus fee.
+// Note well: This function call checks the values concerning MadBytes.
+// It *does not* validate logic related the ERCToken object;
+// see ValidateERCTokens for that function call.
 func (b *Tx) ValidateEqualVinVout(currentHeight uint32, refUTXOs Vout) error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("tx.ValidateEqualVinVout: tx not initialized")
@@ -867,6 +871,10 @@ func (b *Tx) PostValidatePending(currentHeight uint32, consumedUTXOs Vout, stora
 	if err != nil {
 		return err
 	}
+	err = b.ValidateERCTokens(consumedUTXOs)
+	if err != nil {
+		return err
+	}
 	err = b.ValidateFees(currentHeight, consumedUTXOs, storage)
 	if err != nil {
 		return err
@@ -886,12 +894,15 @@ func (b *Tx) ContainsERCTokens(consumedUTXOs Vout) bool {
 	return b.Vout.ContainsERCTokens()
 }
 
-// ValidateERCTokens validates that the ERCToken inputs and outputs match
+// ValidateERCTokens validates that the ERCToken inputs and outputs match.
+// This confirms that the input and output tokens match.
+// This *does not* perform any logic for validating fees.
 func (b *Tx) ValidateERCTokens(consumedUTXOs Vout) error {
 	if !b.ContainsERCTokens(consumedUTXOs) {
 		return nil
 	}
-	inputERCTs := make(map[string]*uint256.Uint256)
+	// Store input ERC Tokens
+	inputERCTs := make(map[string]*uint256.Uint256, len(consumedUTXOs))
 	for k := 0; k < len(consumedUTXOs); k++ {
 		refUTXO := consumedUTXOs[k]
 		if refUTXO.HasERCToken() {
@@ -915,7 +926,8 @@ func (b *Tx) ValidateERCTokens(consumedUTXOs Vout) error {
 			inputERCTs[key] = newValue
 		}
 	}
-	outputERCTs := make(map[string]*uint256.Uint256)
+	// Store output ERC Tokens
+	outputERCTs := make(map[string]*uint256.Uint256, len(b.Vout))
 	for k := 0; k < len(b.Vout); k++ {
 		utxo := b.Vout[k]
 		if utxo.HasERCToken() {
@@ -939,11 +951,12 @@ func (b *Tx) ValidateERCTokens(consumedUTXOs Vout) error {
 			outputERCTs[key] = newValue
 		}
 	}
-	// Loop through inputs and use to confirm outputs are equal.
-	// If not, invalid
+	// Confirm key-value pairs in input and output match
 	if len(inputERCTs) != len(outputERCTs) {
 		return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: erctoken type mismatch; unequal lengths")
 	}
+	// Loop through inputs and use to confirm outputs are equal.
+	// If not, invalid
 	for key, inputValue := range inputERCTs {
 		if inputValue == nil {
 			return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: inputValue is nil")

@@ -507,7 +507,7 @@ func (b *TXOut) IsExpired(currentHeight uint32) (bool, error) {
 	}
 }
 
-// RemainingValue returns the remaining value after discount
+// RemainingValue returns the remaining value after discount in MadBytes.
 func (b *TXOut) RemainingValue(currentHeight uint32) (*uint256.Uint256, error) {
 	switch {
 	case b.HasDataStore():
@@ -520,9 +520,7 @@ func (b *TXOut) RemainingValue(currentHeight uint32) (*uint256.Uint256, error) {
 		obj, _ := b.AtomicSwap()
 		return obj.Value()
 	case b.HasERCToken():
-		panic("not implemented")
-		//obj, _ := b.ERCToken()
-		//return obj.Value()
+		return uint256.Zero(), nil
 	default:
 		return nil, errorz.ErrInvalid{}.New("txout.RemainingValue; type not defined")
 	}
@@ -548,7 +546,7 @@ func (b *TXOut) MakeTxIn() (*TXIn, error) {
 	}
 }
 
-// Value returns the Value of the object
+// Value returns the Value of the object in MadBytes.
 func (b *TXOut) Value() (*uint256.Uint256, error) {
 	switch {
 	case b.HasDataStore():
@@ -561,15 +559,15 @@ func (b *TXOut) Value() (*uint256.Uint256, error) {
 		obj, _ := b.AtomicSwap()
 		return obj.Value()
 	case b.HasERCToken():
-		panic("not implemented")
-		//obj, _ := b.ERCToken()
-		//return obj.Value()
+		return uint256.Zero(), nil
 	default:
 		return nil, errorz.ErrInvalid{}.New("txout.Value; type not defined")
 	}
 }
 
-// ValuePlusFee returns the Value of the object plus the associated fee
+// ValuePlusFee returns the Value of the object plus the associated fee.
+// Here, the Value and Fee are in MadBytes;
+// as such, ERCToken objects only return the fee.
 func (b *TXOut) ValuePlusFee() (*uint256.Uint256, error) {
 	switch {
 	case b.HasDataStore():
@@ -582,9 +580,8 @@ func (b *TXOut) ValuePlusFee() (*uint256.Uint256, error) {
 		obj, _ := b.AtomicSwap()
 		return obj.ValuePlusFee()
 	case b.HasERCToken():
-		panic("not implemented")
-		//obj, _ := b.ERCToken()
-		//return obj.ValuePlusFee()
+		obj, _ := b.ERCToken()
+		return obj.Fee()
 	default:
 		return nil, errorz.ErrInvalid{}.New("txout.ValuePlusFee; type not defined")
 	}
@@ -603,9 +600,8 @@ func (b *TXOut) ValidateFee(storage *wrapper.Storage) error {
 		obj, _ := b.AtomicSwap()
 		return obj.ValidateFee(storage)
 	case b.HasERCToken():
-		panic("not implemented")
-		//obj, _ := b.ERCToken()
-		//return obj.ValidateFee(storage)
+		obj, _ := b.ERCToken()
+		return obj.ValidateFee(storage)
 	default:
 		return errorz.ErrInvalid{}.New("txout.ValidateFee; type not defined")
 	}

@@ -81,6 +81,13 @@ func (vout Vout) ValidateTxOutIdx() error {
 				return err
 			}
 			txOutIdx = asTxOutIdx
+		case utxo.HasERCToken():
+			erct, _ := utxo.ERCToken()
+			erctTxOutIdx, err := erct.TxOutIdx()
+			if err != nil {
+				return err
+			}
+			txOutIdx = erctTxOutIdx
 		default:
 			return errorz.ErrInvalid{}.New("vout.ValidateTxOutIdx; bad txOutIdx: Invalid Type")
 		}
