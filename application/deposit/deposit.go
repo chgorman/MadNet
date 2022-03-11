@@ -21,8 +21,9 @@ import (
 // these deposits to be returned for use in a transaction or for verification.
 type Handler struct {
 	valueIndex *indexer.ValueIndex
-	IsSpent    func(txn *badger.Txn, utxoID []byte) (bool, error)
-	logger     *logrus.Logger
+	//erctokenIndex *indexer.ERCTokenIndex
+	IsSpent func(txn *badger.Txn, utxoID []byte) (bool, error)
+	logger  *logrus.Logger
 }
 
 // Init initializes the deposit handler
@@ -58,10 +59,16 @@ func (dp *Handler) IsValid(txn *badger.Txn, txs objs.TxVec) ([]*objs.TXOut, erro
 
 // Add will add a deposit to the handler
 func (dp *Handler) Add(txn *badger.Txn, chainID uint32, utxoID []byte, biValue *big.Int, owner *objs.Owner) error {
+	if chainID == 0 {
+		return errorz.ErrInvalid{}.New("depositHandler.Add; chainID is zero")
+	}
 	value, err := new(uint256.Uint256).FromBigInt(biValue)
 	if err != nil {
 		utils.DebugTrace(dp.logger, err)
 		return err
+	}
+	if value.IsZero() {
+		return errorz.ErrInvalid{}.New("depositHandler.Add; deposit value is zero")
 	}
 	utxoID = utils.CopySlice(utxoID)
 	utxoID = utils.ForceSliceToLength(utxoID, constants.HashLen)
@@ -86,7 +93,7 @@ func (dp *Handler) Add(txn *badger.Txn, chainID uint32, utxoID []byte, biValue *
 			Value:    value,
 			ChainID:  chainID,
 			Owner:    vso,
-			Fee:      new(uint256.Uint256).SetZero(),
+			Fee:      uint256.Zero(),
 		},
 		TxHash: n2,
 	}
@@ -117,6 +124,96 @@ func (dp *Handler) Add(txn *badger.Txn, chainID uint32, utxoID []byte, biValue *
 	}
 	return nil
 }
+
+/*
+// AddERCToken will add an ERCToken deposit to the handler
+func (dp *Handler) AddERCToken(txn *badger.Txn, chainID, exitChainID uint32, utxoID []byte, biValue *big.Int, owner *objs.Owner, scAddr []byte, biTokenID *big.Int) error {
+	if chainID == 0 {
+		return errorz.ErrInvalid{}.New("depositHandler.AddERCToken; chainID is zero")
+	}
+	if exitChainID == 0 {
+		return errorz.ErrInvalid{}.New("depositHandler.AddERCToken; exitChainID is zero")
+	}
+	value, err := new(uint256.Uint256).FromBigInt(biValue)
+	if err != nil {
+		utils.DebugTrace(dp.logger, err)
+		return err
+	}
+	if value.IsZero() {
+		return errorz.ErrInvalid{}.New("depositHandler.AddERCToken; deposit value is zero")
+	}
+	tokenID, err := new(uint256.Uint256).FromBigInt(biTokenID)
+	if err != nil {
+		utils.DebugTrace(dp.logger, err)
+		return err
+	}
+	sca := &objs.SmartContract{}
+	err = sca.UnmarshalBinary(scAddr)
+	if err != nil {
+		utils.DebugTrace(dp.logger, err)
+		return err
+	}
+	// TODO: think more about how utxoID will be computed
+	//		 in order to determine if this needs to be changed.
+	utxoID = utils.CopySlice(utxoID)
+	utxoID = utils.ForceSliceToLength(utxoID, constants.HashLen)
+	spent, err := dp.IsSpent(txn, utxoID)
+	if err != nil {
+		utils.DebugTrace(dp.logger, err)
+		return err
+	}
+	if spent {
+		return errorz.ErrInvalid{}.New("depositHandler.AddERCToken; a deposit is already spent")
+	}
+	n2 := utils.CopySlice(utxoID)
+	eto := &objs.ERCTokenOwner{}
+	err = eto.NewFromOwner(owner)
+	if err != nil {
+		utils.DebugTrace(dp.logger, err)
+		return err
+	}
+	erct := &objs.ERCToken{
+		ERCTPreImage: &objs.ERCTPreImage{
+			TXOutIdx:             constants.MaxUint32,
+			Value:                value,
+			ChainID:              chainID,
+			ExitChainID:          exitChainID,
+			Owner:                eto,
+			SmartContractAddress: sca,
+			TokenID:              tokenID,
+			Withdraw:             false,
+			Fee:                  uint256.Zero(),
+		},
+		TxHash: n2,
+	}
+	utxo := &objs.TXOut{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		utils.DebugTrace(dp.logger, err)
+		return err
+	}
+	err = dp.erctokenIndex.Add(txn, utxoID, owner, value, sca, tokenID)
+	if err != nil {
+		utils.DebugTrace(dp.logger, err)
+		return err
+	}
+	key := dp.makeKey(utxoID)
+	_, err = utils.GetValue(txn, key)
+	if err != nil {
+		if err != badger.ErrKeyNotFound {
+			utils.DebugTrace(dp.logger, err)
+			return err
+		}
+	} else {
+		return errorz.ErrInvalid{}.New("depositHandler.AddERCToken; stale")
+	}
+	if err := db.SetUTXO(txn, key, utxo); err != nil {
+		utils.DebugTrace(dp.logger, err)
+		return err
+	}
+	return nil
+}
+*/
 
 // Remove will delete all references to a deposit from the Handler
 func (dp *Handler) Remove(txn *badger.Txn, utxoID []byte) error {
