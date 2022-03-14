@@ -374,7 +374,6 @@ func (a *Application) TxQueueAddStop() {
 
 // TxQueueAddStatus returns true if we are currently adding adding txs to queue
 func (a *Application) TxQueueAddStatus() bool {
-	//a.logger.Infof("TxQueueAddStatus: %v\n", a.txHandler.pTxHdlr.TxQueueAddStatus())
 	return a.txHandler.pTxHdlr.TxQueueAddStatus()
 }
 

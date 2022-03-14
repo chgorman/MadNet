@@ -41,8 +41,7 @@ func (pti *PendingTxIndexer) Add(txn *badger.Txn, epoch uint32, txHash []byte, f
 	}
 	if eviction {
 		for j := 0; j < len(evicted); j++ {
-			txHash := utils.CopySlice(evicted[j])
-			err := pti.DeleteOne(txn, utils.CopySlice(txHash))
+			err := pti.DeleteOne(txn, utils.CopySlice(evicted[j]))
 			if err != nil {
 				return nil, err
 			}
