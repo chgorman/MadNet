@@ -47,10 +47,9 @@ func (eclrk *EpochConstrainedListRefKey) UnmarshalBinary(data []byte) {
 
 // Append adds an item to the list
 func (ecl *EpochConstrainedList) Append(txn *badger.Txn, epoch uint32, txHash []byte) error {
-	txHashCopy := utils.CopySlice(txHash)
-	eclKey := ecl.makeKey(epoch, txHashCopy)
+	eclKey := ecl.makeKey(epoch, txHash)
 	key := eclKey.MarshalBinary()
-	eclRefKey := ecl.makeRefKey(txHashCopy)
+	eclRefKey := ecl.makeRefKey(txHash)
 	refKey := eclRefKey.MarshalBinary()
 	epochBytes := utils.MarshalUint32(epoch)
 	err := utils.SetValue(txn, refKey, epochBytes)

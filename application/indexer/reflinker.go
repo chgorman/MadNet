@@ -149,13 +149,12 @@ func (rl *RefLinker) Add(txn *badger.Txn, txHash []byte, utxoIDs [][]byte, feeCo
 // DeleteMined removes a mined txhash from the RefLinker.
 // It also removes any other txhashes which refence the same utxoIDs.
 func (rl *RefLinker) DeleteMined(txn *badger.Txn, txHash []byte) ([][]byte, [][]byte, error) {
-	txHashCopy := utils.CopySlice(txHash)
 	utxoIDs := [][]byte{}
 	txHashes := [][]byte{}
 	txMap := make(map[string]bool)
 	fn1 := func() error {
 		opts := badger.DefaultIteratorOptions
-		prefix := append(rl.prefixRef(), txHashCopy...)
+		prefix := append(rl.prefixRef(), utils.CopySlice(txHash)...)
 		opts.Prefix = prefix
 		iter := txn.NewIterator(opts)
 		defer iter.Close()
@@ -171,13 +170,12 @@ func (rl *RefLinker) DeleteMined(txn *badger.Txn, txHash []byte) ([][]byte, [][]
 		return nil
 	}
 	fn2 := func(utxoID []byte) error {
-		utxoIDCopy := utils.CopySlice(utxoID)
-		_, err := rl.refCounter.Decrement(txn, utxoIDCopy)
+		_, err := rl.refCounter.Decrement(txn, utxoID)
 		if err != nil {
 			return err
 		}
 		opts := badger.DefaultIteratorOptions
-		prefix := append(rl.prefixRevRef(), utxoIDCopy...)
+		prefix := append(rl.prefixRevRef(), utils.CopySlice(utxoID)...)
 		opts.Prefix = prefix
 		iter := txn.NewIterator(opts)
 		defer iter.Close()
@@ -219,9 +217,8 @@ func (rl *RefLinker) DeleteMined(txn *badger.Txn, txHash []byte) ([][]byte, [][]
 
 // Delete removes a txhash from the RefLinker
 func (rl *RefLinker) Delete(txn *badger.Txn, txHash []byte) error {
-	txHashCopy := utils.CopySlice(txHash)
 	opts := badger.DefaultIteratorOptions
-	prefix := append(rl.prefixRef(), txHashCopy...)
+	prefix := append(rl.prefixRef(), utils.CopySlice(txHash)...)
 	opts.Prefix = prefix
 	iter := txn.NewIterator(opts)
 	defer iter.Close()
