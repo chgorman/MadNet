@@ -22,6 +22,7 @@ key: <prefix>|<utxoID>
 
 */
 
+// NewValueIndex makes a new ValueIndex object
 func NewValueIndex(p, pp prefixFunc) *ValueIndex {
 	return &ValueIndex{p, pp}
 }
@@ -60,16 +61,15 @@ func (virk *ValueIndexRefKey) UnmarshalBinary(data []byte) {
 }
 
 // Add adds an item to the list
-func (vi *ValueIndex) Add(txn *badger.Txn, utxoID []byte, owner *objs.Owner, valueOrig *uint256.Uint256) error {
-	valueClone := valueOrig.Clone()
-	viKey, err := vi.makeKey(owner, valueClone.Clone(), utxoID)
+func (vi *ValueIndex) Add(txn *badger.Txn, utxoID []byte, owner *objs.Owner, value *uint256.Uint256) error {
+	viKey, err := vi.makeKey(owner, value, utxoID)
 	if err != nil {
 		return err
 	}
 	key := viKey.MarshalBinary()
 	viRefKey := vi.makeRefKey(utxoID)
 	refKey := viRefKey.MarshalBinary()
-	valueIndex, err := vi.makeValueIndex(owner, valueClone.Clone(), utxoID)
+	valueIndex, err := vi.makeValueIndex(owner, value, utxoID)
 	if err != nil {
 		return err
 	}
@@ -82,8 +82,7 @@ func (vi *ValueIndex) Add(txn *badger.Txn, utxoID []byte, owner *objs.Owner, val
 
 // Drop returns a list of all txHashes that should be dropped
 func (vi *ValueIndex) Drop(txn *badger.Txn, utxoID []byte) error {
-	utxoIDCopy := utils.CopySlice(utxoID)
-	viRefKey := vi.makeRefKey(utxoIDCopy)
+	viRefKey := vi.makeRefKey(utxoID)
 	refKey := viRefKey.MarshalBinary()
 	valueIndex, err := utils.GetValue(txn, refKey)
 	if err != nil {
@@ -169,9 +168,8 @@ func (vi *ValueIndex) GetValueForOwner(txn *badger.Txn, owner *objs.Owner, minVa
 	return result, totalValue, nil, nil
 }
 
-func (vi *ValueIndex) makeKey(owner *objs.Owner, valueOrig *uint256.Uint256, utxoID []byte) (*ValueIndexKey, error) {
-	valueClone := valueOrig.Clone()
-	valueIndex, err := vi.makeValueIndex(owner, valueClone.Clone(), utxoID)
+func (vi *ValueIndex) makeKey(owner *objs.Owner, value *uint256.Uint256, utxoID []byte) (*ValueIndexKey, error) {
+	valueIndex, err := vi.makeValueIndex(owner, value, utxoID)
 	if err != nil {
 		return nil, err
 	}
@@ -192,8 +190,8 @@ func (vi *ValueIndex) makeRefKey(utxoID []byte) *ValueIndexRefKey {
 	return viRefKey
 }
 
-func (vi *ValueIndex) makeValueIndex(owner *objs.Owner, valueOrig *uint256.Uint256, utxoID []byte) ([]byte, error) {
-	valueBytes, err := valueOrig.MarshalBinary()
+func (vi *ValueIndex) makeValueIndex(owner *objs.Owner, value *uint256.Uint256, utxoID []byte) ([]byte, error) {
+	valueBytes, err := value.MarshalBinary()
 	if err != nil {
 		return nil, err
 	}

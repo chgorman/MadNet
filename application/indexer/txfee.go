@@ -7,14 +7,15 @@ import (
 )
 
 /*
-<prefix>|<feeCostRatio>|<txHash>
-  <prefix|txHash>
+Key:      <prefix>|<feeCostRatio>|<txHash>
+Value:    RefKey
+
+RefKey:   <prefix>|<txHash>
+RefValue: <feeCostRatio>
 
 iterate in reverse direction; this ensures we iterate from largest to smallest
 in terms of fee-dense transactions.
 */
-
-var numBytes int = 32
 
 // NewTxFeeIndex makes a new TxFeeIndex object
 func NewTxFeeIndex(p, pp prefixFunc) *TxFeeIndex {
@@ -96,8 +97,8 @@ func (tfi *TxFeeIndex) Drop(txn *badger.Txn, txHash []byte) error {
 func (tfi *TxFeeIndex) makeKey(feeCostRatioBytes []byte, txHash []byte) *TxFeeIndexKey {
 	key := []byte{}
 	key = append(key, tfi.prefix()...)
-	key = append(key, feeCostRatioBytes...)
-	key = append(key, txHash...)
+	key = append(key, utils.CopySlice(feeCostRatioBytes)...)
+	key = append(key, utils.CopySlice(txHash)...)
 	tfiKey := &TxFeeIndexKey{}
 	tfiKey.UnmarshalBinary(key)
 	return tfiKey
@@ -106,7 +107,7 @@ func (tfi *TxFeeIndex) makeKey(feeCostRatioBytes []byte, txHash []byte) *TxFeeIn
 func (tfi *TxFeeIndex) makeRefKey(txHash []byte) *TxFeeIndexRefKey {
 	key := []byte{}
 	key = append(key, tfi.refPrefix()...)
-	key = append(key, txHash...)
+	key = append(key, utils.CopySlice(txHash)...)
 	tfiRefKey := &TxFeeIndexRefKey{}
 	tfiRefKey.UnmarshalBinary(key)
 	return tfiRefKey
