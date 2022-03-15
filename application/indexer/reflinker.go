@@ -84,10 +84,9 @@ func (rlrrk *RefLinkerRevRefKey) XXXIsKey() {}
 // The txhash which gets evicted is the one with the smallest feeCostRatio.
 // If feeCostRatios are equal, then the one with the smallest txhash is removed.
 func (rl *RefLinker) evictOne(txn *badger.Txn, utxoID []byte) ([]byte, error) {
-	utxoIDCopy := utils.CopySlice(utxoID)
 	var evictedHash []byte
 	opts := badger.DefaultIteratorOptions
-	prefix := append(rl.prefixRevRef(), utxoIDCopy...)
+	prefix := append(rl.prefixRevRef(), utils.CopySlice(utxoID)...)
 	opts.Prefix = prefix
 	iter := txn.NewIterator(opts)
 	iter.Seek(prefix)
