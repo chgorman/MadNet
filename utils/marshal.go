@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/binary"
-	"math"
 
 	"github.com/MadBase/MadNet/errorz"
 )
@@ -68,22 +67,5 @@ func UnmarshalInt64(v []byte) (int64, error) {
 		return 0, errorz.ErrInvalid{}.New("UnmarshalInt64: invalid byte length; should be 8")
 	}
 	vv := int64(binary.BigEndian.Uint64(v))
-	return vv, nil
-}
-
-// MarshalFloat32 will marshal a float32 object.
-func MarshalFloat32(v float32) []byte {
-	vv := make([]byte, 4)
-	binary.BigEndian.PutUint32(vv, math.Float32bits(v))
-	return vv
-}
-
-// UnmarshalFloat32 will unmarshal an float32 object.
-func UnmarshalFloat32(v []byte) (float32, error) {
-	if len(v) != 4 {
-		return 0, errorz.ErrInvalid{}.New("UnmarshalFloat32: invalid byte length; should be 4")
-	}
-	w := binary.BigEndian.Uint32(v)
-	vv := math.Float32frombits(w)
 	return vv, nil
 }
