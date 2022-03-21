@@ -955,6 +955,9 @@ func (b *Tx) ValidateERCTokens(consumedUTXOs Vout) error {
 	if len(inputERCTs) != len(outputERCTs) {
 		return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: erctoken type mismatch; unequal lengths")
 	}
+	if len(inputERCTs) > 2 {
+		return errorz.ErrInvalid{}.New("tx.ValidateERCTokens: invalid tx; more than 2 erctoken types")
+	}
 	// Loop through inputs and use to confirm outputs are equal.
 	// If not, invalid
 	for key, inputValue := range inputERCTs {
