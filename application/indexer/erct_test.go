@@ -55,7 +55,8 @@ func TestERCTokenIndexAdd(t *testing.T) {
 	sca := &objs.SmartContract{}
 	addr := make([]byte, constants.OwnerLen)
 	addr[0] = 127
-	err = sca.UnmarshalBinary(addr)
+	origChainID := uint32(128)
+	err = sca.New(origChainID, addr)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,7 +116,8 @@ func TestERCTokenIndexDrop(t *testing.T) {
 	sca := &objs.SmartContract{}
 	addr := make([]byte, constants.OwnerLen)
 	addr[0] = 127
-	err = sca.UnmarshalBinary(addr)
+	origChainID := uint32(128)
+	err = sca.New(origChainID, addr)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -172,7 +174,8 @@ func TestERCTokenIndexMakeKey(t *testing.T) {
 	sca := &objs.SmartContract{}
 	addr := make([]byte, constants.OwnerLen)
 	addr[0] = 127
-	err = sca.UnmarshalBinary(addr)
+	origChainID := uint32(128)
+	err = sca.New(origChainID, addr)
 	if err != nil {
 		t.Fatal(err)
 	}

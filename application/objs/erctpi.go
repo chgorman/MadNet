@@ -224,6 +224,7 @@ func (b *ERCTPreImage) ValidateSignature(msg []byte, sig *ERCTokenSignature) err
 	return b.Owner.ValidateSignature(msg, sig)
 }
 
+// ValidateToken validates the information of the ERCTPreImage object
 func (b *ERCTPreImage) ValidateToken() error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi not initialized")
@@ -253,24 +254,32 @@ func (b *ERCTPreImage) ValidateToken() error {
 		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SCA not initialized")
 	}
 	if len(b.SmartContractAddress.address) != constants.OwnerLen {
-		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SCA has incorrect length")
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SCA.address has incorrect length")
+	}
+	if b.SmartContractAddress.origChainID == 0 {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SCA.origChainID is 0")
 	}
 	return nil
 }
 
 // SmartContract is a value store preimage
 type SmartContract struct {
-	address []byte
+	origChainID uint32
+	address     []byte
 }
 
 // New makes a new SmartContract struct
-func (sc *SmartContract) New(address []byte) error {
+func (sc *SmartContract) New(origChainID uint32, address []byte) error {
 	if sc == nil {
 		return errorz.ErrInvalid{}.New("sc.New: sc not initialized")
+	}
+	if origChainID == 0 {
+		return errorz.ErrInvalid{}.New("sc.New: origChainID is 0")
 	}
 	if len(address) != constants.OwnerLen {
 		return errorz.ErrInvalid{}.New("sc.New: address has incorrect length")
 	}
+	sc.origChainID = origChainID
 	sc.address = utils.CopySlice(address)
 	return nil
 }
@@ -280,10 +289,17 @@ func (sc *SmartContract) MarshalBinary() ([]byte, error) {
 	if sc == nil {
 		return nil, errorz.ErrInvalid{}.New("sc.MarshalBinary: sc not initialized")
 	}
+	if sc.origChainID == 0 {
+		return nil, errorz.ErrInvalid{}.New("sc.MarshalBinary: sc.origChainID is 0")
+	}
 	if len(sc.address) != constants.OwnerLen {
 		return nil, errorz.ErrInvalid{}.New("sc.MarshalBinary: sc.address has incorrect length")
 	}
-	return utils.CopySlice(sc.address), nil
+	origChainIDBytes := utils.MarshalUint32(sc.origChainID)
+	data := []byte{}
+	data = append(data, origChainIDBytes...)
+	data = append(data, utils.CopySlice(sc.address)...)
+	return data, nil
 }
 
 // UnmarshalBinary unmarshals the smart contract object
@@ -291,9 +307,14 @@ func (sc *SmartContract) UnmarshalBinary(data []byte) error {
 	if sc == nil {
 		return errorz.ErrInvalid{}.New("sc.UnmarshalBinary: sc not initialized")
 	}
-	if len(data) != constants.OwnerLen {
+	if len(data) != (constants.OwnerLen + 4) {
 		return errorz.ErrInvalid{}.New("sc.UnmarshalBinary: data has incorrect length")
 	}
-	sc.address = utils.CopySlice(data)
+	origChainID, _ := utils.UnmarshalUint32(data[:4])
+	if origChainID == 0 {
+		return errorz.ErrInvalid{}.New("sc.UnmarshalBinary: origChainID is 0")
+	}
+	sc.origChainID = origChainID
+	sc.address = utils.CopySlice(data[4:])
 	return nil
 }

@@ -344,7 +344,8 @@ func TestUTXOERCTokenGood(t *testing.T) {
 
 	sca := &SmartContract{}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
-	err = sca.UnmarshalBinary(acct)
+	origChainID := uint32(127)
+	err = sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1754,7 +1755,8 @@ func TestUTXOErctKeyValueBad(t *testing.T) {
 	erct.ERCTPreImage = &ERCTPreImage{}
 	sca := &SmartContract{}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
-	err = sca.UnmarshalBinary(acct)
+	origChainID := uint32(127)
+	err = sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1777,7 +1779,8 @@ func TestUTXOErctKeyValueGood(t *testing.T) {
 	erct.ERCTPreImage = &ERCTPreImage{}
 	sca := &SmartContract{}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
-	err := sca.UnmarshalBinary(acct)
+	origChainID := uint32(127)
+	err := sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1791,7 +1794,11 @@ func TestUTXOErctKeyValueGood(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	keyBytesTrue := append(acct, tokenBytes...)
+	scaBytes, err := sca.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	keyBytesTrue := append(scaBytes, tokenBytes...)
 	keyTrue := string(keyBytesTrue)
 
 	utxo := &TXOut{}

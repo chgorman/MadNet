@@ -129,3 +129,11 @@ func PrefixPendingTxTxSizeIndex() []byte {
 func PrefixPendingTxTxSizeIndexRef() []byte {
 	return []byte("ob")
 }
+
+func PrefixDepositERCTKey() []byte {
+	return []byte("oc")
+}
+
+func PrefixDepositERCTRefKey() []byte {
+	return []byte("od")
+}

@@ -3,12 +3,12 @@ package indexer
 import (
 	"github.com/MadBase/MadNet/application/objs"
 	"github.com/MadBase/MadNet/application/objs/uint256"
+	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/utils"
 	"github.com/dgraph-io/badger/v2"
 )
 
 /*
-
 == BADGER KEYS ==
 
 lookup:
@@ -18,7 +18,6 @@ value: <utxoID>
 reverse lookup:
 key: <prefix>|<utxoID>
 value: <owner>|<scaTokenID>|<value>|<utxoID>
-
 */
 
 func NewERCTokenIndex(p, pp prefixFunc) *ERCTokenIndex {
@@ -95,6 +94,86 @@ func (ei *ERCTokenIndex) Drop(txn *badger.Txn, utxoID []byte) error {
 		return err
 	}
 	return utils.DeleteValue(txn, key)
+}
+
+func (ei *ERCTokenIndex) GetValueForOwner(txn *badger.Txn, owner *objs.Owner, sca *objs.SmartContract, tokenID *uint256.Uint256, minValue *uint256.Uint256, excludeFn func([]byte) (bool, error), maxCount int, lastKey []byte) ([][]byte, *uint256.Uint256, []byte, error) {
+	ownerBytes, err := owner.MarshalBinary()
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	scaBytes, err := sca.MarshalBinary()
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	tokenIDBytes, err := tokenID.MarshalBinary()
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	prefix := ei.prefix()
+	prefix = append(prefix, ownerBytes...)
+	prefix = append(prefix, scaBytes...)
+	prefix = append(prefix, tokenIDBytes...)
+	opts := badger.DefaultIteratorOptions
+	opts.Prefix = prefix
+	iter := txn.NewIterator(opts)
+	defer iter.Close()
+
+	result := [][]byte{}
+	totalValue := uint256.Zero()
+	prefixLen := len(prefix)
+
+	if lastKey != nil {
+		iter.Seek(lastKey)
+		if !iter.ValidForPrefix(prefix) {
+			return result, totalValue, nil, nil
+		}
+		iter.Next()
+	} else {
+		iter.Seek(prefix)
+	}
+
+	for ; iter.ValidForPrefix(prefix); iter.Next() {
+		itm := iter.Item()
+		key := itm.KeyCopy(nil)
+
+		valueBytes := key[prefixLen : len(key)-constants.HashLen]
+		value := &uint256.Uint256{}
+		err := value.UnmarshalBinary(valueBytes)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		utxoID, err := itm.ValueCopy(nil)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		if excludeFn != nil {
+			shouldExclude, err := excludeFn(utxoID)
+			if err != nil {
+				return nil, nil, nil, err
+			}
+			if shouldExclude {
+				continue
+			}
+		}
+
+		totalValue, err = totalValue.Add(totalValue, value)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		result = append(result, utxoID)
+
+		if totalValue.Gte(minValue) {
+			break
+		}
+		if len(result) >= maxCount {
+			return result, totalValue, key, nil
+		}
+	}
+	return result, totalValue, nil, nil
 }
 
 func (ei *ERCTokenIndex) makeKey(owner *objs.Owner, value *uint256.Uint256, sca *objs.SmartContract, tokenID *uint256.Uint256, utxoID []byte) (*ERCTokenIndexKey, error) {

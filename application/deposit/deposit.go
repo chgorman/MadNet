@@ -20,10 +20,10 @@ import (
 // Handler creates a value owner index of all deposits and allows
 // these deposits to be returned for use in a transaction or for verification.
 type Handler struct {
-	valueIndex *indexer.ValueIndex
-	//erctokenIndex *indexer.ERCTokenIndex
-	IsSpent func(txn *badger.Txn, utxoID []byte) (bool, error)
-	logger  *logrus.Logger
+	valueIndex    *indexer.ValueIndex
+	erctokenIndex *indexer.ERCTokenIndex
+	IsSpent       func(txn *badger.Txn, utxoID []byte) (bool, error)
+	logger        *logrus.Logger
 }
 
 // Init initializes the deposit handler
@@ -33,6 +33,11 @@ func (dp *Handler) Init() {
 		dbprefix.PrefixDepositValueRefKey,
 	)
 	dp.valueIndex = vidx
+	erctidx := indexer.NewERCTokenIndex(
+		dbprefix.PrefixDepositERCTKey,
+		dbprefix.PrefixDepositERCTRefKey,
+	)
+	dp.erctokenIndex = erctidx
 	dp.logger = logging.GetLogger(constants.LoggerApp)
 }
 
@@ -125,14 +130,16 @@ func (dp *Handler) Add(txn *badger.Txn, chainID uint32, utxoID []byte, biValue *
 	return nil
 }
 
-/*
 // AddERCToken will add an ERCToken deposit to the handler
-func (dp *Handler) AddERCToken(txn *badger.Txn, chainID, exitChainID uint32, utxoID []byte, biValue *big.Int, owner *objs.Owner, scAddr []byte, biTokenID *big.Int) error {
+func (dp *Handler) AddERCToken(txn *badger.Txn, chainID, exitChainID, origChainID uint32, utxoID []byte, biValue *big.Int, owner *objs.Owner, scAddr []byte, biTokenID *big.Int) error {
 	if chainID == 0 {
 		return errorz.ErrInvalid{}.New("depositHandler.AddERCToken; chainID is zero")
 	}
 	if exitChainID == 0 {
 		return errorz.ErrInvalid{}.New("depositHandler.AddERCToken; exitChainID is zero")
+	}
+	if origChainID == 0 {
+		return errorz.ErrInvalid{}.New("depositHandler.AddERCToken; origChainID is zero")
 	}
 	value, err := new(uint256.Uint256).FromBigInt(biValue)
 	if err != nil {
@@ -148,13 +155,11 @@ func (dp *Handler) AddERCToken(txn *badger.Txn, chainID, exitChainID uint32, utx
 		return err
 	}
 	sca := &objs.SmartContract{}
-	err = sca.UnmarshalBinary(scAddr)
+	err = sca.New(origChainID, scAddr)
 	if err != nil {
 		utils.DebugTrace(dp.logger, err)
 		return err
 	}
-	// TODO: think more about how utxoID will be computed
-	//		 in order to determine if this needs to be changed.
 	utxoID = utils.CopySlice(utxoID)
 	utxoID = utils.ForceSliceToLength(utxoID, constants.HashLen)
 	spent, err := dp.IsSpent(txn, utxoID)
@@ -213,7 +218,6 @@ func (dp *Handler) AddERCToken(txn *badger.Txn, chainID, exitChainID uint32, utx
 	}
 	return nil
 }
-*/
 
 // Remove will delete all references to a deposit from the Handler
 func (dp *Handler) Remove(txn *badger.Txn, utxoID []byte) error {
@@ -221,16 +225,29 @@ func (dp *Handler) Remove(txn *badger.Txn, utxoID []byte) error {
 	if err != nil {
 		utils.DebugTrace(dp.logger, err)
 	}
+	err = dp.erctokenIndex.Drop(txn, utxoID)
+	if err != nil {
+		utils.DebugTrace(dp.logger, err)
+	}
 	return nil
 }
 
-// GetValueForOwner allows a list of utxoIDs to be returned that are equal or
-// greater than the value passed as minValue, and are owned by owner.
+// GetValueForOwner allows a list of utxoIDs to be returned that are
+// greater than or equal to the value passed as minValue, and are owned by owner.
 func (dp *Handler) GetValueForOwner(txn *badger.Txn, owner *objs.Owner, minValue *uint256.Uint256, maxCount int, lastKey []byte) ([][]byte, *uint256.Uint256, []byte, error) {
 	excludeSpent := func(utxoID []byte) (bool, error) {
 		return dp.IsSpent(txn, utils.CopySlice(utxoID))
 	}
 	return dp.valueIndex.GetValueForOwner(txn, owner, minValue, excludeSpent, maxCount, lastKey)
+}
+
+// GetERCTokenValueForOwner allows a list of utxoIDs to be returned that are
+// greater than or equal to the value passed as minValue, and are owned by owner.
+func (dp *Handler) GetERCTokenValueForOwner(txn *badger.Txn, owner *objs.Owner, sca *objs.SmartContract, tokenID *uint256.Uint256, minValue *uint256.Uint256, maxCount int, lastKey []byte) ([][]byte, *uint256.Uint256, []byte, error) {
+	excludeSpent := func(utxoID []byte) (bool, error) {
+		return dp.IsSpent(txn, utils.CopySlice(utxoID))
+	}
+	return dp.erctokenIndex.GetValueForOwner(txn, owner, sca, tokenID, minValue, excludeSpent, maxCount, lastKey)
 }
 
 // Get returns four values <found>, <missing>, <spent>, <error>

@@ -9,7 +9,6 @@ import (
 )
 
 /*
-
 == BADGER KEYS ==
 
 lookup:
@@ -19,7 +18,6 @@ key: <prefix>|<owner>|<value>|<utxoID>
 reverse lookup:
 key: <prefix>|<utxoID>
   value: <owner>|<value>|<utxoID>
-
 */
 
 func NewValueIndex(p, pp prefixFunc) *ValueIndex {

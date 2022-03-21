@@ -531,15 +531,17 @@ func TestTxERCTokenTransferGood(t *testing.T) {
 		t.Fatal(err)
 	}
 	acctBTC := crypto.Hasher([]byte("btc"))[:constants.OwnerLen]
+	chainBTC := uint32(127)
 	scaBTC := &SmartContract{}
-	err := scaBTC.UnmarshalBinary(acctBTC)
+	err := scaBTC.New(chainBTC, acctBTC)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	acctETH := crypto.Hasher([]byte("eth"))[:constants.OwnerLen]
+	chainETH := uint32(127)
 	scaETH := &SmartContract{}
-	err = scaETH.UnmarshalBinary(acctETH)
+	err = scaETH.New(chainETH, acctETH)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2696,13 +2698,14 @@ func TestTxContainsERCTokensGood2(t *testing.T) {
 		t.Fatal(err)
 	}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	origChainID := uint32(127)
 
 	tx := &Tx{}
 	value1 := uint256.One()
 	fee := uint256.Zero()
 	tokenID := uint256.Two()
 	sca := &SmartContract{}
-	err := sca.UnmarshalBinary(acct)
+	err := sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2744,8 +2747,9 @@ func TestTxValidateERCTokensGood2(t *testing.T) {
 		t.Fatal(err)
 	}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	origChainID := uint32(127)
 	sca := &SmartContract{}
-	err := sca.UnmarshalBinary(acct)
+	err := sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2776,8 +2780,9 @@ func TestTxValidateERCTokensGood3(t *testing.T) {
 		t.Fatal(err)
 	}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	origChainID := uint32(127)
 	sca := &SmartContract{}
-	err := sca.UnmarshalBinary(acct)
+	err := sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2818,8 +2823,9 @@ func TestTxValidateERCTokensGood4(t *testing.T) {
 		t.Fatal(err)
 	}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	origChainID := uint32(127)
 	sca := &SmartContract{}
-	err := sca.UnmarshalBinary(acct)
+	err := sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2861,15 +2867,17 @@ func TestTxValidateERCTokensGood5(t *testing.T) {
 	}
 
 	acctBTC := crypto.Hasher([]byte("btc"))[:constants.OwnerLen]
+	chainBTC := uint32(127)
 	scaBTC := &SmartContract{}
-	err := scaBTC.UnmarshalBinary(acctBTC)
+	err := scaBTC.New(chainBTC, acctBTC)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	acctETH := crypto.Hasher([]byte("eth"))[:constants.OwnerLen]
+	chainETH := uint32(127)
 	scaETH := &SmartContract{}
-	err = scaETH.UnmarshalBinary(acctETH)
+	err = scaETH.New(chainETH, acctETH)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2953,8 +2961,9 @@ func TestTxValidateERCTokensBad3(t *testing.T) {
 		t.Fatal(err)
 	}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	origChainID := uint32(127)
 	sca := &SmartContract{}
-	err := sca.UnmarshalBinary(acct)
+	err := sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2983,8 +2992,9 @@ func TestTxValidateERCTokensBad4(t *testing.T) {
 		t.Fatal(err)
 	}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	origChainID := uint32(127)
 	sca := &SmartContract{}
-	err := sca.UnmarshalBinary(acct)
+	err := sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -3016,8 +3026,9 @@ func TestTxValidateERCTokensBad5(t *testing.T) {
 		t.Fatal(err)
 	}
 	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	origChainID := uint32(127)
 	sca := &SmartContract{}
-	err := sca.UnmarshalBinary(acct)
+	err := sca.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -40,7 +40,7 @@ func TestERCTPreImageGood(t *testing.T) {
 	owner := &ERCTokenOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	scaBytes := crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))
+	scaBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
 	sca := &SmartContract{}
 	err = sca.UnmarshalBinary(scaBytes)
 	if err != nil {
@@ -97,6 +97,9 @@ func erctpiEqual(t *testing.T, erctpi1, erctpi2 *ERCTPreImage) {
 	}
 	if !bytes.Equal(erctpi1.SmartContractAddress.address, erctpi2.SmartContractAddress.address) {
 		t.Fatal("Do not agree on SmartContractAddress!")
+	}
+	if erctpi1.SmartContractAddress.origChainID != erctpi2.SmartContractAddress.origChainID {
+		t.Fatal("Do not agree on SmartContractAddress origChainID!")
 	}
 }
 
@@ -195,7 +198,7 @@ func TestERCTPreImagePreHashGood(t *testing.T) {
 	owner := &ERCTokenOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	scaBytes := crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))
+	scaBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
 	sca := &SmartContract{}
 	err = sca.UnmarshalBinary(scaBytes)
 	if err != nil {
@@ -309,6 +312,12 @@ func TestERCTPreImageValidateTokenBad(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (10)")
 	}
+
+	erctpi.SmartContractAddress.address = make([]byte, constants.OwnerLen)
+	err = erctpi.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (11)")
+	}
 }
 
 func TestERCTPreImageValidateTokenGood(t *testing.T) {
@@ -329,8 +338,9 @@ func TestERCTPreImageValidateTokenGood(t *testing.T) {
 	erctpi.TokenID = tokenID
 	addr := make([]byte, constants.OwnerLen)
 	addr[0] = 1
+	data := append([]byte{0, 0, 0, 127}, addr...)
 	sca := &SmartContract{}
-	err := sca.UnmarshalBinary(addr)
+	err := sca.UnmarshalBinary(data)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -343,19 +353,24 @@ func TestERCTPreImageValidateTokenGood(t *testing.T) {
 
 func TestSmartContractNew(t *testing.T) {
 	erctpi := &ERCTPreImage{}
-	err := erctpi.SmartContractAddress.New(nil)
+	err := erctpi.SmartContractAddress.New(0, nil)
 	if err == nil {
 		t.Fatal("Should have raised error (0)")
 	}
 	sc := &SmartContract{}
-	err = sc.New(nil)
+	err = sc.New(0, nil)
 	if err == nil {
 		t.Fatal("Should have raised error (1)")
 	}
 
+	origChainID := uint32(1)
+	err = sc.New(origChainID, nil)
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
 	data := make([]byte, constants.OwnerLen)
 	data[0] = 1
-	err = sc.New(data)
+	err = sc.New(origChainID, data)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -363,7 +378,9 @@ func TestSmartContractNew(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !bytes.Equal(data, retData) {
+	chainBytes := utils.MarshalUint32(origChainID)
+	trueData := append(chainBytes, data...)
+	if !bytes.Equal(trueData, retData) {
 		t.Fatal("invalid sc")
 	}
 }
@@ -379,20 +396,29 @@ func TestSmartContractMarshalBad(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (2)")
 	}
+	sc.origChainID = 1
+	_, err = sc.MarshalBinary()
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
 }
 
 func TestSmartContractMarshalGood(t *testing.T) {
-	sca := make([]byte, constants.OwnerLen)
-	for k := 0; k < len(sca); k++ {
-		sca[k] = byte(k + 1)
+	scAddr := make([]byte, constants.OwnerLen)
+	for k := 0; k < len(scAddr); k++ {
+		scAddr[k] = byte(k + 1)
 	}
+	chainBytes := []byte{0, 0, 0, 1}
+	origChainID := uint32(1)
+	trueData := append(chainBytes, scAddr...)
 	sc := &SmartContract{}
-	sc.address = utils.CopySlice(sca)
+	sc.origChainID = origChainID
+	sc.address = utils.CopySlice(scAddr)
 	ret, err := sc.MarshalBinary()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !bytes.Equal(sca, ret) {
+	if !bytes.Equal(trueData, ret) {
 		t.Fatal("invalid address")
 	}
 }
@@ -408,19 +434,29 @@ func TestSmartContractUnmarshalBad(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (2)")
 	}
+	err = sc.UnmarshalBinary(make([]byte, constants.OwnerLen+4))
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
 }
 
 func TestSmartContractUnmarshalGood(t *testing.T) {
-	sca := make([]byte, constants.OwnerLen)
-	for k := 0; k < len(sca); k++ {
-		sca[k] = byte(k + 1)
+	chainBytes := []byte{0, 0, 0, 1}
+	origChainID := uint32(1)
+	scAddr := make([]byte, constants.OwnerLen)
+	for k := 0; k < len(scAddr); k++ {
+		scAddr[k] = byte(k + 1)
 	}
+	data := append(chainBytes, scAddr...)
 	sc := &SmartContract{}
-	err := sc.UnmarshalBinary(sca)
+	err := sc.UnmarshalBinary(data)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !bytes.Equal(sc.address, sca) {
+	if !bytes.Equal(sc.address, scAddr) {
 		t.Fatal("invalid address")
+	}
+	if sc.origChainID != origChainID {
+		t.Fatal("invalid origChainID")
 	}
 }

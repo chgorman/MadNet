@@ -42,7 +42,7 @@ func TestERCTokenGood(t *testing.T) {
 	owner := &ERCTokenOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	scaBytes := crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))
+	scaBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
 	sca := &SmartContract{}
 	err = sca.UnmarshalBinary(scaBytes)
 	if err != nil {
@@ -316,7 +316,7 @@ func TestERCTokenPreHashGood(t *testing.T) {
 	owner := &ERCTokenOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	scaBytes := crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))
+	scaBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
 	sca := &SmartContract{}
 	err = sca.UnmarshalBinary(scaBytes)
 	if err != nil {
