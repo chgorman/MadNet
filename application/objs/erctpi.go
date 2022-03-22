@@ -13,15 +13,15 @@ import (
 
 // ERCTPreImage is a value store preimage
 type ERCTPreImage struct {
-	ChainID              uint32
-	ExitChainID          uint32
-	Value                *uint256.Uint256
-	TXOutIdx             uint32
-	Withdraw             bool
-	Owner                *ERCTokenOwner
-	Fee                  *uint256.Uint256
-	TokenID              *uint256.Uint256
-	SmartContractAddress *SmartContract
+	ChainID       uint32
+	ExitChainID   uint32
+	Value         *uint256.Uint256
+	TXOutIdx      uint32
+	Withdraw      bool
+	Owner         *ERCTokenOwner
+	Fee           *uint256.Uint256
+	TokenID       *uint256.Uint256
+	SmartContract *SmartContract
 	//
 	preHash []byte
 }
@@ -81,7 +81,7 @@ func (b *ERCTPreImage) UnmarshalCapn(bc mdefs.ERCTPreImage) error {
 	if err := sc.UnmarshalBinary(bc.SmartContractAddress()); err != nil {
 		return err
 	}
-	b.SmartContractAddress = sc
+	b.SmartContract = sc
 
 	owner := &ERCTokenOwner{}
 	if err := owner.UnmarshalBinary(bc.Owner()); err != nil {
@@ -149,7 +149,7 @@ func (b *ERCTPreImage) MarshalCapn(seg *capnp.Segment) (mdefs.ERCTPreImage, erro
 	if err := bc.SetOwner(owner); err != nil {
 		return bc, err
 	}
-	sca, err := b.SmartContractAddress.MarshalBinary()
+	sca, err := b.SmartContract.MarshalBinary()
 	if err != nil {
 		return bc, err
 	}
@@ -250,14 +250,14 @@ func (b *ERCTPreImage) ValidateToken() error {
 	if b.TokenID == nil {
 		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.TokenID not initialized")
 	}
-	if b.SmartContractAddress == nil {
-		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SCA not initialized")
+	if b.SmartContract == nil {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SC not initialized")
 	}
-	if len(b.SmartContractAddress.address) != constants.OwnerLen {
-		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SCA.address has incorrect length")
+	if len(b.SmartContract.address) != constants.OwnerLen {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SC.address has incorrect length")
 	}
-	if b.SmartContractAddress.origChainID == 0 {
-		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SCA.origChainID is 0")
+	if b.SmartContract.origChainID == 0 {
+		return errorz.ErrInvalid{}.New("erctpi.ValidateToken: erctpi.SC.origChainID is 0")
 	}
 	return nil
 }

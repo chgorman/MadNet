@@ -12,12 +12,12 @@ import (
 == BADGER KEYS ==
 
 lookup:
-key: <prefix>|<owner>|<scaTokenID>|<value>|<utxoID>
+key: <prefix>|<owner>|<scTokenID>|<value>|<utxoID>
 value: <utxoID>
 
 reverse lookup:
 key: <prefix>|<utxoID>
-value: <owner>|<scaTokenID>|<value>|<utxoID>
+value: <owner>|<scTokenID>|<value>|<utxoID>
 */
 
 func NewERCTokenIndex(p, pp prefixFunc) *ERCTokenIndex {
@@ -58,15 +58,15 @@ func (eirk *ERCTokenIndexRefKey) UnmarshalBinary(data []byte) {
 }
 
 // Add adds an item to the list
-func (ei *ERCTokenIndex) Add(txn *badger.Txn, utxoID []byte, owner *objs.Owner, value *uint256.Uint256, sca *objs.SmartContract, tokenID *uint256.Uint256) error {
-	eiKey, err := ei.makeKey(owner, value, sca, tokenID, utxoID)
+func (ei *ERCTokenIndex) Add(txn *badger.Txn, utxoID []byte, owner *objs.Owner, value *uint256.Uint256, sc *objs.SmartContract, tokenID *uint256.Uint256) error {
+	eiKey, err := ei.makeKey(owner, value, sc, tokenID, utxoID)
 	if err != nil {
 		return err
 	}
 	key := eiKey.MarshalBinary()
 	viRefKey := ei.makeRefKey(utxoID)
 	refKey := viRefKey.MarshalBinary()
-	ercTokenIndex, err := ei.makeERCTokenIndex(owner, value, sca, tokenID, utxoID)
+	ercTokenIndex, err := ei.makeERCTokenIndex(owner, value, sc, tokenID, utxoID)
 	if err != nil {
 		return err
 	}
@@ -96,12 +96,12 @@ func (ei *ERCTokenIndex) Drop(txn *badger.Txn, utxoID []byte) error {
 	return utils.DeleteValue(txn, key)
 }
 
-func (ei *ERCTokenIndex) GetValueForOwner(txn *badger.Txn, owner *objs.Owner, sca *objs.SmartContract, tokenID *uint256.Uint256, minValue *uint256.Uint256, excludeFn func([]byte) (bool, error), maxCount int, lastKey []byte) ([][]byte, *uint256.Uint256, []byte, error) {
+func (ei *ERCTokenIndex) GetValueForOwner(txn *badger.Txn, owner *objs.Owner, sc *objs.SmartContract, tokenID *uint256.Uint256, minValue *uint256.Uint256, excludeFn func([]byte) (bool, error), maxCount int, lastKey []byte) ([][]byte, *uint256.Uint256, []byte, error) {
 	ownerBytes, err := owner.MarshalBinary()
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	scaBytes, err := sca.MarshalBinary()
+	scBytes, err := sc.MarshalBinary()
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -112,7 +112,7 @@ func (ei *ERCTokenIndex) GetValueForOwner(txn *badger.Txn, owner *objs.Owner, sc
 
 	prefix := ei.prefix()
 	prefix = append(prefix, ownerBytes...)
-	prefix = append(prefix, scaBytes...)
+	prefix = append(prefix, scBytes...)
 	prefix = append(prefix, tokenIDBytes...)
 	opts := badger.DefaultIteratorOptions
 	opts.Prefix = prefix
@@ -176,8 +176,8 @@ func (ei *ERCTokenIndex) GetValueForOwner(txn *badger.Txn, owner *objs.Owner, sc
 	return result, totalValue, nil, nil
 }
 
-func (ei *ERCTokenIndex) makeKey(owner *objs.Owner, value *uint256.Uint256, sca *objs.SmartContract, tokenID *uint256.Uint256, utxoID []byte) (*ERCTokenIndexKey, error) {
-	ercTokenIndex, err := ei.makeERCTokenIndex(owner, value, sca, tokenID, utxoID)
+func (ei *ERCTokenIndex) makeKey(owner *objs.Owner, value *uint256.Uint256, sc *objs.SmartContract, tokenID *uint256.Uint256, utxoID []byte) (*ERCTokenIndexKey, error) {
+	ercTokenIndex, err := ei.makeERCTokenIndex(owner, value, sc, tokenID, utxoID)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +198,7 @@ func (ei *ERCTokenIndex) makeRefKey(utxoID []byte) *ERCTokenIndexRefKey {
 	return eiRefKey
 }
 
-func (ei *ERCTokenIndex) makeERCTokenIndex(owner *objs.Owner, value *uint256.Uint256, sca *objs.SmartContract, tokenID *uint256.Uint256, utxoID []byte) ([]byte, error) {
+func (ei *ERCTokenIndex) makeERCTokenIndex(owner *objs.Owner, value *uint256.Uint256, sc *objs.SmartContract, tokenID *uint256.Uint256, utxoID []byte) ([]byte, error) {
 	valueBytes, err := value.MarshalBinary()
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (ei *ERCTokenIndex) makeERCTokenIndex(owner *objs.Owner, value *uint256.Uin
 	if err != nil {
 		return nil, err
 	}
-	scaBytes, err := sca.MarshalBinary()
+	scBytes, err := sc.MarshalBinary()
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func (ei *ERCTokenIndex) makeERCTokenIndex(owner *objs.Owner, value *uint256.Uin
 	}
 	ercTokenIndex := []byte{}
 	ercTokenIndex = append(ercTokenIndex, ownerBytes...)
-	ercTokenIndex = append(ercTokenIndex, scaBytes...)
+	ercTokenIndex = append(ercTokenIndex, scBytes...)
 	ercTokenIndex = append(ercTokenIndex, tokenIDBytes...)
 	ercTokenIndex = append(ercTokenIndex, valueBytes...)
 	ercTokenIndex = append(ercTokenIndex, utils.CopySlice(utxoID)...)

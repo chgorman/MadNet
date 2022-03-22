@@ -40,23 +40,23 @@ func TestERCTPreImageGood(t *testing.T) {
 	owner := &ERCTokenOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	scaBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
-	sca := &SmartContract{}
-	err = sca.UnmarshalBinary(scaBytes)
+	scBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
+	sc := &SmartContract{}
+	err = sc.UnmarshalBinary(scBytes)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	erctpi := &ERCTPreImage{
-		ChainID:              cid,
-		ExitChainID:          ecid,
-		TXOutIdx:             txoid,
-		Withdraw:             withdraw,
-		SmartContractAddress: sca,
-		Owner:                owner,
-		Value:                val,
-		TokenID:              tid,
-		Fee:                  fee,
+		ChainID:       cid,
+		ExitChainID:   ecid,
+		TXOutIdx:      txoid,
+		Withdraw:      withdraw,
+		SmartContract: sc,
+		Owner:         owner,
+		Value:         val,
+		TokenID:       tid,
+		Fee:           fee,
 	}
 	erctpi2 := &ERCTPreImage{}
 	erctpiBytes, err := erctpi.MarshalBinary()
@@ -95,10 +95,10 @@ func erctpiEqual(t *testing.T, erctpi1, erctpi2 *ERCTPreImage) {
 	if !bytes.Equal(erctpi1.Owner.Account, erctpi2.Owner.Account) {
 		t.Fatal("Do not agree on Owner!")
 	}
-	if !bytes.Equal(erctpi1.SmartContractAddress.address, erctpi2.SmartContractAddress.address) {
+	if !bytes.Equal(erctpi1.SmartContract.address, erctpi2.SmartContract.address) {
 		t.Fatal("Do not agree on SmartContractAddress!")
 	}
-	if erctpi1.SmartContractAddress.origChainID != erctpi2.SmartContractAddress.origChainID {
+	if erctpi1.SmartContract.origChainID != erctpi2.SmartContract.origChainID {
 		t.Fatal("Do not agree on SmartContractAddress origChainID!")
 	}
 }
@@ -198,23 +198,23 @@ func TestERCTPreImagePreHashGood(t *testing.T) {
 	owner := &ERCTokenOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	scaBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
-	sca := &SmartContract{}
-	err = sca.UnmarshalBinary(scaBytes)
+	scBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
+	sc := &SmartContract{}
+	err = sc.UnmarshalBinary(scBytes)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	erctpi := &ERCTPreImage{
-		ChainID:              cid,
-		ExitChainID:          ecid,
-		TXOutIdx:             txoid,
-		Withdraw:             withdraw,
-		SmartContractAddress: sca,
-		Owner:                owner,
-		Value:                val,
-		TokenID:              tid,
-		Fee:                  fee,
+		ChainID:       cid,
+		ExitChainID:   ecid,
+		TXOutIdx:      txoid,
+		Withdraw:      withdraw,
+		SmartContract: sc,
+		Owner:         owner,
+		Value:         val,
+		TokenID:       tid,
+		Fee:           fee,
 	}
 	ret, err := erctpi.PreHash()
 	if err != nil {
@@ -306,14 +306,14 @@ func TestERCTPreImageValidateTokenBad(t *testing.T) {
 		t.Fatal("Should have raised error (9)")
 	}
 
-	sca := &SmartContract{}
-	erctpi.SmartContractAddress = sca
+	sc := &SmartContract{}
+	erctpi.SmartContract = sc
 	err = erctpi.ValidateToken()
 	if err == nil {
 		t.Fatal("Should have raised error (10)")
 	}
 
-	erctpi.SmartContractAddress.address = make([]byte, constants.OwnerLen)
+	erctpi.SmartContract.address = make([]byte, constants.OwnerLen)
 	err = erctpi.ValidateToken()
 	if err == nil {
 		t.Fatal("Should have raised error (11)")
@@ -339,12 +339,12 @@ func TestERCTPreImageValidateTokenGood(t *testing.T) {
 	addr := make([]byte, constants.OwnerLen)
 	addr[0] = 1
 	data := append([]byte{0, 0, 0, 127}, addr...)
-	sca := &SmartContract{}
-	err := sca.UnmarshalBinary(data)
+	sc := &SmartContract{}
+	err := sc.UnmarshalBinary(data)
 	if err != nil {
 		t.Fatal(err)
 	}
-	erctpi.SmartContractAddress = sca
+	erctpi.SmartContract = sc
 	err = erctpi.ValidateToken()
 	if err != nil {
 		t.Fatal(err)
@@ -353,7 +353,7 @@ func TestERCTPreImageValidateTokenGood(t *testing.T) {
 
 func TestSmartContractNew(t *testing.T) {
 	erctpi := &ERCTPreImage{}
-	err := erctpi.SmartContractAddress.New(0, nil)
+	err := erctpi.SmartContract.New(0, nil)
 	if err == nil {
 		t.Fatal("Should have raised error (0)")
 	}
@@ -387,7 +387,7 @@ func TestSmartContractNew(t *testing.T) {
 
 func TestSmartContractMarshalBad(t *testing.T) {
 	erctpi := &ERCTPreImage{}
-	_, err := erctpi.SmartContractAddress.MarshalBinary()
+	_, err := erctpi.SmartContract.MarshalBinary()
 	if err == nil {
 		t.Fatal("Should have raised error (1)")
 	}
@@ -425,7 +425,7 @@ func TestSmartContractMarshalGood(t *testing.T) {
 
 func TestSmartContractUnmarshalBad(t *testing.T) {
 	erctpi := &ERCTPreImage{}
-	err := erctpi.SmartContractAddress.UnmarshalBinary(nil)
+	err := erctpi.SmartContract.UnmarshalBinary(nil)
 	if err == nil {
 		t.Fatal("Should have raised error (1)")
 	}

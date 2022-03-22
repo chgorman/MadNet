@@ -52,17 +52,17 @@ func TestERCTokenIndexAdd(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	sca := &objs.SmartContract{}
+	sc := &objs.SmartContract{}
 	addr := make([]byte, constants.OwnerLen)
 	addr[0] = 127
 	origChainID := uint32(128)
-	err = sca.New(origChainID, addr)
+	err = sc.New(origChainID, addr)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	err = db.Update(func(txn *badger.Txn) error {
-		err := index.Add(txn, utxoID, owner, value, sca, tokenID)
+		err := index.Add(txn, utxoID, owner, value, sc, tokenID)
 		if err == nil {
 			// Invalid Owner
 			t.Fatal("Should have raised error (1)")
@@ -74,7 +74,7 @@ func TestERCTokenIndexAdd(t *testing.T) {
 	}
 	owner = makeOwner()
 	err = db.Update(func(txn *badger.Txn) error {
-		err = index.Add(txn, utxoID, owner, value, sca, tokenID)
+		err = index.Add(txn, utxoID, owner, value, sc, tokenID)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -113,11 +113,11 @@ func TestERCTokenIndexDrop(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	sca := &objs.SmartContract{}
+	sc := &objs.SmartContract{}
 	addr := make([]byte, constants.OwnerLen)
 	addr[0] = 127
 	origChainID := uint32(128)
-	err = sca.New(origChainID, addr)
+	err = sc.New(origChainID, addr)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -128,7 +128,7 @@ func TestERCTokenIndexDrop(t *testing.T) {
 			// Not present
 			t.Fatal("Should have raised error")
 		}
-		err = index.Add(txn, utxoID, owner, value, sca, tokenID)
+		err = index.Add(txn, utxoID, owner, value, sc, tokenID)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -171,16 +171,16 @@ func TestERCTokenIndexMakeKey(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	sca := &objs.SmartContract{}
+	sc := &objs.SmartContract{}
 	addr := make([]byte, constants.OwnerLen)
 	addr[0] = 127
 	origChainID := uint32(128)
-	err = sca.New(origChainID, addr)
+	err = sc.New(origChainID, addr)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = index.makeKey(owner, value, sca, tokenID, utxoID)
+	_, err = index.makeKey(owner, value, sc, tokenID, utxoID)
 	if err == nil {
 		t.Fatal("Should have raised error (1)")
 	}
@@ -193,11 +193,11 @@ func TestERCTokenIndexMakeKey(t *testing.T) {
 	trueKey := []byte{}
 	trueKey = append(trueKey, index.prefix()...)
 	trueKey = append(trueKey, ownerBytes...)
-	scaBytes, err := sca.MarshalBinary()
+	scBytes, err := sc.MarshalBinary()
 	if err != nil {
 		t.Fatal(err)
 	}
-	trueKey = append(trueKey, scaBytes...)
+	trueKey = append(trueKey, scBytes...)
 	tokenIDBytes, err := tokenID.MarshalBinary()
 	if err != nil {
 		t.Fatal(err)
@@ -209,7 +209,7 @@ func TestERCTokenIndexMakeKey(t *testing.T) {
 	}
 	trueKey = append(trueKey, valueBytes...)
 	trueKey = append(trueKey, utxoID...)
-	viKey, err := index.makeKey(owner, value, sca, tokenID, utxoID)
+	viKey, err := index.makeKey(owner, value, sc, tokenID, utxoID)
 	if err != nil {
 		t.Fatal(err)
 	}

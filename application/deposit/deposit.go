@@ -154,8 +154,8 @@ func (dp *Handler) AddERCToken(txn *badger.Txn, chainID, exitChainID, origChainI
 		utils.DebugTrace(dp.logger, err)
 		return err
 	}
-	sca := &objs.SmartContract{}
-	err = sca.New(origChainID, scAddr)
+	sc := &objs.SmartContract{}
+	err = sc.New(origChainID, scAddr)
 	if err != nil {
 		utils.DebugTrace(dp.logger, err)
 		return err
@@ -179,15 +179,15 @@ func (dp *Handler) AddERCToken(txn *badger.Txn, chainID, exitChainID, origChainI
 	}
 	erct := &objs.ERCToken{
 		ERCTPreImage: &objs.ERCTPreImage{
-			TXOutIdx:             constants.MaxUint32,
-			Value:                value,
-			ChainID:              chainID,
-			ExitChainID:          exitChainID,
-			Owner:                eto,
-			SmartContractAddress: sca,
-			TokenID:              tokenID,
-			Withdraw:             false,
-			Fee:                  uint256.Zero(),
+			TXOutIdx:      constants.MaxUint32,
+			Value:         value,
+			ChainID:       chainID,
+			ExitChainID:   exitChainID,
+			Owner:         eto,
+			SmartContract: sc,
+			TokenID:       tokenID,
+			Withdraw:      false,
+			Fee:           uint256.Zero(),
 		},
 		TxHash: n2,
 	}
@@ -197,7 +197,7 @@ func (dp *Handler) AddERCToken(txn *badger.Txn, chainID, exitChainID, origChainI
 		utils.DebugTrace(dp.logger, err)
 		return err
 	}
-	err = dp.erctokenIndex.Add(txn, utxoID, owner, value, sca, tokenID)
+	err = dp.erctokenIndex.Add(txn, utxoID, owner, value, sc, tokenID)
 	if err != nil {
 		utils.DebugTrace(dp.logger, err)
 		return err

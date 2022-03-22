@@ -342,10 +342,10 @@ func TestUTXOERCTokenGood(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	sca := &SmartContract{}
-	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	sc := &SmartContract{}
+	acct := crypto.Hasher([]byte("sc"))[:constants.OwnerLen]
 	origChainID := uint32(127)
-	err = sca.New(origChainID, acct)
+	err = sc.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -354,15 +354,15 @@ func TestUTXOERCTokenGood(t *testing.T) {
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
 	erctp := &ERCTPreImage{
-		ChainID:              cid,
-		ExitChainID:          ecid,
-		Value:                val,
-		TXOutIdx:             txoid,
-		Owner:                owner,
-		Withdraw:             false,
-		Fee:                  new(uint256.Uint256).SetZero(),
-		SmartContractAddress: sca,
-		TokenID:              tokenID,
+		ChainID:       cid,
+		ExitChainID:   ecid,
+		Value:         val,
+		TXOutIdx:      txoid,
+		Owner:         owner,
+		Withdraw:      false,
+		Fee:           new(uint256.Uint256).SetZero(),
+		SmartContract: sc,
+		TokenID:       tokenID,
 	}
 	txHash := make([]byte, constants.HashLen)
 	erct := &ERCToken{
@@ -1753,14 +1753,14 @@ func TestUTXOErctKeyValueBad(t *testing.T) {
 	}
 
 	erct.ERCTPreImage = &ERCTPreImage{}
-	sca := &SmartContract{}
-	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	sc := &SmartContract{}
+	acct := crypto.Hasher([]byte("sc"))[:constants.OwnerLen]
 	origChainID := uint32(127)
-	err = sca.New(origChainID, acct)
+	err = sc.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
-	erct.ERCTPreImage.SmartContractAddress = sca
+	erct.ERCTPreImage.SmartContract = sc
 	_, _, err = utxo.erctKeyValue()
 	if err == nil {
 		t.Fatal("Should have raised error (3)")
@@ -1777,14 +1777,14 @@ func TestUTXOErctKeyValueBad(t *testing.T) {
 func TestUTXOErctKeyValueGood(t *testing.T) {
 	erct := &ERCToken{}
 	erct.ERCTPreImage = &ERCTPreImage{}
-	sca := &SmartContract{}
-	acct := crypto.Hasher([]byte("sca"))[:constants.OwnerLen]
+	sc := &SmartContract{}
+	acct := crypto.Hasher([]byte("sc"))[:constants.OwnerLen]
 	origChainID := uint32(127)
-	err := sca.New(origChainID, acct)
+	err := sc.New(origChainID, acct)
 	if err != nil {
 		t.Fatal(err)
 	}
-	erct.ERCTPreImage.SmartContractAddress = sca
+	erct.ERCTPreImage.SmartContract = sc
 	tokenID := uint256.Zero()
 	erct.ERCTPreImage.TokenID = tokenID
 	ercValue := uint256.One()
@@ -1794,11 +1794,11 @@ func TestUTXOErctKeyValueGood(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	scaBytes, err := sca.MarshalBinary()
+	scBytes, err := sc.MarshalBinary()
 	if err != nil {
 		t.Fatal(err)
 	}
-	keyBytesTrue := append(scaBytes, tokenBytes...)
+	keyBytesTrue := append(scBytes, tokenBytes...)
 	keyTrue := string(keyBytesTrue)
 
 	utxo := &TXOut{}

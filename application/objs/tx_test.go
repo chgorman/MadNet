@@ -188,7 +188,7 @@ func makeDSWithValueFee(t *testing.T, ownerSigner Signer, i int, rawData []byte,
 	return utxInputs
 }
 
-func makeERCToken(t *testing.T, ownerSigner Signer, value, fee, tokenID *uint256.Uint256, sca *SmartContract, txHashIdx int) *TXOut {
+func makeERCToken(t *testing.T, ownerSigner Signer, value, fee, tokenID *uint256.Uint256, sc *SmartContract, txHashIdx int) *TXOut {
 	if value == nil || fee == nil || tokenID == nil {
 		panic("invalid value, fee, or tokenID")
 	}
@@ -203,15 +203,15 @@ func makeERCToken(t *testing.T, ownerSigner Signer, value, fee, tokenID *uint256
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
 	erctp := &ERCTPreImage{
-		ChainID:              cid,
-		ExitChainID:          cid,
-		TXOutIdx:             0,
-		Withdraw:             false,
-		Value:                value.Clone(),
-		Owner:                owner,
-		Fee:                  fee.Clone(),
-		SmartContractAddress: sca,
-		TokenID:              tokenID.Clone(),
+		ChainID:       cid,
+		ExitChainID:   cid,
+		TXOutIdx:      0,
+		Withdraw:      false,
+		Value:         value.Clone(),
+		Owner:         owner,
+		Fee:           fee.Clone(),
+		SmartContract: sc,
+		TokenID:       tokenID.Clone(),
 	}
 	var txHash []byte
 	if txHashIdx == 0 {

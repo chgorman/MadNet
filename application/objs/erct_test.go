@@ -42,23 +42,23 @@ func TestERCTokenGood(t *testing.T) {
 	owner := &ERCTokenOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	scaBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
-	sca := &SmartContract{}
-	err = sca.UnmarshalBinary(scaBytes)
+	scBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
+	sc := &SmartContract{}
+	err = sc.UnmarshalBinary(scBytes)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	erctpi := &ERCTPreImage{
-		ChainID:              cid,
-		ExitChainID:          ecid,
-		Value:                val,
-		Withdraw:             withdraw,
-		TXOutIdx:             txoid,
-		Owner:                owner,
-		SmartContractAddress: sca,
-		Fee:                  fee,
-		TokenID:              tokenID,
+		ChainID:       cid,
+		ExitChainID:   ecid,
+		Value:         val,
+		Withdraw:      withdraw,
+		TXOutIdx:      txoid,
+		Owner:         owner,
+		SmartContract: sc,
+		Fee:           fee,
+		TokenID:       tokenID,
 	}
 	txHash := make([]byte, constants.HashLen)
 	erct := &ERCToken{
@@ -316,23 +316,23 @@ func TestERCTokenPreHashGood(t *testing.T) {
 	owner := &ERCTokenOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	scaBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
-	sca := &SmartContract{}
-	err = sca.UnmarshalBinary(scaBytes)
+	scBytes := append([]byte{0, 0, 0, 127}, crypto.GetAccount(crypto.Hasher([]byte("SmartContractAddress")))...)
+	sc := &SmartContract{}
+	err = sc.UnmarshalBinary(scBytes)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	erctpi := &ERCTPreImage{
-		ChainID:              cid,
-		ExitChainID:          ecid,
-		Value:                val,
-		Withdraw:             withdraw,
-		TXOutIdx:             txoid,
-		Owner:                owner,
-		SmartContractAddress: sca,
-		Fee:                  fee,
-		TokenID:              tokenID,
+		ChainID:       cid,
+		ExitChainID:   ecid,
+		Value:         val,
+		Withdraw:      withdraw,
+		TXOutIdx:      txoid,
+		Owner:         owner,
+		SmartContract: sc,
+		Fee:           fee,
+		TokenID:       tokenID,
 	}
 	erct := &ERCToken{
 		ERCTPreImage: erctpi,
