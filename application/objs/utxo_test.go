@@ -116,6 +116,9 @@ func TestUTXODataStoreGood(t *testing.T) {
 	if utxo.HasAtomicSwap() {
 		t.Fatal("Should not have AtomicSwap!")
 	}
+	if utxo.HasERCToken() {
+		t.Fatal("Should not have ERCToken!")
+	}
 
 	dsCopy, err := utxo.DataStore()
 	if err != nil {
@@ -131,6 +134,11 @@ func TestUTXODataStoreGood(t *testing.T) {
 	_, err = utxo.AtomicSwap()
 	if err == nil {
 		t.Fatal("Should raise error for no AtomicSwap!")
+	}
+
+	_, err = utxo.ERCToken()
+	if err == nil {
+		t.Fatal("Should raise error for no ERCToken!")
 	}
 
 	utxo2 := &TXOut{}
@@ -193,6 +201,9 @@ func TestUTXOValueStoreGood(t *testing.T) {
 	if utxo.HasAtomicSwap() {
 		t.Fatal("Should not have AtomicSwap!")
 	}
+	if utxo.HasERCToken() {
+		t.Fatal("Should not have ERCToken!")
+	}
 
 	_, err = utxo.DataStore()
 	if err == nil {
@@ -208,6 +219,11 @@ func TestUTXOValueStoreGood(t *testing.T) {
 	_, err = utxo.AtomicSwap()
 	if err == nil {
 		t.Fatal("Should raise error for no AtomicSwap!")
+	}
+
+	_, err = utxo.ERCToken()
+	if err == nil {
+		t.Fatal("Should raise error for no ERCToken!")
 	}
 
 	utxo2 := &TXOut{}
@@ -278,6 +294,9 @@ func TestUTXOAtomicSwapGood(t *testing.T) {
 	if !utxo.HasAtomicSwap() {
 		t.Fatal("Should have AtomicSwap!")
 	}
+	if utxo.HasERCToken() {
+		t.Fatal("Should not have ERCToken!")
+	}
 
 	_, err = utxo.DataStore()
 	if err == nil {
@@ -294,6 +313,112 @@ func TestUTXOAtomicSwapGood(t *testing.T) {
 		t.Fatal(err)
 	}
 	asEqual(t, as, asCopy)
+
+	_, err = utxo.ERCToken()
+	if err == nil {
+		t.Fatal("Should raise error for ERCToken!")
+	}
+}
+
+func TestUTXOERCTokenGood(t *testing.T) {
+	cid := uint32(2)
+	ecid := uint32(3)
+	val, err := new(uint256.Uint256).FromUint64(65537)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txoid := uint32(17)
+	tokenID, err := new(uint256.Uint256).FromUint64(1234)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ownerSigner := &crypto.Secp256k1Signer{}
+	if err := ownerSigner.SetPrivk(crypto.Hasher([]byte("a"))); err != nil {
+		t.Fatal(err)
+	}
+	ownerPubk, err := ownerSigner.Pubkey()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	sc := &SmartContract{}
+	acct := crypto.Hasher([]byte("sc"))[:constants.OwnerLen]
+	origChainID := uint32(127)
+	err = sc.New(origChainID, acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ownerAcct := crypto.GetAccount(ownerPubk)
+	owner := &ERCTokenOwner{}
+	owner.New(ownerAcct, constants.CurveSecp256k1)
+
+	erctp := &ERCTPreImage{
+		ChainID:       cid,
+		ExitChainID:   ecid,
+		Value:         val,
+		TXOutIdx:      txoid,
+		Owner:         owner,
+		Withdraw:      false,
+		Fee:           new(uint256.Uint256).SetZero(),
+		SmartContract: sc,
+		TokenID:       tokenID,
+	}
+	txHash := make([]byte, constants.HashLen)
+	erct := &ERCToken{
+		ERCTPreImage: erctp,
+		TxHash:       txHash,
+	}
+
+	utxo := &TXOut{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if utxo.HasDataStore() {
+		t.Fatal("Should not have DataStore!")
+	}
+	if utxo.HasValueStore() {
+		t.Fatal("Should not have ValueStore!")
+	}
+	if utxo.HasAtomicSwap() {
+		t.Fatal("Should not have AtomicSwap!")
+	}
+	if !utxo.HasERCToken() {
+		t.Fatal("Should have ERCToken!")
+	}
+
+	_, err = utxo.DataStore()
+	if err == nil {
+		t.Fatal("Should raise error for no DataStore!")
+	}
+
+	_, err = utxo.ValueStore()
+	if err == nil {
+		t.Fatal("Should raise error for no ValueStore!")
+	}
+
+	_, err = utxo.AtomicSwap()
+	if err == nil {
+		t.Fatal("Should raise error for no AtomicSwap!")
+	}
+
+	erctCopy, err := utxo.ERCToken()
+	if err != nil {
+		t.Fatal(err)
+	}
+	erctEqual(t, erct, erctCopy)
+
+	utxo2 := &TXOut{}
+	utxoBytes, err := utxo.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = utxo2.UnmarshalBinary(utxoBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestUTXOMarshalBinary(t *testing.T) {
@@ -332,6 +457,17 @@ func TestUTXOMarshalBinary(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.MarshalBinary()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
+	}
+
 }
 
 func TestUTXOUnmarshalBinary(t *testing.T) {
@@ -379,6 +515,16 @@ func TestUTXOPreHash(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.PreHash()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
+	}
 }
 
 func TestUTXOUTXOID(t *testing.T) {
@@ -416,6 +562,16 @@ func TestUTXOUTXOID(t *testing.T) {
 	_, err = utxo.UTXOID()
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.UTXOID()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
 	}
 }
 
@@ -455,6 +611,16 @@ func TestUTXOChainID(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.ChainID()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
+	}
 }
 
 func TestUTXOTxOutIdx(t *testing.T) {
@@ -492,6 +658,16 @@ func TestUTXOTxOutIdx(t *testing.T) {
 	_, err = utxo.TxOutIdx()
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.TxOutIdx()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
 	}
 }
 
@@ -531,6 +707,16 @@ func TestUTXOSetTxOutIdx(t *testing.T) {
 	err = utxo.SetTxOutIdx(idx)
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = utxo.SetTxOutIdx(idx)
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
 	}
 }
 
@@ -598,6 +784,25 @@ func TestUTXOTxHash(t *testing.T) {
 	if !bytes.Equal(txHash, txHashTrue) {
 		t.Fatal("txHash does not match (4)")
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.TxHash()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
+	}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.TxHash = txHashTrue
+	txHash, err = utxo.TxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(txHash, txHashTrue) {
+		t.Fatal("txHash does not match (5)")
+	}
 }
 
 func TestUTXOSetTxHash(t *testing.T) {
@@ -643,6 +848,16 @@ func TestUTXOSetTxHash(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (5)")
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = utxo.SetTxHash(txHash)
+	if err == nil {
+		t.Fatal("Should have raised error (6)")
+	}
 }
 
 func TestUTXOIsExpired(t *testing.T) {
@@ -679,6 +894,19 @@ func TestUTXOIsExpired(t *testing.T) {
 		t.Fatal(err)
 	}
 	expired, err := utxo.IsExpired(currentHeight)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if expired {
+		t.Fatal("ValueStore should not be expired")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expired, err = utxo.IsExpired(currentHeight)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -724,6 +952,19 @@ func TestUTXORemainingValue(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	z, err := utxo.RemainingValue(currentHeight)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !z.IsZero() {
+		t.Fatal("Should returned remainingValue of zero")
+	}
 }
 
 func TestUTXOMakeTxIn(t *testing.T) {
@@ -761,6 +1002,16 @@ func TestUTXOMakeTxIn(t *testing.T) {
 	_, err = utxo.MakeTxIn()
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.MakeTxIn()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
 	}
 }
 
@@ -800,6 +1051,19 @@ func TestUTXOValue(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	z, err := utxo.Value()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !z.IsZero() {
+		t.Fatal("Should have returned value of zero")
+	}
 }
 
 func TestUTXOValuePlusFee(t *testing.T) {
@@ -838,6 +1102,16 @@ func TestUTXOValuePlusFee(t *testing.T) {
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.ValuePlusFee()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
+	}
 }
 
 func TestUTXOValidatePreSignature(t *testing.T) {
@@ -875,6 +1149,16 @@ func TestUTXOValidatePreSignature(t *testing.T) {
 	err = utxo.ValidatePreSignature()
 	if err != nil {
 		t.Fatal("Should pass (2)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = utxo.ValidatePreSignature()
+	if err != nil {
+		t.Fatal("Should pass (3)")
 	}
 }
 
@@ -915,6 +1199,16 @@ func TestUTXOValidateSignature(t *testing.T) {
 	err = utxo.ValidateSignature(currentHeight, txIn)
 	if err == nil {
 		t.Fatal("Should have raised error (4)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = utxo.ValidateSignature(currentHeight, txIn)
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
 	}
 }
 
@@ -972,14 +1266,31 @@ func TestUTXOMustBeMinedBeforeHeight(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = utxo.MustBeMinedBeforeHeight()
+	heightVS, err := utxo.MustBeMinedBeforeHeight()
 	if err != nil {
 		t.Fatal(err)
+	}
+	if heightVS != constants.MaxUint32 {
+		t.Fatal("Incorrect MinedBefore (4)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	heightERCT, err := utxo.MustBeMinedBeforeHeight()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if heightERCT != constants.MaxUint32 {
+		t.Fatal("Incorrect MinedBefore (5)")
 	}
 }
 
 func TestUTXOAccount(t *testing.T) {
 	acct := make([]byte, constants.OwnerLen)
+	acct[0] = 127
 	curveSpec := constants.CurveSecp256k1
 	o := &Owner{}
 	err := o.New(acct, curveSpec)
@@ -987,7 +1298,9 @@ func TestUTXOAccount(t *testing.T) {
 		t.Fatal(err)
 	}
 	altOwner := &Owner{}
-	err = altOwner.New(acct, curveSpec)
+	acctAlt := make([]byte, constants.OwnerLen)
+	acctAlt[0] = 123
+	err = altOwner.New(acctAlt, curveSpec)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1019,9 +1332,12 @@ func TestUTXOAccount(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = utxo.Account()
+	acctAS, err := utxo.Account()
 	if err != nil {
 		t.Fatal(err)
+	}
+	if !bytes.Equal(acctAS, acct) {
+		t.Fatal("Invalid AtomicSwap account")
 	}
 
 	ds := &DataStore{}
@@ -1044,9 +1360,12 @@ func TestUTXOAccount(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = utxo.Account()
+	acctDS, err := utxo.Account()
 	if err != nil {
 		t.Fatal(err)
+	}
+	if !bytes.Equal(acctDS, acct) {
+		t.Fatal("Invalid DataStore account")
 	}
 
 	vs := &ValueStore{}
@@ -1069,9 +1388,40 @@ func TestUTXOAccount(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = utxo.Account()
+	acctVS, err := utxo.Account()
 	if err != nil {
 		t.Fatal(err)
+	}
+	if !bytes.Equal(acctVS, acct) {
+		t.Fatal("Invalid ValueStore account")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.Account()
+	if err == nil {
+		t.Fatal("Should have raised error (5)")
+	}
+
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.Owner = &ERCTokenOwner{}
+	err = erct.ERCTPreImage.Owner.NewFromOwner(o)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	acctERCT, err := utxo.Account()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(acctERCT, acct) {
+		t.Fatal("Invalid ERCToken account")
 	}
 }
 
@@ -1229,6 +1579,49 @@ func TestUTXOGenericOwner(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.GenericOwner()
+	if err == nil {
+		t.Fatal("Should have raised error (12)")
+	}
+
+	erct.ERCTPreImage = &ERCTPreImage{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.GenericOwner()
+	if err == nil {
+		t.Fatal("Should have raised error (13)")
+	}
+
+	erct.ERCTPreImage.Owner = &ERCTokenOwner{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.GenericOwner()
+	if err == nil {
+		t.Fatal("Should have raised error (13)")
+	}
+
+	err = erct.ERCTPreImage.Owner.NewFromOwner(o)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = utxo.GenericOwner()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestUTXOIsDeposit(t *testing.T) {
@@ -1266,6 +1659,40 @@ func TestUTXOIsDeposit(t *testing.T) {
 	val = utxo.IsDeposit()
 	if val {
 		t.Fatal("Should be false (4)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	val = utxo.IsDeposit()
+	if val {
+		t.Fatal("Should be false (5)")
+	}
+
+	// Now positive values
+
+	vs.VSPreImage = &VSPreImage{}
+	vs.VSPreImage.TXOutIdx = constants.MaxUint32
+	err = utxo.NewValueStore(vs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	val = utxo.IsDeposit()
+	if !val {
+		t.Fatal("Should be true (1)")
+	}
+
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.TXOutIdx = constants.MaxUint32
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	val = utxo.IsDeposit()
+	if !val {
+		t.Fatal("Should be true (2)")
 	}
 }
 
@@ -1339,5 +1766,88 @@ func TestUTXOCannotBeMinedBeforeHeight(t *testing.T) {
 	}
 	if height != heightVSTrue {
 		t.Fatal("Incorrect height for ValueStore in CannotBeMinedBeforeHeight")
+	}
+}
+
+func TestUTXOErctKeyValueBad(t *testing.T) {
+	utxo := &TXOut{}
+	_, _, err := utxo.erctKeyValue()
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _, err = utxo.erctKeyValue()
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+
+	erct.ERCTPreImage = &ERCTPreImage{}
+	sc := &SmartContract{}
+	acct := crypto.Hasher([]byte("sc"))[:constants.OwnerLen]
+	origChainID := uint32(127)
+	err = sc.New(origChainID, acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	erct.ERCTPreImage.SmartContract = sc
+	_, _, err = utxo.erctKeyValue()
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+
+	tokenID := uint256.Zero()
+	erct.ERCTPreImage.TokenID = tokenID
+	_, _, err = utxo.erctKeyValue()
+	if err == nil {
+		t.Fatal("Should have raised error (4)")
+	}
+}
+
+func TestUTXOErctKeyValueGood(t *testing.T) {
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	sc := &SmartContract{}
+	acct := crypto.Hasher([]byte("sc"))[:constants.OwnerLen]
+	origChainID := uint32(127)
+	err := sc.New(origChainID, acct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	erct.ERCTPreImage.SmartContract = sc
+	tokenID := uint256.Zero()
+	erct.ERCTPreImage.TokenID = tokenID
+	ercValue := uint256.One()
+	erct.ERCTPreImage.Value = ercValue
+
+	tokenBytes, err := tokenID.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	scBytes, err := sc.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	keyBytesTrue := append(scBytes, tokenBytes...)
+	keyTrue := string(keyBytesTrue)
+
+	utxo := &TXOut{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	key, value, err := utxo.erctKeyValue()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if key != keyTrue {
+		t.Fatal("invalid ercToken key")
+	}
+	if !value.Eq(ercValue) {
+		t.Fatal("invalid ercToken value")
 	}
 }

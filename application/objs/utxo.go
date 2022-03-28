@@ -16,10 +16,12 @@ type TXOut struct {
 	dataStore  *DataStore
 	valueStore *ValueStore
 	atomicSwap *AtomicSwap
+	ercToken   *ERCToken
 	// not part of serialized object below this line
 	hasDataStore  bool
 	hasValueStore bool
 	hasAtomicSwap bool
+	hasERCToken   bool
 }
 
 // CreateValueStore makes a new ValueStore
@@ -47,9 +49,11 @@ func (b *TXOut) NewDataStore(v *DataStore) error {
 	b.hasDataStore = true
 	b.hasValueStore = false
 	b.hasAtomicSwap = false
+	b.hasERCToken = false
 	b.dataStore = v
 	b.atomicSwap = nil
 	b.valueStore = nil
+	b.ercToken = nil
 	return nil
 }
 
@@ -58,9 +62,11 @@ func (b *TXOut) NewValueStore(v *ValueStore) error {
 	b.hasDataStore = false
 	b.hasValueStore = true
 	b.hasAtomicSwap = false
+	b.hasERCToken = false
 	b.dataStore = nil
 	b.valueStore = v
 	b.atomicSwap = nil
+	b.ercToken = nil
 	return nil
 }
 
@@ -69,9 +75,24 @@ func (b *TXOut) NewAtomicSwap(v *AtomicSwap) error {
 	b.hasDataStore = false
 	b.hasValueStore = false
 	b.hasAtomicSwap = true
+	b.hasERCToken = false
 	b.dataStore = nil
 	b.valueStore = nil
 	b.atomicSwap = v
+	b.ercToken = nil
+	return nil
+}
+
+// NewERCToken makes a TXOut object which with the specified ERCToken
+func (b *TXOut) NewERCToken(v *ERCToken) error {
+	b.hasDataStore = false
+	b.hasValueStore = false
+	b.hasAtomicSwap = false
+	b.hasERCToken = true
+	b.dataStore = nil
+	b.valueStore = nil
+	b.atomicSwap = nil
+	b.ercToken = v
 	return nil
 }
 
@@ -99,12 +120,20 @@ func (b *TXOut) HasAtomicSwap() bool {
 	return b.hasAtomicSwap
 }
 
+// HasERCToken specifies if the TXOut object has an ERCToken
+func (b *TXOut) HasERCToken() bool {
+	if b == nil {
+		return false
+	}
+	return b.hasERCToken
+}
+
 // DataStore returns the DataStore of the TXOut object if it exists
 func (b *TXOut) DataStore() (*DataStore, error) {
 	if b.HasDataStore() {
 		return b.dataStore, nil
 	}
-	return nil, errorz.ErrInvalid{}.New("txout.datastore; object does not have a DataStore")
+	return nil, errorz.ErrInvalid{}.New("txout.DataStore; object does not have a DataStore")
 }
 
 // ValueStore returns the ValueStore of the TXOut object if it exists
@@ -112,7 +141,7 @@ func (b *TXOut) ValueStore() (*ValueStore, error) {
 	if b.HasValueStore() {
 		return b.valueStore, nil
 	}
-	return nil, errorz.ErrInvalid{}.New("txout.valuestore; object does not have a ValueStore")
+	return nil, errorz.ErrInvalid{}.New("txout.ValueStore; object does not have a ValueStore")
 }
 
 // AtomicSwap returns the AtomicSwap of the TXOut object if it exists
@@ -120,7 +149,15 @@ func (b *TXOut) AtomicSwap() (*AtomicSwap, error) {
 	if b.HasAtomicSwap() {
 		return b.atomicSwap, nil
 	}
-	return nil, errorz.ErrInvalid{}.New("txout.atomicswap; object does not have an AtomicSwap")
+	return nil, errorz.ErrInvalid{}.New("txout.AtomicSwap; object does not have an AtomicSwap")
+}
+
+// ERCToken returns the ERCToken of the TXOut object if it exists
+func (b *TXOut) ERCToken() (*ERCToken, error) {
+	if b.HasERCToken() {
+		return b.ercToken, nil
+	}
+	return nil, errorz.ErrInvalid{}.New("txout.ERCToken; object does not have an ERCToken")
 }
 
 // UnmarshalBinary takes a byte slice and returns the corresponding
@@ -137,7 +174,7 @@ func (b *TXOut) UnmarshalBinary(data []byte) error {
 // byte slice
 func (b *TXOut) MarshalBinary() ([]byte, error) {
 	if b == nil {
-		return nil, errorz.ErrInvalid{}.New("txout.marshalBinary: txout not initialized")
+		return nil, errorz.ErrInvalid{}.New("txout.MarshalBinary: txout not initialized")
 	}
 	bc, err := b.MarshalCapn(nil)
 	if err != nil {
@@ -165,6 +202,8 @@ func (b *TXOut) UnmarshalCapn(bc mdefs.TXOut) error {
 		b.hasValueStore = false
 		b.atomicSwap = nil
 		b.hasAtomicSwap = false
+		b.ercToken = nil
+		b.hasERCToken = false
 	case bc.HasValueStore():
 		cObj, err := bc.ValueStore()
 		if err != nil {
@@ -181,6 +220,8 @@ func (b *TXOut) UnmarshalCapn(bc mdefs.TXOut) error {
 		b.hasValueStore = true
 		b.atomicSwap = nil
 		b.hasAtomicSwap = false
+		b.ercToken = nil
+		b.hasERCToken = false
 	case bc.HasAtomicSwap():
 		cObj, err := bc.AtomicSwap()
 		if err != nil {
@@ -197,8 +238,28 @@ func (b *TXOut) UnmarshalCapn(bc mdefs.TXOut) error {
 		b.hasValueStore = false
 		b.atomicSwap = obj
 		b.hasAtomicSwap = true
+		b.ercToken = nil
+		b.hasERCToken = false
+	case bc.HasErcToken():
+		cObj, err := bc.ErcToken()
+		if err != nil {
+			return err
+		}
+		obj := &ERCToken{}
+		err = obj.UnmarshalCapn(cObj)
+		if err != nil {
+			return err
+		}
+		b.dataStore = nil
+		b.hasDataStore = false
+		b.valueStore = nil
+		b.hasValueStore = false
+		b.atomicSwap = nil
+		b.hasAtomicSwap = false
+		b.ercToken = obj
+		b.hasERCToken = true
 	default:
-		return errorz.ErrInvalid{}.New("txout.unmarshalCapn; type not defined")
+		return errorz.ErrInvalid{}.New("txout.UnmarshalCapn; type not defined")
 	}
 	return nil
 }
@@ -206,7 +267,7 @@ func (b *TXOut) UnmarshalCapn(bc mdefs.TXOut) error {
 // MarshalCapn marshals the object into its capnproto definition
 func (b *TXOut) MarshalCapn(seg *capnp.Segment) (mdefs.TXOut, error) {
 	if b == nil {
-		return mdefs.TXOut{}, errorz.ErrInvalid{}.New("txout.marshalCapn: txout not initialized")
+		return mdefs.TXOut{}, errorz.ErrInvalid{}.New("txout.MarshalCapn: txout not initialized")
 	}
 	var bc mdefs.TXOut
 	if seg == nil {
@@ -252,8 +313,16 @@ func (b *TXOut) MarshalCapn(seg *capnp.Segment) (mdefs.TXOut, error) {
 		if err := bc.SetAtomicSwap(as); err != nil {
 			return bc, err
 		}
+	case b.hasERCToken:
+		erct, err := b.ercToken.MarshalCapn(seg)
+		if err != nil {
+			return bc, err
+		}
+		if err := bc.SetErcToken(erct); err != nil {
+			return bc, err
+		}
 	default:
-		return mdefs.TXOut{}, errorz.ErrInvalid{}.New("txout.marshalCapn; type not defined")
+		return mdefs.TXOut{}, errorz.ErrInvalid{}.New("txout.MarshalCapn; type not defined")
 	}
 	return bc, nil
 }
@@ -270,8 +339,11 @@ func (b *TXOut) PreHash() ([]byte, error) {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.PreHash()
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.PreHash()
 	default:
-		return nil, errorz.ErrInvalid{}.New("txout.preHash; type not defined")
+		return nil, errorz.ErrInvalid{}.New("txout.PreHash; type not defined")
 	}
 }
 
@@ -286,6 +358,9 @@ func (b *TXOut) UTXOID() ([]byte, error) {
 		return obj.UTXOID()
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
+		return obj.UTXOID()
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
 		return obj.UTXOID()
 	default:
 		return nil, errorz.ErrInvalid{}.New("txout.utxoID; type not defined")
@@ -304,8 +379,11 @@ func (b *TXOut) ChainID() (uint32, error) {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.ChainID()
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.ChainID()
 	default:
-		return 0, errorz.ErrInvalid{}.New("txout.chainID; type not defined")
+		return 0, errorz.ErrInvalid{}.New("txout.ChainID; type not defined")
 	}
 }
 
@@ -321,8 +399,11 @@ func (b *TXOut) TxOutIdx() (uint32, error) {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.TxOutIdx()
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.TxOutIdx()
 	default:
-		return 0, errorz.ErrInvalid{}.New("txout.txOutIdx; type not defined")
+		return 0, errorz.ErrInvalid{}.New("txout.TxOutIdx; type not defined")
 	}
 }
 
@@ -338,8 +419,11 @@ func (b *TXOut) SetTxOutIdx(idx uint32) error {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.SetTxOutIdx(idx)
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.SetTxOutIdx(idx)
 	default:
-		return errorz.ErrInvalid{}.New("txout.setTxOutIdx; type not defined")
+		return errorz.ErrInvalid{}.New("txout.SetTxOutIdx; type not defined")
 	}
 }
 
@@ -356,23 +440,32 @@ func (b *TXOut) TxHash() ([]byte, error) {
 	case b.HasValueStore():
 		obj, _ := b.ValueStore()
 		if obj == nil {
-			return nil, errorz.ErrInvalid{}.New("txout.txhash: vs not initialized")
+			return nil, errorz.ErrInvalid{}.New("txout.TxHash: vs not initialized")
 		}
 		if len(obj.TxHash) != constants.HashLen {
-			return nil, errorz.ErrInvalid{}.New("txout.txhash: vs.txhash has incorrect length")
+			return nil, errorz.ErrInvalid{}.New("txout.TxHash: vs.txhash has incorrect length")
 		}
 		return utils.CopySlice(obj.TxHash), nil
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		if obj == nil {
-			return nil, errorz.ErrInvalid{}.New("txout.txhash: as not initialized")
+			return nil, errorz.ErrInvalid{}.New("txout.TxHash: as not initialized")
 		}
 		if len(obj.TxHash) != constants.HashLen {
-			return nil, errorz.ErrInvalid{}.New("txout.txhash: as.txhash has incorrect length")
+			return nil, errorz.ErrInvalid{}.New("txout.TxHash: as.txhash has incorrect length")
+		}
+		return utils.CopySlice(obj.TxHash), nil
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		if obj == nil {
+			return nil, errorz.ErrInvalid{}.New("txout.TxHash: erct not initialized")
+		}
+		if len(obj.TxHash) != constants.HashLen {
+			return nil, errorz.ErrInvalid{}.New("txout.TxHash: erct.txhash has incorrect length")
 		}
 		return utils.CopySlice(obj.TxHash), nil
 	default:
-		return nil, errorz.ErrInvalid{}.New("txout.txhash; type not defined")
+		return nil, errorz.ErrInvalid{}.New("txout.TxHash; type not defined")
 	}
 }
 
@@ -388,8 +481,11 @@ func (b *TXOut) SetTxHash(txHash []byte) error {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.SetTxHash(utils.CopySlice(txHash))
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.SetTxHash(utils.CopySlice(txHash))
 	default:
-		return errorz.ErrInvalid{}.New("txout.setTxHash; type not defined")
+		return errorz.ErrInvalid{}.New("txout.SetTxHash; type not defined")
 	}
 }
 
@@ -404,12 +500,14 @@ func (b *TXOut) IsExpired(currentHeight uint32) (bool, error) {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.IsExpired(currentHeight)
+	case b.HasERCToken():
+		return false, nil
 	default:
-		return false, errorz.ErrInvalid{}.New("txout.isExpired; type not defined")
+		return false, errorz.ErrInvalid{}.New("txout.IsExpired; type not defined")
 	}
 }
 
-// RemainingValue returns the remaining value after discount
+// RemainingValue returns the remaining value after discount in MadBytes.
 func (b *TXOut) RemainingValue(currentHeight uint32) (*uint256.Uint256, error) {
 	switch {
 	case b.HasDataStore():
@@ -421,8 +519,10 @@ func (b *TXOut) RemainingValue(currentHeight uint32) (*uint256.Uint256, error) {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.Value()
+	case b.HasERCToken():
+		return uint256.Zero(), nil
 	default:
-		return nil, errorz.ErrInvalid{}.New("txout.remainingValue; type not defined")
+		return nil, errorz.ErrInvalid{}.New("txout.RemainingValue; type not defined")
 	}
 }
 
@@ -438,12 +538,15 @@ func (b *TXOut) MakeTxIn() (*TXIn, error) {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.MakeTxIn()
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.MakeTxIn()
 	default:
-		return nil, errorz.ErrInvalid{}.New("txout.makeTxIn; type not defined")
+		return nil, errorz.ErrInvalid{}.New("txout.MakeTxIn; type not defined")
 	}
 }
 
-// Value returns the Value of the object
+// Value returns the Value of the object in MadBytes.
 func (b *TXOut) Value() (*uint256.Uint256, error) {
 	switch {
 	case b.HasDataStore():
@@ -455,12 +558,16 @@ func (b *TXOut) Value() (*uint256.Uint256, error) {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.Value()
+	case b.HasERCToken():
+		return uint256.Zero(), nil
 	default:
-		return nil, errorz.ErrInvalid{}.New("txout.value; type not defined")
+		return nil, errorz.ErrInvalid{}.New("txout.Value; type not defined")
 	}
 }
 
-// ValuePlusFee returns the Value of the object plus the associated fee
+// ValuePlusFee returns the Value of the object plus the associated fee.
+// Here, the Value and Fee are in MadBytes;
+// as such, ERCToken objects only return the fee.
 func (b *TXOut) ValuePlusFee() (*uint256.Uint256, error) {
 	switch {
 	case b.HasDataStore():
@@ -472,8 +579,11 @@ func (b *TXOut) ValuePlusFee() (*uint256.Uint256, error) {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.ValuePlusFee()
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.Fee()
 	default:
-		return nil, errorz.ErrInvalid{}.New("txout.valuePlusFee; type not defined")
+		return nil, errorz.ErrInvalid{}.New("txout.ValuePlusFee; type not defined")
 	}
 }
 
@@ -489,8 +599,11 @@ func (b *TXOut) ValidateFee(storage *wrapper.Storage) error {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.ValidateFee(storage)
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.ValidateFee(storage)
 	default:
-		return errorz.ErrInvalid{}.New("txout.validateFee; type not defined")
+		return errorz.ErrInvalid{}.New("txout.ValidateFee; type not defined")
 	}
 }
 
@@ -504,8 +617,10 @@ func (b *TXOut) ValidatePreSignature() error {
 		return nil
 	case b.HasAtomicSwap():
 		return nil
+	case b.HasERCToken():
+		return nil
 	default:
-		return errorz.ErrInvalid{}.New("txout.validatePreSignature; type not defined")
+		return errorz.ErrInvalid{}.New("txout.ValidatePreSignature; type not defined")
 	}
 }
 
@@ -521,8 +636,11 @@ func (b *TXOut) ValidateSignature(currentHeight uint32, txIn *TXIn) error {
 	case b.HasAtomicSwap():
 		obj, _ := b.AtomicSwap()
 		return obj.ValidateSignature(currentHeight, txIn)
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.ValidateSignature(txIn)
 	default:
-		return errorz.ErrInvalid{}.New("txout.validateSignature; type not defined")
+		return errorz.ErrInvalid{}.New("txout.ValidateSignature; type not defined")
 	}
 }
 
@@ -545,8 +663,10 @@ func (b *TXOut) MustBeMinedBeforeHeight() (uint32, error) {
 			return 0, err
 		}
 		return (iat * constants.EpochLength) - 1, nil
+	case b.HasERCToken():
+		return constants.MaxUint32, nil
 	default:
-		return 0, errorz.ErrInvalid{}.New("txout.mustBeMinedBeforeHeight; type not defined")
+		return 0, errorz.ErrInvalid{}.New("txout.MustBeMinedBeforeHeight; type not defined")
 	}
 }
 
@@ -569,8 +689,10 @@ func (b *TXOut) CannotBeMinedBeforeHeight() (uint32, error) {
 			return 0, err
 		}
 		return (iat-1)*constants.EpochLength + 1, nil
+	case b.HasERCToken():
+		return 1, nil
 	default:
-		return 0, errorz.ErrInvalid{}.New("txout.cannotBeMinedBeforeHeight; type not defined")
+		return 0, errorz.ErrInvalid{}.New("txout.CannotBeMinedBeforeHeight; type not defined")
 	}
 }
 
@@ -602,8 +724,15 @@ func (b *TXOut) Account() ([]byte, error) {
 			return nil, err
 		}
 		return utils.CopySlice(asoPrimaryAcct), nil
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		eto, err := obj.Owner()
+		if err != nil {
+			return nil, err
+		}
+		return utils.CopySlice(eto.Account), nil
 	default:
-		return nil, errorz.ErrInvalid{}.New("txout.account; type not defined")
+		return nil, errorz.ErrInvalid{}.New("txout.Account; type not defined")
 	}
 }
 
@@ -631,12 +760,19 @@ func (b *TXOut) GenericOwner() (*Owner, error) {
 			return nil, err
 		}
 		return onr, nil
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		onr, err := obj.GenericOwner()
+		if err != nil {
+			return nil, err
+		}
+		return onr, nil
 	default:
-		return nil, errorz.ErrInvalid{}.New("txout.genericOwner; type not defined")
+		return nil, errorz.ErrInvalid{}.New("txout.GenericOwner; type not defined")
 	}
 }
 
-// IsDeposit returns true if it is a valid ValueStore with deposit.
+// IsDeposit returns true if it is a valid ValueStore or ERCToken with deposit.
 // All other instances return false.
 func (b *TXOut) IsDeposit() bool {
 	if b == nil {
@@ -646,7 +782,53 @@ func (b *TXOut) IsDeposit() bool {
 	case b.HasValueStore():
 		obj, _ := b.ValueStore()
 		return obj.IsDeposit()
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.IsDeposit()
 	default:
 		return false
+	}
+}
+
+// IsDeposit returns true if it is a valid ValueStore or ERCToken with deposit.
+// All other instances return false.
+func (b *TXOut) WithdrawnERCToken() bool {
+	if b == nil {
+		return false
+	}
+	switch {
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.WithdrawnTokens()
+	default:
+		return false
+	}
+}
+
+// erctKeyValue returns the key value pair for the ERCToken object
+func (b *TXOut) erctKeyValue() (string, *uint256.Uint256, error) {
+	switch {
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		scBytes, err := obj.MarshalSmartContract()
+		if err != nil {
+			return "", nil, err
+		}
+		tokenID, err := obj.TokenID()
+		if err != nil {
+			return "", nil, err
+		}
+		tokenBytes, err := tokenID.MarshalBinary()
+		if err != nil {
+			return "", nil, err
+		}
+		key := string(append(scBytes, tokenBytes...))
+		value, err := obj.ERCValue()
+		if err != nil {
+			return "", nil, err
+		}
+		return key, value, nil
+	default:
+		return "", nil, errorz.ErrInvalid{}.New("txout.erctKeyValue; type not defined")
 	}
 }

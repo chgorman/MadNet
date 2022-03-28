@@ -7,6 +7,7 @@ import (
 	trie "github.com/MadBase/MadNet/badgerTrie"
 	"github.com/MadBase/MadNet/constants"
 	"github.com/MadBase/MadNet/constants/dbprefix"
+	"github.com/MadBase/MadNet/errorz"
 	"github.com/MadBase/MadNet/logging"
 	"github.com/MadBase/MadNet/utils"
 	"github.com/dgraph-io/badger/v2"
@@ -287,15 +288,18 @@ func (ut *UTXOTrie) add(txn *badger.Txn, txs objs.TxVec, current *trie.SMT, fn f
 			delkeys = append(delkeys, aa[i])
 		}
 	}
-	cc, err := txs.GeneratedUTXOID()
+	cc, err := txs.GeneratedUTXOIDNoWithdrawn()
 	if err != nil {
 		utils.DebugTrace(ut.logger, err)
 		return nil, err
 	}
-	dd, err := txs.GeneratedPreHash()
+	dd, err := txs.GeneratedPreHashNoWithdrawn()
 	if err != nil {
 		utils.DebugTrace(ut.logger, err)
 		return nil, err
+	}
+	if len(cc) != len(dd) {
+		return nil, errorz.ErrInvalid{}.New("utxoTrie.add; different key, value lengths for GeneratedUTXOs")
 	}
 	if len(cc) > 0 {
 		for i := 0; i < len(cc); i++ {
@@ -312,6 +316,9 @@ func (ut *UTXOTrie) add(txn *badger.Txn, txs objs.TxVec, current *trie.SMT, fn f
 	if err != nil {
 		utils.DebugTrace(ut.logger, err)
 		return nil, err
+	}
+	if len(ee) != len(ff) {
+		return nil, errorz.ErrInvalid{}.New("utxoTrie.add; different key, value lengths for ConsumedUTXOs")
 	}
 	if len(ee) > 0 {
 		for i := 0; i < len(ee); i++ {

@@ -17,5 +17,8 @@ var dataStoreEpochFee = bigFromBase10("3")
 // valueStoreFee is the initial fee for the ValueStore object.
 var valueStoreFee = bigFromBase10("1")
 
+// ercTokenFee is the initial fee for the ERCToken object.
+var ercTokenFee = bigFromBase10("5")
+
 // minTxFeeCostRatio is the initial minimum transaction fee-cost ratio for a Tx object.
 var minTxFeeCostRatio = bigFromBase10("4")

@@ -81,17 +81,24 @@ func (vout Vout) ValidateTxOutIdx() error {
 				return err
 			}
 			txOutIdx = asTxOutIdx
+		case utxo.HasERCToken():
+			erct, _ := utxo.ERCToken()
+			erctTxOutIdx, err := erct.TxOutIdx()
+			if err != nil {
+				return err
+			}
+			txOutIdx = erctTxOutIdx
 		default:
-			return errorz.ErrInvalid{}.New("vout.validateTxOutIdx; bad txOutIdx: Invalid Type")
+			return errorz.ErrInvalid{}.New("vout.ValidateTxOutIdx; bad txOutIdx: Invalid Type")
 		}
 		if idxMap[txOutIdx] {
-			return errorz.ErrInvalid{}.New("vout.validateTxOutIdx; duplicate txOutIdx")
+			return errorz.ErrInvalid{}.New("vout.ValidateTxOutIdx; duplicate txOutIdx")
 		}
 		idxMap[txOutIdx] = true
 	}
 	for i := uint32(0); i < uint32(len(idxMap)); i++ {
 		if !idxMap[i] {
-			return errorz.ErrInvalid{}.New("vout.validateTxOutIdx; missing tx out index")
+			return errorz.ErrInvalid{}.New("vout.ValidateTxOutIdx; missing tx out index")
 		}
 	}
 	return nil
@@ -110,6 +117,34 @@ func (vout Vout) UTXOID() ([][]byte, error) {
 	return ids, nil
 }
 
+// UTXOIDNoWithdrawn returns the list of UTXOIDs from each TXOut in Vout
+// except for those belonging to withdrawn ERCToken objects
+func (vout Vout) UTXOIDNoWithdrawn() ([][]byte, error) {
+	ids := [][]byte{}
+	for i := 0; i < len(vout); i++ {
+		if !vout[i].WithdrawnERCToken() {
+			id, err := vout[i].UTXOID()
+			if err != nil {
+				return nil, err
+			}
+			ids = append(ids, id)
+		}
+	}
+	return ids, nil
+}
+
+// NoWithdrawnERCTokens returns the list of utxos which do not include
+// withdrawn ERCToken objects
+func (vout Vout) NoWithdrawnERCTokens() (Vout, error) {
+	ret := Vout{}
+	for i := 0; i < len(vout); i++ {
+		if !vout[i].WithdrawnERCToken() {
+			ret = append(ret, vout[i])
+		}
+	}
+	return ret, nil
+}
+
 // PreHash returns the list of PreHashs from each TXOut in Vout
 func (vout Vout) PreHash() ([][]byte, error) {
 	phs := [][]byte{}
@@ -119,6 +154,21 @@ func (vout Vout) PreHash() ([][]byte, error) {
 			return nil, err
 		}
 		phs = append(phs, ph)
+	}
+	return phs, nil
+}
+
+// PreHashNoWithdrawn returns the list of PreHashs from each TXOut in Vout
+func (vout Vout) PreHashNoWithdrawn() ([][]byte, error) {
+	phs := [][]byte{}
+	for i := 0; i < len(vout); i++ {
+		if !vout[i].WithdrawnERCToken() {
+			ph, err := vout[i].PreHash()
+			if err != nil {
+				return nil, err
+			}
+			phs = append(phs, ph)
+		}
 	}
 	return phs, nil
 }
@@ -148,7 +198,7 @@ func (vout Vout) ValidatePreSignature() error {
 // ValidateSignature validates the Signature from each TXOut in Vout
 func (vout Vout) ValidateSignature(currentHeight uint32, txIn []*TXIn) error {
 	if len(txIn) != len(vout) {
-		return errorz.ErrInvalid{}.New("vout.validateSignature; mismatched vector lengths")
+		return errorz.ErrInvalid{}.New("vout.ValidateSignature; mismatched vector lengths")
 	}
 	for i := 0; i < len(vout); i++ {
 		err := vout[i].ValidateSignature(currentHeight, txIn[i])
@@ -170,6 +220,18 @@ func (vout Vout) MakeTxIn() (Vin, error) {
 		txIns = append(txIns, txin)
 	}
 	return txIns, nil
+}
+
+// ContainsERCTokens returns true if the Vout object contains
+// any UTXO-type of ERCToken.
+// This is needed because additional validation logic is required in this case.
+func (vout Vout) ContainsERCTokens() bool {
+	for i := 0; i < len(vout); i++ {
+		if vout[i].HasERCToken() {
+			return true
+		}
+	}
+	return false
 }
 
 // IsCleanupVout ensures we have a valid Vout object in Cleanup Tx.

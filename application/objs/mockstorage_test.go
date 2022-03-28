@@ -14,6 +14,7 @@ func makeMockStorageGetter() *mockStorageGetter {
 	dataStoreEpochFee := new(big.Int)
 	atomicSwapFee := new(big.Int)
 	valueStoreFee := new(big.Int)
+	ercTokenFee := new(big.Int)
 	minTxFeeCostRatio := new(big.Int)
 
 	msg := &mockStorageGetter{
@@ -21,6 +22,7 @@ func makeMockStorageGetter() *mockStorageGetter {
 		dataStoreEpochFee: dataStoreEpochFee,
 		valueStoreFee:     valueStoreFee,
 		atomicSwapFee:     atomicSwapFee,
+		ercTokenFee:       ercTokenFee,
 		minTxFeeCostRatio: minTxFeeCostRatio,
 	}
 	return msg
@@ -35,6 +37,7 @@ type mockStorageGetter struct {
 	maxBytes          uint32
 	dataStoreEpochFee *big.Int
 	valueStoreFee     *big.Int
+	ercTokenFee       *big.Int
 	atomicSwapFee     *big.Int
 	minTxFeeCostRatio *big.Int
 	maxTxVectorLength int
@@ -111,6 +114,21 @@ func (msg *mockStorageGetter) SetValueStoreFee(value *big.Int) {
 }
 
 func (msg *mockStorageGetter) GetValueStoreValidVersion() uint32 {
+	return 0
+}
+
+func (msg *mockStorageGetter) GetERCTokenFee() *big.Int {
+	return msg.ercTokenFee
+}
+
+func (msg *mockStorageGetter) SetERCTokenFee(value *big.Int) {
+	if value == nil {
+		panic("invalid value")
+	}
+	msg.ercTokenFee.Set(value)
+}
+
+func (msg *mockStorageGetter) GetERCTokenValidVersion() uint32 {
 	return 0
 }
 

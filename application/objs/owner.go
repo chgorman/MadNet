@@ -15,7 +15,7 @@ type Owner struct {
 // New makes a new Owner
 func (onr *Owner) New(acct []byte, curveSpec constants.CurveSpec) error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.new; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.New; owner not initialized")
 	}
 	onr.CurveSpec = curveSpec
 	onr.Account = acct
@@ -31,7 +31,7 @@ func (onr *Owner) New(acct []byte, curveSpec constants.CurveSpec) error {
 // (PrimaryOwner)
 func (onr *Owner) NewFromAtomicSwapOwner(aso *AtomicSwapOwner) error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.newFromAtomicSwapOwner; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.NewFromAtomicSwapOwner; owner not initialized")
 	}
 	if err := aso.Validate(); err != nil {
 		return err
@@ -42,7 +42,7 @@ func (onr *Owner) NewFromAtomicSwapOwner(aso *AtomicSwapOwner) error {
 // NewFromAtomicSwapSubOwner makes a new Owner from an AtomicSwapSubOwner
 func (onr *Owner) NewFromAtomicSwapSubOwner(asso *AtomicSwapSubOwner) error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.newFromAtomicSwapSubOwner; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.NewFromAtomicSwapSubOwner; owner not initialized")
 	}
 	if err := asso.Validate(); err != nil {
 		return err
@@ -53,7 +53,7 @@ func (onr *Owner) NewFromAtomicSwapSubOwner(asso *AtomicSwapSubOwner) error {
 // NewFromDataStoreOwner makes a new Owner from a DataStoreOwner
 func (onr *Owner) NewFromDataStoreOwner(dso *DataStoreOwner) error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.newFromDataStoreOwner; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.NewFromDataStoreOwner; owner not initialized")
 	}
 	if err := dso.Validate(); err != nil {
 		return err
@@ -64,12 +64,23 @@ func (onr *Owner) NewFromDataStoreOwner(dso *DataStoreOwner) error {
 // NewFromValueStoreOwner makes a new Owner from a ValueStoreOwner
 func (onr *Owner) NewFromValueStoreOwner(vso *ValueStoreOwner) error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.newFromValueStoreOwner; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.NewFromValueStoreOwner; owner not initialized")
 	}
 	if err := vso.Validate(); err != nil {
 		return err
 	}
 	return onr.New(vso.Account, vso.CurveSpec)
+}
+
+// NewFromERCTokenOwner makes a new Owner from an ERCTokenOwner
+func (onr *Owner) NewFromERCTokenOwner(eto *ERCTokenOwner) error {
+	if onr == nil {
+		return errorz.ErrInvalid{}.New("owner.NewFromERCTokenOwner; owner not initialized")
+	}
+	if err := eto.Validate(); err != nil {
+		return err
+	}
+	return onr.New(eto.Account, eto.CurveSpec)
 }
 
 // MarshalBinary takes the Owner object and returns the canonical
@@ -87,7 +98,7 @@ func (onr *Owner) MarshalBinary() ([]byte, error) {
 // Validate validates the Owner object
 func (onr *Owner) Validate() error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.validate; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.Validate; owner not initialized")
 	}
 	if err := onr.validateCurveSpec(); err != nil {
 		return err
@@ -102,7 +113,7 @@ func (onr *Owner) Validate() error {
 // Owner object
 func (onr *Owner) UnmarshalBinary(o []byte) error {
 	if onr == nil {
-		return errorz.ErrInvalid{}.New("owner.unmarshalBinary; owner not initialized")
+		return errorz.ErrInvalid{}.New("owner.UnmarshalBinary; owner not initialized")
 	}
 	owner := utils.CopySlice(o)
 	curveSpec, owner, err := extractCurveSpec(owner)
