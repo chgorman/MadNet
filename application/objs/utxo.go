@@ -772,7 +772,7 @@ func (b *TXOut) GenericOwner() (*Owner, error) {
 	}
 }
 
-// IsDeposit returns true if it is a valid ValueStore with deposit.
+// IsDeposit returns true if it is a valid ValueStore or ERCToken with deposit.
 // All other instances return false.
 func (b *TXOut) IsDeposit() bool {
 	if b == nil {
@@ -782,6 +782,24 @@ func (b *TXOut) IsDeposit() bool {
 	case b.HasValueStore():
 		obj, _ := b.ValueStore()
 		return obj.IsDeposit()
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.IsDeposit()
+	default:
+		return false
+	}
+}
+
+// IsDeposit returns true if it is a valid ValueStore or ERCToken with deposit.
+// All other instances return false.
+func (b *TXOut) WithdrawnERCToken() bool {
+	if b == nil {
+		return false
+	}
+	switch {
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.WithdrawnTokens()
 	default:
 		return false
 	}
@@ -792,7 +810,7 @@ func (b *TXOut) erctKeyValue() (string, *uint256.Uint256, error) {
 	switch {
 	case b.HasERCToken():
 		obj, _ := b.ERCToken()
-		sca, err := obj.SmartContractAddress()
+		scBytes, err := obj.MarshalSmartContract()
 		if err != nil {
 			return "", nil, err
 		}
@@ -804,7 +822,7 @@ func (b *TXOut) erctKeyValue() (string, *uint256.Uint256, error) {
 		if err != nil {
 			return "", nil, err
 		}
-		key := string(append(sca, tokenBytes...))
+		key := string(append(scBytes, tokenBytes...))
 		value, err := obj.ERCValue()
 		if err != nil {
 			return "", nil, err

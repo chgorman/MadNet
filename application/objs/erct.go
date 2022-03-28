@@ -293,8 +293,8 @@ func (b *ERCToken) Fee() (*uint256.Uint256, error) {
 	return b.ERCTPreImage.Fee.Clone(), nil
 }
 
-// SmartContractAddress returns the SmartCotnract address of the object
-func (b *ERCToken) SmartContractAddress() ([]byte, error) {
+// MarshalSmartContract marshals the SmartContract subobject
+func (b *ERCToken) MarshalSmartContract() ([]byte, error) {
 	if b == nil {
 		return nil, errorz.ErrInvalid{}.New("erct.SmartContractdAddress: erct not initialized")
 	}
@@ -329,8 +329,8 @@ func (b *ERCToken) IsDeposit() bool {
 	return b.ERCTPreImage.TXOutIdx == constants.MaxUint32
 }
 
-// WithdrawTokens returns true if the tokens are to be withdrawn
-func (b *ERCToken) WithdrawTokens() bool {
+// WithdrawnTokens returns true if the tokens are to be withdrawn
+func (b *ERCToken) WithdrawnTokens() bool {
 	if b == nil || b.ERCTPreImage == nil {
 		return false
 	}

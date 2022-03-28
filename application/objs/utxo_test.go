@@ -1660,6 +1660,40 @@ func TestUTXOIsDeposit(t *testing.T) {
 	if val {
 		t.Fatal("Should be false (4)")
 	}
+
+	erct := &ERCToken{}
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	val = utxo.IsDeposit()
+	if val {
+		t.Fatal("Should be false (5)")
+	}
+
+	// Now positive values
+
+	vs.VSPreImage = &VSPreImage{}
+	vs.VSPreImage.TXOutIdx = constants.MaxUint32
+	err = utxo.NewValueStore(vs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	val = utxo.IsDeposit()
+	if !val {
+		t.Fatal("Should be true (1)")
+	}
+
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.TXOutIdx = constants.MaxUint32
+	err = utxo.NewERCToken(erct)
+	if err != nil {
+		t.Fatal(err)
+	}
+	val = utxo.IsDeposit()
+	if !val {
+		t.Fatal("Should be true (2)")
+	}
 }
 
 func TestUTXOCannotBeMinedBeforeHeight(t *testing.T) {

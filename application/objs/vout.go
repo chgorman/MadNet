@@ -117,6 +117,34 @@ func (vout Vout) UTXOID() ([][]byte, error) {
 	return ids, nil
 }
 
+// UTXOIDNoWithdrawn returns the list of UTXOIDs from each TXOut in Vout
+// except for those belonging to withdrawn ERCToken objects
+func (vout Vout) UTXOIDNoWithdrawn() ([][]byte, error) {
+	ids := [][]byte{}
+	for i := 0; i < len(vout); i++ {
+		if !vout[i].WithdrawnERCToken() {
+			id, err := vout[i].UTXOID()
+			if err != nil {
+				return nil, err
+			}
+			ids = append(ids, id)
+		}
+	}
+	return ids, nil
+}
+
+// NoWithdrawnERCTokens returns the list of utxos which do not include
+// withdrawn ERCToken objects
+func (vout Vout) NoWithdrawnERCTokens() (Vout, error) {
+	ret := Vout{}
+	for i := 0; i < len(vout); i++ {
+		if !vout[i].WithdrawnERCToken() {
+			ret = append(ret, vout[i])
+		}
+	}
+	return ret, nil
+}
+
 // PreHash returns the list of PreHashs from each TXOut in Vout
 func (vout Vout) PreHash() ([][]byte, error) {
 	phs := [][]byte{}
@@ -126,6 +154,21 @@ func (vout Vout) PreHash() ([][]byte, error) {
 			return nil, err
 		}
 		phs = append(phs, ph)
+	}
+	return phs, nil
+}
+
+// PreHashNoWithdrawn returns the list of PreHashs from each TXOut in Vout
+func (vout Vout) PreHashNoWithdrawn() ([][]byte, error) {
+	phs := [][]byte{}
+	for i := 0; i < len(vout); i++ {
+		if !vout[i].WithdrawnERCToken() {
+			ph, err := vout[i].PreHash()
+			if err != nil {
+				return nil, err
+			}
+			phs = append(phs, ph)
+		}
 	}
 	return phs, nil
 }

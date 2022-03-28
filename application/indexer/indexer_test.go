@@ -1023,12 +1023,10 @@ func TestValueIndex(t *testing.T) {
 		return []byte("zb")
 	}
 	index := NewValueIndex(prefix1, prefix2)
-	//value1 := &uint256.Uint256{}
 	value1, err := new(uint256.Uint256).FromUint64(1)
 	if err != nil {
 		t.Fatal(err)
 	}
-	//value5 := &uint256.Uint256{}
 	value5, err := new(uint256.Uint256).FromUint64(5)
 	if err != nil {
 		t.Fatal(err)

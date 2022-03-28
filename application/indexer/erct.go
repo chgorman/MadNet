@@ -4,6 +4,7 @@ import (
 	"github.com/MadBase/MadNet/application/objs"
 	"github.com/MadBase/MadNet/application/objs/uint256"
 	"github.com/MadBase/MadNet/constants"
+	"github.com/MadBase/MadNet/errorz"
 	"github.com/MadBase/MadNet/utils"
 	"github.com/dgraph-io/badger/v2"
 )
@@ -96,6 +97,8 @@ func (ei *ERCTokenIndex) Drop(txn *badger.Txn, utxoID []byte) error {
 	return utils.DeleteValue(txn, key)
 }
 
+// GetValueForOwner attempts to return a list of utxoIDs with total value
+// greater than the specified minValue
 func (ei *ERCTokenIndex) GetValueForOwner(txn *badger.Txn, owner *objs.Owner, sc *objs.SmartContract, tokenID *uint256.Uint256, minValue *uint256.Uint256, excludeFn func([]byte) (bool, error), maxCount int, lastKey []byte) ([][]byte, *uint256.Uint256, []byte, error) {
 	ownerBytes, err := owner.MarshalBinary()
 	if err != nil {
@@ -108,6 +111,9 @@ func (ei *ERCTokenIndex) GetValueForOwner(txn *badger.Txn, owner *objs.Owner, sc
 	tokenIDBytes, err := tokenID.MarshalBinary()
 	if err != nil {
 		return nil, nil, nil, err
+	}
+	if minValue == nil {
+		return nil, nil, nil, errorz.ErrInvalid{}.New("ERCTokenIndex.GetValueForOwner; minValue is nil")
 	}
 
 	prefix := ei.prefix()

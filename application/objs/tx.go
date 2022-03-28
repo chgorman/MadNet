@@ -424,6 +424,18 @@ func (b *Tx) ConsumedIsDeposit() []bool {
 	return b.Vin.IsDeposit()
 }
 
+// GeneratedUTXOsNoWithdrawn returns the list of UTXOs from Vout
+// except for withdrawn ERCToken objects.
+func (b *Tx) GeneratedUTXOsNoWithdrawn() (Vout, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.GeneratedUTXOsNoWithdrawn: tx not initialized")
+	}
+	if len(b.Vout) == 0 {
+		return nil, errorz.ErrInvalid{}.New("tx.GeneratedUTXOsNoWithdrawn: tx.vout not initialized")
+	}
+	return b.Vout.NoWithdrawnERCTokens()
+}
+
 // GeneratedUTXOID returns the list of UTXOIDs from Vout
 func (b *Tx) GeneratedUTXOID() ([][]byte, error) {
 	if b == nil {
@@ -435,6 +447,18 @@ func (b *Tx) GeneratedUTXOID() ([][]byte, error) {
 	return b.Vout.UTXOID()
 }
 
+// GeneratedUTXOIDNoWithdrawn returns the list of UTXOIDs from Vout
+// which do not include withdrawn ERCTOken objects
+func (b *Tx) GeneratedUTXOIDNoWithdrawn() ([][]byte, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.GeneratedUTXOIDNoWithdrawn: tx not initialized")
+	}
+	if len(b.Vout) == 0 {
+		return nil, errorz.ErrInvalid{}.New("tx.GeneratedUTXOIDNoWithdrawn: tx.vout not initialized")
+	}
+	return b.Vout.UTXOIDNoWithdrawn()
+}
+
 // GeneratedPreHash returns the list of PreHashs from Vout
 func (b *Tx) GeneratedPreHash() ([][]byte, error) {
 	if b == nil {
@@ -444,6 +468,17 @@ func (b *Tx) GeneratedPreHash() ([][]byte, error) {
 		return nil, errorz.ErrInvalid{}.New("tx.GeneratedPreHash: tx.vout not initialized")
 	}
 	return b.Vout.PreHash()
+}
+
+// GeneratedPreHashNoWithdrawn returns the list of PreHashs from Vout
+func (b *Tx) GeneratedPreHashNoWithdrawn() ([][]byte, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("tx.GeneratedPreHashNoWithdrawn: tx not initialized")
+	}
+	if len(b.Vout) == 0 {
+		return nil, errorz.ErrInvalid{}.New("tx.GeneratedPreHashNoWithdrawn: tx.vout not initialized")
+	}
+	return b.Vout.PreHashNoWithdrawn()
 }
 
 // ValidateSignature validates the signatures of the objects
@@ -605,8 +640,8 @@ func (b *Tx) ScaledFeeCostRatio(isCleanup bool) (*uint256.Uint256, error) {
 // calc sum on inputs from utxos and currentHeight
 // sum inputs must equal sum outputs plus fee.
 // Note well: This function call checks the values concerning MadBytes.
-// It *does not* validate logic related the ERCToken object;
-// see ValidateERCTokens for that function call.
+// It also validates logic related the ERCToken object
+// by calling ValidateERCTokens.
 func (b *Tx) ValidateEqualVinVout(currentHeight uint32, refUTXOs Vout) error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("tx.ValidateEqualVinVout: tx not initialized")
@@ -644,6 +679,10 @@ func (b *Tx) ValidateEqualVinVout(currentHeight uint32, refUTXOs Vout) error {
 	}
 	if !valueOutPlusFee.Eq(valueIn) {
 		return errorz.ErrInvalid{}.New(fmt.Sprintf("tx.ValidateEqualVinVout: input value does not match output value: IN:%v  vs  OUT+FEE:%v", valueIn, valueOutPlusFee))
+	}
+	err = b.ValidateERCTokens(refUTXOs)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -800,10 +839,6 @@ func (b *Tx) Validate(set map[string]bool, currentHeight uint32, consumedUTXOs V
 	if err != nil {
 		return nil, err
 	}
-	err = b.ValidateERCTokens(consumedUTXOs)
-	if err != nil {
-		return nil, err
-	}
 	err = b.ValidateFees(currentHeight, consumedUTXOs, storage)
 	if err != nil {
 		return nil, err
@@ -868,10 +903,6 @@ func (b *Tx) PostValidatePending(currentHeight uint32, consumedUTXOs Vout, stora
 		return errorz.ErrInvalid{}.New("tx.PostValidatePending: tx.fee not initialized")
 	}
 	err := b.ValidateEqualVinVout(currentHeight, consumedUTXOs)
-	if err != nil {
-		return err
-	}
-	err = b.ValidateERCTokens(consumedUTXOs)
 	if err != nil {
 		return err
 	}

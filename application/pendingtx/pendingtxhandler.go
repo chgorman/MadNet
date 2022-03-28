@@ -210,7 +210,7 @@ func (pt *Handler) DeleteMined(txnState *badger.Txn, currentHeight uint32, txHas
 	return pt.db.Update(func(txn *badger.Txn) error {
 		for i := 0; i < len(txHashes); i++ {
 			txHash = utils.CopySlice(txHashes[i])
-			cooldownKey := pt.makePendingTxCooldownKey(utils.CopySlice(txHash))
+			cooldownKey := pt.makePendingTxCooldownKey(txHash)
 			e := badger.NewEntry(cooldownKey, []byte{uint8(1)}).WithTTL(time.Second * 20)
 			err := txn.SetEntry(e)
 			if err != nil {
@@ -231,7 +231,7 @@ func (pt *Handler) DeleteMined(txnState *badger.Txn, currentHeight uint32, txHas
 		}
 		for i := 0; i < len(dropHashes); i++ {
 			txHash = utils.CopySlice(dropHashes[i])
-			cooldownKey := pt.makePendingTxCooldownKey(utils.CopySlice(txHash))
+			cooldownKey := pt.makePendingTxCooldownKey(txHash)
 			e := badger.NewEntry(cooldownKey, []byte{uint8(1)}).WithTTL(time.Second * 20)
 			err := txn.SetEntry(e)
 			if err != nil {
@@ -692,13 +692,13 @@ func (pt *Handler) checkTx(txnState *badger.Txn, tx *objs.Tx, currentHeight uint
 }
 
 func (pt *Handler) checkGenerated(txnState *badger.Txn, tx *objs.Tx) (bool, error) {
-	generatedUTXOIDs, err := tx.GeneratedUTXOID()
+	generatedUTXOIDsNoWithdrawn, err := tx.GeneratedUTXOIDNoWithdrawn()
 	if err != nil {
 		utils.DebugTrace(pt.logger, err)
 		return false, err
 	}
-	for k := 0; k < len(generatedUTXOIDs); k++ {
-		trieContains, err := pt.UTXOHandler.TrieContains(txnState, generatedUTXOIDs[k])
+	for k := 0; k < len(generatedUTXOIDsNoWithdrawn); k++ {
+		trieContains, err := pt.UTXOHandler.TrieContains(txnState, utils.CopySlice(generatedUTXOIDsNoWithdrawn[k]))
 		if err != nil {
 			utils.DebugTrace(pt.logger, err)
 			return false, err
@@ -842,7 +842,7 @@ func (pt *Handler) deleteOneInternal(txn *badger.Txn, txHash []byte, minedDelete
 		}
 		for j := 0; j < len(txHashes); j++ {
 			txH := utils.CopySlice(txHashes[j])
-			key := pt.makePendingTxKey(utils.CopySlice(txH))
+			key := pt.makePendingTxKey(txH)
 			err := utils.DeleteValue(txn, key)
 			if err != nil {
 				if err != badger.ErrKeyNotFound {
@@ -885,14 +885,13 @@ func (pt *Handler) containsOneInternal(txn *badger.Txn, epoch uint32, txHash []b
 
 func (pt *Handler) makePendingTxKey(txHash []byte) []byte {
 	key := dbprefix.PrefixPendingTx()
-	key = append(key, txHash...)
+	key = append(key, utils.CopySlice(txHash)...)
 	return key
 }
 
 func (pt *Handler) makePendingTxCooldownKey(txHash []byte) []byte {
-	txHashCopy := utils.CopySlice(txHash)
 	key := dbprefix.PrefixPendingTxCooldownKey()
-	key = append(key, txHashCopy...)
+	key = append(key, utils.CopySlice(txHash)...)
 	return key
 }
 

@@ -976,24 +976,24 @@ func TestERCTokenMakeTxInGood(t *testing.T) {
 	}
 }
 
-func TestERCTokenWithdrawTokens(t *testing.T) {
+func TestERCTokenWithdrawnTokens(t *testing.T) {
 	utxo := TXOut{}
-	retWithdraw := utxo.ercToken.WithdrawTokens()
+	retWithdraw := utxo.ercToken.WithdrawnTokens()
 	if retWithdraw {
 		t.Fatal("Should not withdraw tokens (1)")
 	}
 	erct := &ERCToken{}
-	retWithdraw = erct.WithdrawTokens()
+	retWithdraw = erct.WithdrawnTokens()
 	if retWithdraw {
 		t.Fatal("Should not withdraw tokens (2)")
 	}
 	erct.ERCTPreImage = &ERCTPreImage{}
-	retWithdraw = erct.WithdrawTokens()
+	retWithdraw = erct.WithdrawnTokens()
 	if retWithdraw {
 		t.Fatal("Should not withdraw tokens (3)")
 	}
 	erct.ERCTPreImage.Withdraw = true
-	retWithdraw = erct.WithdrawTokens()
+	retWithdraw = erct.WithdrawnTokens()
 	if !retWithdraw {
 		t.Fatal("Should withdraw tokens")
 	}
