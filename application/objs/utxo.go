@@ -790,7 +790,7 @@ func (b *TXOut) IsDeposit() bool {
 	}
 }
 
-// IsDeposit returns true if it is a valid ValueStore or ERCToken with deposit.
+// WithdrawnERCToken returns true if ERCToken are set to be withdrawn.
 // All other instances return false.
 func (b *TXOut) WithdrawnERCToken() bool {
 	if b == nil {
@@ -802,6 +802,39 @@ func (b *TXOut) WithdrawnERCToken() bool {
 		return obj.WithdrawnTokens()
 	default:
 		return false
+	}
+}
+
+// ERCTokenValue returns the Value of the ERCToken object.
+func (b *TXOut) ERCTokenValue() (*uint256.Uint256, error) {
+	switch {
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.ERCValue()
+	default:
+		return nil, errorz.ErrInvalid{}.New("txout.ERCTokenValue; type not defined")
+	}
+}
+
+// ERCTokenValue returns the Value of the ERCToken object.
+func (b *TXOut) ERCTokenSmartContract() (*SmartContract, error) {
+	switch {
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.SmartContract()
+	default:
+		return nil, errorz.ErrInvalid{}.New("txout.ERCTokenValue; type not defined")
+	}
+}
+
+// ERCTokenValue returns the Value of the ERCToken object.
+func (b *TXOut) ERCTokenTokenID() (*uint256.Uint256, error) {
+	switch {
+	case b.HasERCToken():
+		obj, _ := b.ERCToken()
+		return obj.TokenID()
+	default:
+		return nil, errorz.ErrInvalid{}.New("txout.ERCTokenValue; type not defined")
 	}
 }
 

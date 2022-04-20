@@ -265,16 +265,16 @@ func (b *ERCToken) ChainID() (uint32, error) {
 // ERCValue returns the Value of the object
 func (b *ERCToken) ERCValue() (*uint256.Uint256, error) {
 	if b == nil {
-		return nil, errorz.ErrInvalid{}.New("erct.Value: erct not initialized")
+		return nil, errorz.ErrInvalid{}.New("erct.ERCValue: erct not initialized")
 	}
 	if b.ERCTPreImage == nil {
-		return nil, errorz.ErrInvalid{}.New("erct.Value: erctpi not initialized")
+		return nil, errorz.ErrInvalid{}.New("erct.ERCValue: erctpi not initialized")
 	}
 	if b.ERCTPreImage.Value == nil {
-		return nil, errorz.ErrInvalid{}.New("erct.Value: erctpi.value not initialized")
+		return nil, errorz.ErrInvalid{}.New("erct.ERCValue: erctpi.value not initialized")
 	}
 	if b.ERCTPreImage.Value.IsZero() {
-		return nil, errorz.ErrInvalid{}.New("erct.Value: erctpi.value is zero")
+		return nil, errorz.ErrInvalid{}.New("erct.ERCValue: erctpi.value is zero")
 	}
 	return b.ERCTPreImage.Value.Clone(), nil
 }
@@ -296,15 +296,32 @@ func (b *ERCToken) Fee() (*uint256.Uint256, error) {
 // MarshalSmartContract marshals the SmartContract subobject
 func (b *ERCToken) MarshalSmartContract() ([]byte, error) {
 	if b == nil {
-		return nil, errorz.ErrInvalid{}.New("erct.SmartContractdAddress: erct not initialized")
+		return nil, errorz.ErrInvalid{}.New("erct.MarshalSmartContract: erct not initialized")
 	}
 	if b.ERCTPreImage == nil {
-		return nil, errorz.ErrInvalid{}.New("erct.SmartContractAddress: erctpi not initialized")
-	}
-	if b.ERCTPreImage.SmartContract == nil {
-		return nil, errorz.ErrInvalid{}.New("erct.SmartContractAddress: erctpi.sc not initialized")
+		return nil, errorz.ErrInvalid{}.New("erct.MarshalSmartContract: erctpi not initialized")
 	}
 	return b.ERCTPreImage.SmartContract.MarshalBinary()
+}
+
+// SmartContract returns the SmartContract subobject
+func (b *ERCToken) SmartContract() (*SmartContract, error) {
+	if b == nil {
+		return nil, errorz.ErrInvalid{}.New("erct.SmartContract: erct not initialized")
+	}
+	if b.ERCTPreImage == nil {
+		return nil, errorz.ErrInvalid{}.New("erct.SmartContract: erctpi not initialized")
+	}
+	scBytes, err := b.ERCTPreImage.SmartContract.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+	sc := &SmartContract{}
+	err = sc.UnmarshalBinary(scBytes)
+	if err != nil {
+		return nil, err
+	}
+	return sc, nil
 }
 
 // TokenID returns the TokenID of the object
@@ -431,6 +448,7 @@ func (b *ERCToken) ValidateSignature(txIn *TXIn) error {
 	return b.ERCTPreImage.ValidateSignature(msg, sig)
 }
 
+// ValidateToken validates the ERCToken object
 func (b *ERCToken) ValidateToken() error {
 	if b == nil {
 		return errorz.ErrInvalid{}.New("erct.ValidateToken: erct not initialized")

@@ -577,6 +577,70 @@ func TestERCTokenFeeGood(t *testing.T) {
 	}
 }
 
+func TestERCTokenSmartContractBad(t *testing.T) {
+	utxo := TXOut{}
+	_, err := utxo.ercToken.SmartContract()
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+	erct := &ERCToken{}
+	_, err = erct.SmartContract()
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	_, err = erct.SmartContract()
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+}
+
+func TestERCTokenSmartContractGood(t *testing.T) {
+	origChainID := uint32(1)
+	scAddr := make([]byte, constants.OwnerLen)
+	scAddr[0] = 255
+	scTrue := &SmartContract{
+		origChainID: origChainID,
+		address:     scAddr,
+	}
+	erct := &ERCToken{}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	erct.ERCTPreImage.SmartContract = scTrue
+	sc, err := erct.SmartContract()
+	if err != nil {
+		t.Fatal(err)
+	}
+	scTrueBytes, err := scTrue.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	scBytes, err := sc.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(scTrueBytes, scBytes) {
+		t.Fatal("SmartContracts do not match")
+	}
+}
+
+func TestERCTokenMarshalSmartContractBad(t *testing.T) {
+	utxo := TXOut{}
+	_, err := utxo.ercToken.MarshalSmartContract()
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+	erct := &ERCToken{}
+	_, err = erct.MarshalSmartContract()
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
+	}
+	erct.ERCTPreImage = &ERCTPreImage{}
+	_, err = erct.MarshalSmartContract()
+	if err == nil {
+		t.Fatal("Should have raised error (3)")
+	}
+}
+
 func TestERCTokenTokenIDBad(t *testing.T) {
 	utxo := TXOut{}
 	_, err := utxo.ercToken.TokenID()
@@ -914,6 +978,19 @@ func TestERCTokenValidateFeeGood(t *testing.T) {
 	err = erct.ValidateFee(storage)
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestERCTokenValidateTokenBad(t *testing.T) {
+	utxo := TXOut{}
+	err := utxo.ercToken.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (1)")
+	}
+	erct := &ERCToken{}
+	err = erct.ValidateToken()
+	if err == nil {
+		t.Fatal("Should have raised error (2)")
 	}
 }
 
