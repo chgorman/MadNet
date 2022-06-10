@@ -286,7 +286,7 @@ abstract contract StakingNFT is
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_CALLER_NOT_TOKEN_OWNER))
         );
         Position memory position = _positions[tokenID_];
-        require(position.lockedPosition);
+        require(position.lockedPosition); // Is this requirement correct? I
         require(
             position.withdrawFreeAfter < block.number,
             string(
@@ -514,9 +514,8 @@ abstract contract StakingNFT is
     ) internal returns (uint256 tokenID) {
         // this is to allow struct packing and is safe due to AToken having a
         // total distribution of 220M
-        // TODO: may want to add appropriate error code to match new require statement
+        // TODO: may want to add appropriate error code to match new require statements
         require(amount_ > 0);
-        // TODO: may want to add appropriate error code to match new require statement
         require(lockDuration_ > 0);
         require(
             amount_ <= 2**224 - 1,
@@ -535,9 +534,9 @@ abstract contract StakingNFT is
         // get new tokenID from counter
         tokenID = _increment();
 
-        // Need to ensure that we call _slushSkim on both tokens *and* Eth
-        // accumulators before minting an additional staked position.
-        // This ensures that all stakers receive their appropriate earnings.
+        // Call _slushSkim on both tokens *and* Eth accumulators
+        // before minting a staked position.
+        // This ensures that all stakers receive their appropriate rewards.
         if (sharesEth > 0) {
             (ethState.accumulator, ethState.slush) = _slushSkim(
                 sharesEth,
@@ -568,8 +567,8 @@ abstract contract StakingNFT is
             uint224(weightedAmount),
             lockedPosition,
             uint224(amount_),
-            uint32(block.number) + 1, // TODO: this must be fixed
-            uint32(block.number) + lockDuration_, // TODO: this must be fixed
+            uint32(block.number) + 1, // TODO: Is this correct?
+            uint32(block.number) + lockDuration_,
             ethState.accumulator,
             tokenState.accumulator
         );
@@ -636,8 +635,8 @@ abstract contract StakingNFT is
         Accumulator memory ethState = _ethState;
         Accumulator memory tokenState = _tokenState;
 
-        // Need to ensure that we call _slushSkim on both tokens *and* Eth
-        // accumulators before burning a staked position.
+        // Call _slushSkim on both tokens *and* Eth
+        // accumulators before burning staked position.
         // This ensures stakers receive all their earnings.
         (ethState.accumulator, ethState.slush) = _slushSkim(
             sharesEth,
@@ -662,7 +661,7 @@ abstract contract StakingNFT is
             (p, payoutToken) = _collectToken(sharesToken, p);
         }
 
-        // add back to token payout the original stake position
+        // add back to token payout the stake position
         payoutToken += p.shares;
 
         // debit global shares counter and delete from mapping
@@ -670,7 +669,7 @@ abstract contract StakingNFT is
             _weightedSharesToken -= p.weightedShares;
         }
         _weightedSharesEth -= p.weightedShares;
-        _reserveToken -= payoutToken;
+        _reserveToken -= payoutToken; // TODO: is this correct?
         _reserveEth -= payoutEth;
         delete _positions[tokenID_];
 
@@ -898,8 +897,7 @@ abstract contract StakingNFT is
         Accumulator memory tokenState = _tokenState;
         uint256 sharesToken = _weightedSharesToken;
         uint256 reserveToken = _reserveToken;
-        //(tokenState, reserveToken) = _updateAccumulatorForMinting(
-        (tokenState, ) = _updateAccumulatorForMinting(
+        (tokenState, reserveToken) = _updateAccumulatorForMinting(
             epoch_,
             sharesToken,
             tokenState,
@@ -909,7 +907,7 @@ abstract contract StakingNFT is
         );
         // Overwrite state variables
         _tokenState = tokenState;
-        //_reserveToken = reserveToken;
+        _reserveToken = reserveToken;
         return;
     }
 
@@ -942,6 +940,7 @@ abstract contract StakingNFT is
             ethState.accumulator,
             ethState.slush
         );
+        _ethState = ethState;
 
         require(
             p.shares + payoutToken <= 2**224 - 1,
@@ -953,11 +952,9 @@ abstract contract StakingNFT is
         // Update total staked shares
         sharesToken += payoutToken;
         sharesEth += payoutToken;
-        _reserveToken += payoutToken; // I do not think we should include this here.
 
         // Overwrite position
         _positions[tokenID_] = p;
-        _ethState = ethState;
         // Overwrite shares
         _weightedSharesToken = sharesToken;
         _weightedSharesEth = sharesEth;

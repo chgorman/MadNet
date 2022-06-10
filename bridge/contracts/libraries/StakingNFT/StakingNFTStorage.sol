@@ -115,8 +115,10 @@ abstract contract StakingNFTStorage {
     // which determines the specific decay rate of additional ATokens which
     // are minted each snapshot (epoch).
     //
-    // TODO: we should think about what value we want to choose
-    uint32 internal constant _REWARD_ERA = 4400;
+    // TODO: we should think about what value we want to choose.
+    //       For now, switching to 2200 because that is the longest
+    //       allowable locking value at this point.
+    uint32 internal constant _REWARD_ERA = 2200;
 
     // _ADDITIONAL_ATOKENS specifies the total number of additional ATokens
     // which will be minted.
