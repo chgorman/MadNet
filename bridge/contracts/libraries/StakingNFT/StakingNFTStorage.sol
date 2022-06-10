@@ -61,9 +61,12 @@ abstract contract StakingNFTStorage {
     // TODO: it is not clear if _shares and _reserveToken
     //       serve different roles. They appear to be the same.
 
-    // _shares stores total amount of AToken staked in contract.
-    // If this is used, we may want to rename this as _weightedShares.
+    // _weightedSharesToken stores total weighted amount of ATokens
+    // used to determine the distribution of additional ATokens
     uint256 internal _weightedSharesToken;
+
+    // _weightedSharesEth stores total weighted amount of ATokens
+    // used to determine the distribution of Eth
     uint256 internal _weightedSharesEth;
 
     // _tokenState tracks distribution of AToken that originate from slashing
@@ -81,24 +84,16 @@ abstract contract StakingNFTStorage {
     // contract
     uint256 internal _reserveEth;
 
-    // state to keep track of the amount of ATokens deposited and collected
+    // state to keep track of the number of ATokens deposited and collected
     // from the contract.
-    //
-    // As noted above, it is not clear if this duplicates _shares global variable.
-    // If this does duplicate _shares, this could be kept and used to represent
-    // the total ATokens in the smart contract: the *unweighted* value.
     uint256 internal _reserveToken;
-
-    // state to keep track of the amount of ATokens to be distributed
-    // from the contract to locked stakers
-    uint256 internal _additionalToken;
 
     // denominator used when computing weighted stake
     uint256 internal constant _LOCKING_TIER_DENOMINATOR = 1000000;
 
     // Tier 0; required locking for one block; no AToken rewards
     uint256 internal constant _LOCKING_TIER_0 = 1;
-    uint256 internal constant _LOCKING_TIER_0_NUMERATOR = 0;
+    // uint256 internal constant _LOCKING_TIER_0_NUMERATOR = 0;
 
     uint256 internal constant _LOCKING_TIER_1 = 0;
     uint256 internal constant _LOCKING_TIER_1_NUMERATOR = 1000000;
