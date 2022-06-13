@@ -669,7 +669,7 @@ abstract contract StakingNFT is
             _weightedSharesToken -= p.weightedShares;
         }
         _weightedSharesEth -= p.weightedShares;
-        _reserveToken -= payoutToken; // TODO: is this correct?
+        _reserveToken -= payoutToken;
         _reserveEth -= payoutEth;
         delete _positions[tokenID_];
 
@@ -915,6 +915,10 @@ abstract contract StakingNFT is
     // their position to realize their gains; this will result
     // in earning more Eth and additional ATokens
     function updateTokenPosition(uint256 tokenID_) public {
+        require(
+            _exists(tokenID_),
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
+        );
         // collect state
         Position memory p = _positions[tokenID_];
         require(p.lockedPosition);

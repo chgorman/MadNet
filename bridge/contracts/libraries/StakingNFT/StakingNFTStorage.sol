@@ -95,29 +95,25 @@ abstract contract StakingNFTStorage {
     uint256 internal constant _LOCKING_TIER_0 = 1;
     // uint256 internal constant _LOCKING_TIER_0_NUMERATOR = 0;
 
-    uint256 internal constant _LOCKING_TIER_1 = 0;
-    uint256 internal constant _LOCKING_TIER_1_NUMERATOR = 1000000;
+    // 1 week;     84 epochs
+    uint256 internal constant _LOCKING_TIER_1 = (_MAX_MINT_LOCK * 70) / 1825;
+    uint256 internal constant _LOCKING_TIER_1_NUMERATOR = 1000001;
 
-    uint256 internal constant _LOCKING_TIER_2 = 0;
-    uint256 internal constant _LOCKING_TIER_2_NUMERATOR = 1000000;
+    // 1 month;   367 epochs
+    uint256 internal constant _LOCKING_TIER_2 = _MAX_MINT_LOCK / 6;
+    uint256 internal constant _LOCKING_TIER_2_NUMERATOR = 1010000;
 
-    uint256 internal constant _LOCKING_TIER_3 = 0;
-    uint256 internal constant _LOCKING_TIER_3_NUMERATOR = 1000000;
+    // 3 months; 1100 epochs
+    uint256 internal constant _LOCKING_TIER_3 = _MAX_MINT_LOCK / 2;
+    uint256 internal constant _LOCKING_TIER_3_NUMERATOR = 1100000;
 
-    uint256 internal constant _LOCKING_TIER_4 = 0;
-    uint256 internal constant _LOCKING_TIER_4_NUMERATOR = 1000000;
-
-    // TODO: need different tiers; potential for wanting a short locking period.
-    //       will probably need to use an enum. We may want a specific struct to
-    //       to use for Tier objects.
+    // 6 months; 2200 epochs
+    uint256 internal constant _LOCKING_TIER_4 = _MAX_MINT_LOCK;
+    uint256 internal constant _LOCKING_TIER_4_NUMERATOR = 2000000;
 
     // _REWARD_ERA specifies the number of epochs per reward era,
     // which determines the specific decay rate of additional ATokens which
     // are minted each snapshot (epoch).
-    //
-    // TODO: we should think about what value we want to choose.
-    //       For now, switching to 2200 because that is the longest
-    //       allowable locking value at this point.
     uint32 internal constant _REWARD_ERA = 2200;
 
     // _ADDITIONAL_ATOKENS specifies the total number of additional ATokens
