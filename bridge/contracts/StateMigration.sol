@@ -86,7 +86,7 @@ contract StateMigration is
         uint256[4] memory tokenIDs;
         for (uint256 i; i < 4; i++) {
             // minting publicStaking position for the factory
-            tokenIDs[i] = IStakingNFT(_publicStakingAddress()).mint(1);
+            tokenIDs[i] = IStakingNFT(_publicStakingAddress()).mint(1, 1);
             IERC721(_publicStakingAddress()).approve(_validatorPoolAddress(), tokenIDs[i]);
         }
         _externalStore.storeTokenIds(tokenIDs);

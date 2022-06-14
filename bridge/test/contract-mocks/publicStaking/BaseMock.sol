@@ -15,8 +15,8 @@ abstract contract BaseMock {
         aToken = aToken_;
     }
 
-    function mint(uint256 amount_) public returns (uint256) {
-        return publicStaking.mint(amount_);
+    function mint(uint256 amount_, uint256 lockDuration_) public returns (uint256) {
+        return publicStaking.mint(amount_, lockDuration_);
     }
 
     function mintTo(

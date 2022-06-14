@@ -606,7 +606,7 @@ contract ValidatorPool is
     {
         // We should approve the validatorStaking to transferFrom the tokens of this contract
         IERC20Transferable(_aTokenAddress()).approve(_validatorStakingAddress(), minerShares_);
-        validatorTokenID = IStakingNFT(_validatorStakingAddress()).mint(minerShares_);
+        validatorTokenID = IStakingNFT(_validatorStakingAddress()).mint(minerShares_, 1);
     }
 
     function _mintPublicStakingPosition(uint256 minerShares_)
@@ -615,7 +615,7 @@ contract ValidatorPool is
     {
         // We should approve the PublicStaking to transferFrom the tokens of this contract
         IERC20Transferable(_aTokenAddress()).approve(_publicStakingAddress(), minerShares_);
-        stakeTokenID = IStakingNFT(_publicStakingAddress()).mint(minerShares_);
+        stakeTokenID = IStakingNFT(_publicStakingAddress()).mint(minerShares_, 1);
     }
 
     function _burnValidatorStakingPosition(address validator_)

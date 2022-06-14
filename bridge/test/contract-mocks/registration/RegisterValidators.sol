@@ -80,7 +80,7 @@ contract RegisterValidators is
         uint256[] memory tokenIDs = new uint256[](numValidators);
         for (uint256 i; i < numValidators; i++) {
             // minting publicStaking position for the factory
-            tokenIDs[i] = IStakingNFT(_publicStakingAddress()).mint(1);
+            tokenIDs[i] = IStakingNFT(_publicStakingAddress()).mint(1, 1);
             IERC721(_publicStakingAddress()).approve(_validatorPoolAddress(), tokenIDs[i]);
         }
         _externalStore.storeTokenIds(tokenIDs);

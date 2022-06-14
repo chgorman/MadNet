@@ -535,7 +535,20 @@
   },
   {
     "inputs": [],
-    "name": "getTotalShares",
+    "name": "getTotalSharesEth",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalSharesToken",
     "outputs": [
       {
         "internalType": "uint256",
@@ -660,6 +673,11 @@
         "internalType": "uint256",
         "name": "amount_",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lockDuration_",
+        "type": "uint256"
       }
     ],
     "name": "mint",
@@ -670,6 +688,19 @@
         "type": "uint256"
       }
     ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint32",
+        "name": "epoch_",
+        "type": "uint32"
+      }
+    ],
+    "name": "mintATokensForEpoch",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -877,7 +908,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "tokenID",
         "type": "uint256"
       }
     ],
@@ -918,6 +949,19 @@
   {
     "inputs": [],
     "name": "tripCB",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateTokenPosition",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

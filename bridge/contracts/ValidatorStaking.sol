@@ -16,14 +16,14 @@ contract ValidatorStaking is StakingNFT {
     /// requires the caller to have performed an approve invocation against
     /// AToken into this contract. This function will fail if the circuit
     /// breaker is tripped.
-    function mint(uint256 amount_)
+    function mint(uint256 amount_, uint256 lockDuration_)
         public
         override
         withCircuitBreaker
         onlyValidatorPool
         returns (uint256 tokenID)
     {
-        return _mintNFT(msg.sender, amount_);
+        return _mintNFT(msg.sender, amount_, lockDuration_);
     }
 
     /// mintTo allows a staking position to be opened in the name of an
@@ -43,7 +43,7 @@ contract ValidatorStaking is StakingNFT {
                 abi.encodePacked(StakingNFTErrorCodes.STAKENFT_LOCK_DURATION_GREATER_THAN_MINT_LOCK)
             )
         );
-        tokenID = _mintNFT(to_, amount_);
+        tokenID = _mintNFT(to_, amount_, lockDuration_);
         if (lockDuration_ > 0) {
             _lockPosition(tokenID, lockDuration_);
         }

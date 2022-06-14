@@ -20,7 +20,7 @@ interface IStakingNFT {
 
     function lockWithdraw(uint256 tokenID_, uint256 lockDuration_) external returns (uint256);
 
-    function mint(uint256 amount_) external returns (uint256 tokenID);
+    function mint(uint256 amount_, uint256 lockDuration_) external returns (uint256 tokenID);
 
     function mintTo(
         address to_,
@@ -55,7 +55,9 @@ interface IStakingNFT {
 
     function getAccumulatorScaleFactor() external view returns (uint256);
 
-    function getTotalShares() external view returns (uint256);
+    function getTotalSharesToken() external view returns (uint256);
+
+    function getTotalSharesEth() external view returns (uint256);
 
     function getTotalReserveEth() external view returns (uint256);
 

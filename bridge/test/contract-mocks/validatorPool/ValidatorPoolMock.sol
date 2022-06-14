@@ -80,7 +80,7 @@ contract ValidatorPoolMock is
     function mintValidatorStaking() public returns (uint256 stakeID_) {
         IERC20Transferable(_aTokenAddress()).transferFrom(msg.sender, address(this), _stakeAmount);
         IERC20Transferable(_aTokenAddress()).approve(_validatorStakingAddress(), _stakeAmount);
-        stakeID_ = IStakingNFT(_validatorStakingAddress()).mint(_stakeAmount);
+        stakeID_ = IStakingNFT(_validatorStakingAddress()).mint(_stakeAmount, 1);
     }
 
     function burnValidatorStaking(uint256 tokenID_)

@@ -51,4 +51,25 @@ describe("Testing AToken", async () => {
       });
     });
   });
+
+  describe("Testing staking operations", async () => {
+    describe("Test token accumulator functions", async () => {
+      it("Ensure accumulatorEth is 0", async function () {
+        // currentState = await getState(fixture);
+        let stakingNFTIFace = await ethers.getContractFactory("StakingNFTMock");
+        let stakingNFT = await stakingNFTIFace.deploy();
+        let epoch = 1;
+        let additionalTokens = 1000;
+        let rewardEra = 1000;
+        let txResponse = await stakingNFT.epochRewardMock(
+          epoch,
+          additionalTokens,
+          rewardEra
+        );
+        let value = await txResponse.toBigInt();
+        await expect(value).to.be.equal(1000);
+        // expect(txResponse).to.be.revertedWith // assert with certain error codes
+      });
+    });
+  });
 });
