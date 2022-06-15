@@ -177,7 +177,7 @@ abstract contract StakingNFT is
         // collect tokens
         _safeTransferFromERC20(IERC20Transferable(_aTokenAddress()), msg.sender, amount_);
         // update state
-        _tokenState = _deposit(_shares, amount_, _tokenState);
+        _tokenState = _deposit(_sharesToken, amount_, _tokenState);
         _reserveToken += amount_;
     }
 
@@ -189,7 +189,7 @@ abstract contract StakingNFT is
     /// successfully interacting with this method without first reading the
     /// source code and hopefully this comment
     function depositEth(uint8 magic_) public payable withCircuitBreaker checkMagic(magic_) {
-        _ethState = _deposit(_shares, msg.value, _ethState);
+        _ethState = _deposit(_sharesEth, msg.value, _ethState);
         _reserveEth += msg.value;
     }
 
@@ -264,7 +264,7 @@ abstract contract StakingNFT is
         );
 
         // get values and update state
-        (_positions[tokenID_], payout) = _collectEth(_shares, position);
+        (_positions[tokenID_], payout) = _collectEth(_sharesEth, position);
         _reserveEth -= payout;
         // perform transfer and return amount paid out
         _safeTransferEth(owner, payout);
@@ -290,7 +290,7 @@ abstract contract StakingNFT is
         );
 
         // get values and update state
-        (_positions[tokenID_], payout) = _collectToken(_shares, position);
+        (_positions[tokenID_], payout) = _collectToken(_sharesToken, position);
         _reserveToken -= payout;
         // perform transfer and return amount paid out
         _safeTransferERC20(IERC20Transferable(_aTokenAddress()), owner, payout);
@@ -316,7 +316,7 @@ abstract contract StakingNFT is
         );
 
         // get values and update state
-        (_positions[tokenID_], payout) = _collectEth(_shares, position);
+        (_positions[tokenID_], payout) = _collectEth(_sharesEth, position);
         _reserveEth -= payout;
         // perform transfer and return amount paid out
         _safeTransferEth(to_, payout);
@@ -342,7 +342,7 @@ abstract contract StakingNFT is
         );
 
         // get values and update state
-        (_positions[tokenID_], payout) = _collectToken(_shares, position);
+        (_positions[tokenID_], payout) = _collectToken(_sharesToken, position);
         _reserveToken -= payout;
         // perform transfer and return amount paid out
         _safeTransferERC20(IERC20Transferable(_aTokenAddress()), to_, payout);
@@ -354,8 +354,13 @@ abstract contract StakingNFT is
     }
 
     /// gets the total amount of AToken staked in contract
-    function getTotalShares() public view returns (uint256) {
-        return _shares;
+    function getTotalSharesEth() public view returns (uint256) {
+        return _sharesEth;
+    }
+
+    /// gets the total amount of AToken staked in contract
+    function getTotalSharesToken() public view returns (uint256) {
+        return _sharesToken;
     }
 
     /// gets the total amount of Ether staked in contract
@@ -375,7 +380,7 @@ abstract contract StakingNFT is
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
         );
         Position memory p = _positions[tokenID_];
-        (, , , payout) = _collect(_shares, _ethState, p, p.accumulatorEth);
+        (, , , payout) = _collect(_sharesEth, _ethState, p, p.accumulatorEth);
         return payout;
     }
 
@@ -386,7 +391,7 @@ abstract contract StakingNFT is
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
         );
         Position memory p = _positions[tokenID_];
-        (, , , payout) = _collect(_shares, _tokenState, p, p.accumulatorToken);
+        (, , , payout) = _collect(_sharesToken, _tokenState, p, p.accumulatorToken);
         return payout;
     }
 
@@ -405,12 +410,16 @@ abstract contract StakingNFT is
         return _estimateExcessEth();
     }
 
-    /// gets the position struct given a tokenID. The tokenId must
+    /// gets the position struct given a tokenID. The tokenID must
     /// exist.
+    ///
+    /// TODO: this should probably be updated to reflect changes
     function getPosition(uint256 tokenID_)
         public
         view
         returns (
+            uint256 weightedShares,
+            bool lockedStakingPosition,
             uint256 shares,
             uint256 freeAfter,
             uint256 withdrawFreeAfter,
@@ -423,6 +432,8 @@ abstract contract StakingNFT is
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
         );
         Position memory p = _positions[tokenID_];
+        weightedShares = uint256(p.weightedShares);
+        lockedStakingPosition = p.lockedStakingPosition;
         shares = uint256(p.shares);
         freeAfter = uint256(p.freeAfter);
         withdrawFreeAfter = uint256(p.withdrawFreeAfter);
@@ -498,6 +509,7 @@ abstract contract StakingNFT is
     function _mintNFT(address to_, uint256 amount_) internal returns (uint256 tokenID) {
         // this is to allow struct packing and is safe due to AToken having a
         // total distribution of 220M
+        require(amount_ > 0);
         require(
             amount_ <= 2**224 - 1,
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_MINT_AMOUNT_EXCEEDS_MAX_SUPPLY))
@@ -507,17 +519,30 @@ abstract contract StakingNFT is
         _safeTransferFromERC20(IERC20Transferable(_aTokenAddress()), msg.sender, amount_);
 
         // get local copy of storage vars to save gas
-        uint256 shares = _shares;
+        uint256 sharesEth = _sharesEth;
         Accumulator memory ethState = _ethState;
         Accumulator memory tokenState = _tokenState;
 
         // get new tokenID from counter
         tokenID = _increment();
 
+        // Call _slushSkim on Eth accumulator before minting staked position.
+        // This ensures that all stakers receive their appropriate rewards.
+        if (sharesEth > 0) {
+            (ethState.accumulator, ethState.slush) = _slushSkim(
+                sharesEth,
+                ethState.accumulator,
+                ethState.slush
+            );
+            _ethState = ethState;
+        }
+
         // update storage
-        shares += amount_;
-        _shares = shares;
+        sharesEth += amount_;
+        _sharesEth = sharesEth;
         _positions[tokenID] = Position(
+            uint224(amount_),
+            false,
             uint224(amount_),
             uint32(block.number) + 1,
             uint32(block.number) + 1,
@@ -550,19 +575,46 @@ abstract contract StakingNFT is
         );
 
         // get copy of storage to save gas
-        uint256 shares = _shares;
+        uint256 sharesEth = _sharesEth;
+        uint256 sharesToken = _sharesToken;
+        //uint256 sharesEth = _weightedSharesEth;
+        //uint256 sharesToken = _weightedSharesToken;
+        Accumulator memory ethState = _ethState;
+        Accumulator memory tokenState = _tokenState;
+
+        // Call _slushSkim on both tokens and Eth accumulators before burning
+        // staked position. This ensures stakers receive all their earnings.
+        (ethState.accumulator, ethState.slush) = _slushSkim(
+            sharesEth,
+            ethState.accumulator,
+            ethState.slush
+        );
+        _ethState = ethState;
+        if (p.lockedStakingPosition) {
+            (tokenState.accumulator, tokenState.slush) = _slushSkim(
+                sharesToken,
+                tokenState.accumulator,
+                tokenState.slush
+            );
+            _tokenState = tokenState;
+        }
 
         // calc Eth amounts due
-        (p, payoutEth) = _collectEth(shares, p);
+        (p, payoutEth) = _collectEth(sharesEth, p);
 
-        // calc token amounts due
-        (p, payoutToken) = _collectToken(shares, p);
+        // calc token amounts due; only for staked positions that are locked
+        if (p.lockedStakingPosition) {
+            (p, payoutToken) = _collectToken(sharesToken, p);
+        }
 
         // add back to token payout the original stake position
         payoutToken += p.shares;
 
         // debit global shares counter and delete from mapping
-        _shares -= p.shares;
+        if (p.lockedStakingPosition) {
+            _sharesToken -= p.weightedShares;
+        }
+        _sharesEth -= p.weightedShares;
         _reserveToken -= payoutToken;
         _reserveEth -= payoutEth;
         delete _positions[tokenID_];
@@ -580,6 +632,7 @@ abstract contract StakingNFT is
         internal
         returns (Position memory p, uint256 payout)
     {
+        require(p.lockedStakingPosition);
         uint256 acc;
         (_tokenState, p, acc, payout) = _collect(shares_, _tokenState, p_, p_.accumulatorToken);
         p.accumulatorToken = acc;
@@ -750,5 +803,120 @@ abstract contract StakingNFT is
             }
         }
         return (accumulator_, slush_);
+    }
+
+    // lockStakingPosition allows for Stakers to Lock their staking position
+    // in order to earn additional Eth and AToken rewards.
+    function lockStakingPosition(uint256 tokenID_, uint256 lockDuration_) public {
+        require(
+            msg.sender == ownerOf(tokenID_),
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_CALLER_NOT_TOKEN_OWNER))
+        );
+        require(lockDuration_ > 0);
+        require(
+            lockDuration_ <= _MAX_MINT_LOCK,
+            string(
+                abi.encodePacked(
+                    StakingNFTErrorCodes.STAKENFT_LOCK_DURATION_GREATER_THAN_GOVERNANCE_LOCK
+                )
+            )
+        );
+
+        require(
+            _exists(tokenID_),
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
+        );
+        Position memory p = _positions[tokenID_];
+        // Must not currently be a locked staking position
+        require(p.lockedStakingPosition == false);
+
+        // Compute updated weight
+        uint256 weightedShares;
+        bool lockedStakingPosition;
+        (weightedShares, lockedStakingPosition) = _computeLockedStakingPosition(
+            p.shares,
+            lockDuration_
+        );
+
+        // Update withdraw
+        uint32 withdrawFreeAfter = uint32(block.number) + uint32(lockDuration_);
+        // Determine if Position variable needs be to updated
+        if (p.withdrawFreeAfter < withdrawFreeAfter) {
+            p.withdrawFreeAfter = withdrawFreeAfter;
+        }
+
+        if (lockedStakingPosition == false) {
+            require(weightedShares == p.shares);
+            _positions[tokenID_] = p;
+            // Nothing else needs to be updated because there are
+            // no other changes to be made
+            return;
+        }
+        require(weightedShares >= p.shares);
+
+        // TODO: think more about what is required.
+        // Update state information accordingly;
+
+        // We need to update both sharesEth and sharesToken
+        // as well as call _slushSkim
+        uint256 sharesEth = _sharesEth;
+        uint256 sharesToken = _sharesToken;
+        Accumulator memory ethState = _ethState;
+        Accumulator memory tokenState = _tokenState;
+        (ethState.accumulator, ethState.slush) = _slushSkim(
+            sharesEth,
+            ethState.accumulator,
+            ethState.slush
+        );
+        (tokenState.accumulator, tokenState.slush) = _slushSkim(
+            sharesToken,
+            tokenState.accumulator,
+            tokenState.slush
+        );
+
+        // Update shares and state information
+        sharesEth += (weightedShares - p.shares);
+        sharesToken += weightedShares;
+        _sharesEth = sharesEth;
+        _sharesToken = sharesToken;
+        _ethState = ethState;
+        _tokenState = tokenState;
+
+        // Update Position information
+        p.accumulatorToken = tokenState.accumulator;
+        p.weightedShares = uint224(weightedShares);
+        p.lockedStakingPosition = lockedStakingPosition;
+
+        // Save position
+        _positions[tokenID_] = p;
+    }
+
+    // Compute the weighted shares and locked position bool based on
+    // amount_ and lockDuration_
+    function _computeLockedStakingPosition(uint256 amount_, uint256 lockDuration_)
+        internal
+        pure
+        returns (uint256, bool)
+    {
+        bool lockedStakingPosition = true;
+        uint256 lockingTierNumerator;
+        if (lockDuration_ < _LOCKING_TIER_1) {
+            lockingTierNumerator = _LOCKING_TIER_DENOMINATOR; // Result is multiplier == 1
+            lockedStakingPosition = false;
+        } else if ((_LOCKING_TIER_1 <= lockDuration_) && (lockDuration_ < _LOCKING_TIER_2)) {
+            lockingTierNumerator = _LOCKING_TIER_1_NUMERATOR;
+        } else if ((_LOCKING_TIER_2 <= lockDuration_) && (lockDuration_ < _LOCKING_TIER_3)) {
+            lockingTierNumerator = _LOCKING_TIER_2_NUMERATOR;
+        } else if ((_LOCKING_TIER_3 <= lockDuration_) && (lockDuration_ < _LOCKING_TIER_4)) {
+            lockingTierNumerator = _LOCKING_TIER_3_NUMERATOR;
+        } else {
+            lockingTierNumerator = _LOCKING_TIER_4_NUMERATOR;
+        }
+
+        // Compute weighted shares; this weight is determined by the specific
+        // Tier selected.
+        uint256 weightedAmount = (lockingTierNumerator * amount_) / _LOCKING_TIER_DENOMINATOR;
+
+        return (weightedAmount, lockedStakingPosition);
     }
 }
