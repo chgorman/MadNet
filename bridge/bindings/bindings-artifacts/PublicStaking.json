@@ -744,6 +744,19 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint32",
+        "name": "epoch_",
+        "type": "uint32"
+      }
+    ],
+    "name": "mintTokensForEpoch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "name",
     "outputs": [
@@ -959,6 +972,19 @@
   {
     "inputs": [],
     "name": "tripCB",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateStakingPosition",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

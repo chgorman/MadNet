@@ -505,11 +505,15 @@ abstract contract StakingNFT is
         return p.shares;
     }
 
-    // _mintNFT performs the mint operation and invokes the inherited _mint method
+    // _mintNFT performs the mint operation and invokes the inherited _mint method.
+    // This staking position only allows for Eth rewards.
     function _mintNFT(address to_, uint256 amount_) internal returns (uint256 tokenID) {
         // this is to allow struct packing and is safe due to AToken having a
         // total distribution of 220M
-        require(amount_ > 0);
+        require(
+            amount_ > 0,
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_STAKED_AMOUNT_IS_ZERO))
+        );
         require(
             amount_ <= 2**224 - 1,
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_MINT_AMOUNT_EXCEEDS_MAX_SUPPLY))
@@ -738,8 +742,8 @@ abstract contract StakingNFT is
             // update accumulator value for calling method
             positionAccumulatorValue_ += accumulatorDelta;
         }
-        // calculate payout based on shares held in position
-        uint256 payout = accumulatorDelta * p_.shares;
+        // calculate payout based on weightedShares held in position
+        uint256 payout = accumulatorDelta * p_.weightedShares;
         // if there are no shares other than this position, flush the slush fund
         // into the payout and update the in memory state object
         if (shares_ == p_.shares) {
@@ -805,14 +809,136 @@ abstract contract StakingNFT is
         return (accumulator_, slush_);
     }
 
-    // lockStakingPosition allows for Stakers to Lock their staking position
-    // in order to earn additional Eth and AToken rewards.
-    function lockStakingPosition(uint256 tokenID_, uint256 lockDuration_) public {
+    // _epochReward computes the additional ATokens to be minted for a given epoch.
+    // The specific reward is based on the Bitcoin block rewards;
+    // after each reward era, the additional tokens minted are halved.
+    function _epochReward(
+        uint32 epoch_,
+        uint256 additionalNewTokens_,
+        uint256 rewardEra_
+    ) internal pure returns (uint256) {
+        uint256 currentEra = epoch_ / rewardEra_;
+        uint256 additionalTokens = additionalNewTokens_ / (rewardEra_ * 2**(currentEra + 1));
+        return additionalTokens;
+    }
+
+    // Computes the additional ATokens which will be distributed
+    // as part of the snapshot process.
+    // This should *only* be called during the snapshot process
+    // and should only be performed *once*.
+    function _updateAccumulatorForMinting(
+        uint32 epoch_,
+        uint256 shares_,
+        Accumulator memory state_,
+        uint256 reserveToken_,
+        uint256 additionalNewTokens_,
+        uint256 rewardEra_
+    ) internal pure returns (Accumulator memory, uint256) {
+        uint256 newlyMintedTokens = _epochReward(epoch_, additionalNewTokens_, rewardEra_);
+        state_ = _deposit(shares_, newlyMintedTokens, state_);
+        reserveToken_ += newlyMintedTokens;
+        return (state_, reserveToken_);
+    }
+
+    // MUST BE MODIFIED TO ENSURE THIS IS ONLY CALLED ONCE PER EPOCH
+    // MUST HAVE RESTRICTION SO CALLED ONLY DURING THE SNAPSHOT PROCESS.
+    // THIS MUST ONLY BE CALLED ONCE PER SNAPSHOT/EPOCH
+    function mintTokensForEpoch(uint32 epoch_) external {
+        // Make copies of state variable to save gas
+        Accumulator memory tokenState = _tokenState;
+        uint256 sharesToken = _sharesToken;
+        uint256 reserveToken = _reserveToken;
+        (tokenState, reserveToken) = _updateAccumulatorForMinting(
+            epoch_,
+            sharesToken,
+            tokenState,
+            reserveToken,
+            _ADDITIONAL_ATOKENS,
+            _REWARD_ERA
+        );
+        // Overwrite state variables
+        _tokenState = tokenState;
+        _reserveToken = reserveToken;
+        return;
+    }
+
+    // updateStakingPosition realizes the AToken gains and adds them
+    // to the staking position
+    function updateStakingPosition(uint256 tokenID_) public {
+        require(
+            _exists(tokenID_),
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
+        );
         require(
             msg.sender == ownerOf(tokenID_),
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_CALLER_NOT_TOKEN_OWNER))
         );
-        require(lockDuration_ > 0);
+
+        // collect state
+        Position memory p = _positions[tokenID_];
+        // Must not currently be a locked staking position
+        require(
+            p.lockedStakingPosition == true,
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_POSITION_IS_UNLOCKED))
+        );
+
+        // get copy of storage to save gas
+        Accumulator memory ethState = _ethState;
+        Accumulator memory tokenState = _tokenState;
+        uint256 sharesToken = _sharesToken;
+        uint256 sharesEth = _sharesEth;
+        uint256 payoutToken;
+        // calc token amount due; call _slushSkim to ensure all profits
+        // are distributed correctly
+        (tokenState.accumulator, tokenState.slush) = _slushSkim(
+            sharesToken,
+            tokenState.accumulator,
+            tokenState.slush
+        );
+        _tokenState = tokenState;
+        (ethState.accumulator, ethState.slush) = _slushSkim(
+            sharesEth,
+            ethState.accumulator,
+            ethState.slush
+        );
+        _ethState = ethState;
+
+        // Compute additional AToken
+        (p, payoutToken) = _collectToken(sharesToken, p);
+
+        require(
+            p.shares + payoutToken <= 2**224 - 1,
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_MINT_AMOUNT_EXCEEDS_MAX_SUPPLY))
+        );
+        // Update shares in position
+        p.weightedShares += uint224(payoutToken);
+        p.shares += uint224(payoutToken);
+        // Update total staked shares
+        sharesToken += payoutToken;
+        sharesEth += payoutToken;
+
+        // Overwrite position
+        _positions[tokenID_] = p;
+        // Overwrite shares
+        _sharesToken = sharesToken;
+        _sharesEth = sharesEth;
+    }
+
+    // lockStakingPosition allows for Stakers to Lock their staking position
+    // in order to earn additional Eth and AToken rewards.
+    function lockStakingPosition(uint256 tokenID_, uint256 lockDuration_) public {
+        require(
+            _exists(tokenID_),
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
+        );
+        require(
+            msg.sender == ownerOf(tokenID_),
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_CALLER_NOT_TOKEN_OWNER))
+        );
+        require(
+            lockDuration_ > 0,
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_LOCK_DURATION_IS_ZERO))
+        );
         require(
             lockDuration_ <= _MAX_MINT_LOCK,
             string(
@@ -822,13 +948,12 @@ abstract contract StakingNFT is
             )
         );
 
-        require(
-            _exists(tokenID_),
-            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
-        );
         Position memory p = _positions[tokenID_];
         // Must not currently be a locked staking position
-        require(p.lockedStakingPosition == false);
+        require(
+            p.lockedStakingPosition == false,
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_POSITION_IS_LOCKED))
+        );
 
         // Compute updated weight
         uint256 weightedShares;
@@ -853,6 +978,8 @@ abstract contract StakingNFT is
             return;
         }
         require(weightedShares >= p.shares);
+
+        // TODO: add error codes for each require statement everywhere
 
         // TODO: think more about what is required.
         // Update state information accordingly;
