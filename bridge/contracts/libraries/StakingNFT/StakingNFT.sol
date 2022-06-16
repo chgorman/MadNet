@@ -412,8 +412,6 @@ abstract contract StakingNFT is
 
     /// gets the position struct given a tokenID. The tokenID must
     /// exist.
-    ///
-    /// TODO: this should probably be updated to reflect changes
     function getPosition(uint256 tokenID_)
         public
         view
@@ -581,8 +579,6 @@ abstract contract StakingNFT is
         // get copy of storage to save gas
         uint256 sharesEth = _sharesEth;
         uint256 sharesToken = _sharesToken;
-        //uint256 sharesEth = _weightedSharesEth;
-        //uint256 sharesToken = _weightedSharesToken;
         Accumulator memory ethState = _ethState;
         Accumulator memory tokenState = _tokenState;
 
@@ -594,6 +590,10 @@ abstract contract StakingNFT is
             ethState.slush
         );
         _ethState = ethState;
+        // calc Eth amounts due
+        (p, payoutEth) = _collectEth(sharesEth, p);
+
+        // calc token amounts due; only for staked positions that are locked
         if (p.lockedStakingPosition) {
             (tokenState.accumulator, tokenState.slush) = _slushSkim(
                 sharesToken,
@@ -601,23 +601,13 @@ abstract contract StakingNFT is
                 tokenState.slush
             );
             _tokenState = tokenState;
-        }
-
-        // calc Eth amounts due
-        (p, payoutEth) = _collectEth(sharesEth, p);
-
-        // calc token amounts due; only for staked positions that are locked
-        if (p.lockedStakingPosition) {
             (p, payoutToken) = _collectToken(sharesToken, p);
+            _sharesToken -= p.weightedShares;
         }
-
         // add back to token payout the original stake position
         payoutToken += p.shares;
 
         // debit global shares counter and delete from mapping
-        if (p.lockedStakingPosition) {
-            _sharesToken -= p.weightedShares;
-        }
         _sharesEth -= p.weightedShares;
         _reserveToken -= payoutToken;
         _reserveEth -= payoutEth;
@@ -812,6 +802,7 @@ abstract contract StakingNFT is
         return (accumulator_, slush_);
     }
 
+    /*
     // _epochReward computes the additional ATokens to be minted for a given epoch.
     // The specific reward is based on the Bitcoin block rewards;
     // after each reward era, the additional tokens minted are halved.
@@ -820,10 +811,9 @@ abstract contract StakingNFT is
         uint256 additionalNewTokens_,
         uint256 rewardEra_
     ) internal pure returns (uint256) {
-        uint256 currentEra = epoch_ / rewardEra_;
-        uint256 additionalTokens = additionalNewTokens_ / (rewardEra_ * 2**(currentEra + 1));
         return additionalTokens;
     }
+    */
 
     // Computes the additional ATokens which will be distributed
     // as part of the snapshot process.
@@ -837,9 +827,11 @@ abstract contract StakingNFT is
         uint256 additionalNewTokens_,
         uint256 rewardEra_
     ) internal pure returns (Accumulator memory, uint256) {
-        uint256 newlyMintedTokens = _epochReward(epoch_, additionalNewTokens_, rewardEra_);
-        state_ = _deposit(shares_, newlyMintedTokens, state_);
-        reserveToken_ += newlyMintedTokens;
+        uint256 currentEra = epoch_ / rewardEra_;
+        uint256 additionalTokens = additionalNewTokens_ / (rewardEra_ * 2**(currentEra + 1));
+        //uint256 newlyMintedTokens = _epochReward(epoch_, additionalNewTokens_, rewardEra_);
+        state_ = _deposit(shares_, additionalTokens, state_);
+        reserveToken_ += additionalTokens;
         return (state_, reserveToken_);
     }
 
@@ -871,10 +863,6 @@ abstract contract StakingNFT is
         require(
             _exists(tokenID_),
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
-        );
-        require(
-            msg.sender == ownerOf(tokenID_),
-            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_CALLER_NOT_TOKEN_OWNER))
         );
 
         // collect state
@@ -929,7 +917,7 @@ abstract contract StakingNFT is
 
     // lockStakingPosition allows for Stakers to Lock their staking position
     // in order to earn additional Eth and AToken rewards.
-    function lockStakingPosition(uint256 tokenID_, uint256 lockDuration_) public {
+    function lockStakingPosition(uint256 tokenID_, uint32 lockDuration_) public returns (bool) {
         require(
             _exists(tokenID_),
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_TOKEN_ID))
@@ -937,18 +925,6 @@ abstract contract StakingNFT is
         require(
             msg.sender == ownerOf(tokenID_),
             string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_CALLER_NOT_TOKEN_OWNER))
-        );
-        require(
-            lockDuration_ > 0,
-            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_LOCK_DURATION_IS_ZERO))
-        );
-        require(
-            lockDuration_ <= _MAX_MINT_LOCK,
-            string(
-                abi.encodePacked(
-                    StakingNFTErrorCodes.STAKENFT_LOCK_DURATION_GREATER_THAN_GOVERNANCE_LOCK
-                )
-            )
         );
 
         Position memory p = _positions[tokenID_];
@@ -966,24 +942,18 @@ abstract contract StakingNFT is
             lockDuration_
         );
 
+        // Did not choose lockDuration_ long enough for the minimum Tier,
+        // so nothing happens and the position is not locked.
+        if (lockedStakingPosition == false) {
+            return lockedStakingPosition;
+        }
+
         // Update withdraw
         uint32 withdrawFreeAfter = uint32(block.number) + uint32(lockDuration_);
         // Determine if Position variable needs be to updated
-        if (p.withdrawFreeAfter < withdrawFreeAfter) {
-            p.withdrawFreeAfter = withdrawFreeAfter;
-        }
-
-        if (lockedStakingPosition == false) {
-            _positions[tokenID_] = p;
-            // Nothing else needs to be updated because there are
-            // no other changes to be made.
-            // No effective change has occurred except for possibly forcing
-            // a longer locked position.
-            //
-            // TODO: It may be the case that, we just do *nothing* if lockDuration
-            //       is not long enough. Something to think about.
-            return;
-        }
+        p.withdrawFreeAfter = (p.withdrawFreeAfter < withdrawFreeAfter)
+            ? withdrawFreeAfter
+            : p.withdrawFreeAfter;
 
         // TODO: think more about what is required.
         // Update state information accordingly;
@@ -1020,39 +990,50 @@ abstract contract StakingNFT is
 
         // Save position
         _positions[tokenID_] = p;
+        return lockedStakingPosition;
     }
 
     // Compute the weighted shares and locked position bool based on
     // amount_ and lockDuration_
-    function _computeLockedStakingPosition(uint256 amount_, uint256 lockDuration_)
+    function _computeLockedStakingPosition(uint256 amount_, uint32 lockDuration_)
         internal
         pure
         returns (uint256, bool)
     {
-        bool lockedStakingPosition = true;
+        // denominator used when computing weighted stake
+        uint24 lockingTierDenominator = 1000000;
+        uint24 lockingTierNumerator1 = 1000001;
+        uint24 lockingTierNumerator2 = 1010000;
+        uint24 lockingTierNumerator3 = 1100000;
+        uint24 lockingTierNumerator4 = 2000000;
+
+        uint32 lockingTier1 = (uint32(_MAX_MINT_LOCK) * 70) / 1825;
+        uint32 lockingTier2 = uint32(_MAX_MINT_LOCK) / 6;
+        uint32 lockingTier3 = uint32(_MAX_MINT_LOCK) / 2;
+        uint32 lockingTier4 = uint32(_MAX_MINT_LOCK);
+
         uint256 lockingTierNumerator;
-        if (lockDuration_ < _LOCKING_TIER_1) {
-            lockingTierNumerator = _LOCKING_TIER_DENOMINATOR; // Result is multiplier == 1
-            lockedStakingPosition = false;
-        } else if ((_LOCKING_TIER_1 <= lockDuration_) && (lockDuration_ < _LOCKING_TIER_2)) {
-            lockingTierNumerator = _LOCKING_TIER_1_NUMERATOR;
-        } else if ((_LOCKING_TIER_2 <= lockDuration_) && (lockDuration_ < _LOCKING_TIER_3)) {
-            lockingTierNumerator = _LOCKING_TIER_2_NUMERATOR;
-        } else if ((_LOCKING_TIER_3 <= lockDuration_) && (lockDuration_ < _LOCKING_TIER_4)) {
-            lockingTierNumerator = _LOCKING_TIER_3_NUMERATOR;
+        if (lockDuration_ < lockingTier1) {
+            return (amount_, false);
+        } else if (lockDuration_ < lockingTier2) {
+            lockingTierNumerator = lockingTierNumerator1;
+            //lockingTierNumerator = 1000001;
+        } else if (lockDuration_ < lockingTier3) {
+            lockingTierNumerator = lockingTierNumerator2;
+            //lockingTierNumerator = 1010000;
+        } else if (lockDuration_ < lockingTier4) {
+            lockingTierNumerator = lockingTierNumerator3;
+            //lockingTierNumerator = 1100000;
         } else {
-            lockingTierNumerator = _LOCKING_TIER_4_NUMERATOR;
+            lockingTierNumerator = lockingTierNumerator4;
+            //lockingTierNumerator = 2000000;
         }
 
         // Compute weighted shares; this weight is determined by the specific
         // Tier selected.
-        uint256 weightedAmount = (lockingTierNumerator * amount_) / _LOCKING_TIER_DENOMINATOR;
-
-        require(
-            weightedAmount >= amount_,
-            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_WEIGHTED_AMOUNT))
-        );
-
-        return (weightedAmount, lockedStakingPosition);
+        uint256 weightedAmount = (lockingTierNumerator * amount_) / lockingTierDenominator;
+        //uint256 weightedAmount = (lockingTierNumerator * amount_) / _LOCKING_TIER_DENOMINATOR;
+        //return ((lockingTierNumerator * amount_) / lockingTierDenominator, lockedStakingPosition);
+        return (weightedAmount, true);
     }
 }

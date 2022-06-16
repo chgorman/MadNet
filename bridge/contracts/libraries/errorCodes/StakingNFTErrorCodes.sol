@@ -12,9 +12,8 @@ library StakingNFTErrorCodes {
     bytes32 public constant STAKENFT_FREE_AFTER_TIME_NOT_REACHED = "606"; //  "PublicStaking: The position is not ready to be burned!"
     bytes32 public constant STAKENFT_BALANCE_LESS_THAN_RESERVE = "607"; //  "PublicStaking: The balance of the contract is less then the tracked reserve!"
     bytes32 public constant STAKENFT_SLUSH_TOO_LARGE = "608"; // "PublicStaking: slush too large"
-    bytes32 public constant STAKENFT_LOCK_DURATION_IS_ZERO = "609"; // "PublicStaking: The lock duration must be positive!"
-    bytes32 public constant STAKENFT_STAKED_AMOUNT_IS_ZERO = "610"; // "PublicStaking: The staked amount must be positive!"
-    bytes32 public constant STAKENFT_POSITION_IS_LOCKED = "611"; // "PublicStaking: The staked position must be unlocked!"
-    bytes32 public constant STAKENFT_POSITION_IS_UNLOCKED = "612"; // "PublicStaking: The staked position must be locked!"
-    bytes32 public constant STAKENFT_INVALID_WEIGHTED_AMOUNT = "613"; // "PublicStaking: The weighted amount must be greater than or equal to the amount!"
+    bytes32 public constant STAKENFT_STAKED_AMOUNT_IS_ZERO = "609"; // "PublicStaking: The staked amount must be positive!"
+    bytes32 public constant STAKENFT_POSITION_IS_LOCKED = "610"; // "PublicStaking: The staked position must be unlocked!"
+    bytes32 public constant STAKENFT_POSITION_IS_UNLOCKED = "611"; // "PublicStaking: The staked position must be locked!"
+    bytes32 public constant STAKENFT_INVALID_WEIGHTED_AMOUNT = "612"; // "PublicStaking: The weighted amount must be greater than or equal to the amount!"
 }

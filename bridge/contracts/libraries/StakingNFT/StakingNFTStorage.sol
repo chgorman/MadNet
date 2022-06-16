@@ -74,6 +74,7 @@ abstract contract StakingNFTStorage {
     // from the contract
     uint256 internal _reserveToken;
 
+    /*
     // denominator used when computing weighted stake
     uint256 internal constant _LOCKING_TIER_DENOMINATOR = 1000000;
 
@@ -96,6 +97,7 @@ abstract contract StakingNFTStorage {
     // 6 months; 2200 epochs
     uint256 internal constant _LOCKING_TIER_4 = _MAX_MINT_LOCK;
     uint256 internal constant _LOCKING_TIER_4_NUMERATOR = 2000000;
+    */
 
     // _REWARD_ERA specifies the number of epochs per reward era,
     // which determines the specific decay rate of additional ATokens which
