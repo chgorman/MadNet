@@ -16,4 +16,5 @@ library StakingNFTErrorCodes {
     bytes32 public constant STAKENFT_STAKED_AMOUNT_IS_ZERO = "610"; // "PublicStaking: The staked amount must be positive!"
     bytes32 public constant STAKENFT_POSITION_IS_LOCKED = "611"; // "PublicStaking: The staked position must be unlocked!"
     bytes32 public constant STAKENFT_POSITION_IS_UNLOCKED = "612"; // "PublicStaking: The staked position must be locked!"
+    bytes32 public constant STAKENFT_INVALID_WEIGHTED_AMOUNT = "613"; // "PublicStaking: The weighted amount must be greater than or equal to the amount!"
 }

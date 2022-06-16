@@ -636,7 +636,10 @@ abstract contract StakingNFT is
         internal
         returns (Position memory p, uint256 payout)
     {
-        require(p.lockedStakingPosition);
+        require(
+            p.lockedStakingPosition,
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_POSITION_IS_UNLOCKED))
+        );
         uint256 acc;
         (_tokenState, p, acc, payout) = _collect(shares_, _tokenState, p_, p_.accumulatorToken);
         p.accumulatorToken = acc;
@@ -971,15 +974,16 @@ abstract contract StakingNFT is
         }
 
         if (lockedStakingPosition == false) {
-            require(weightedShares == p.shares);
             _positions[tokenID_] = p;
             // Nothing else needs to be updated because there are
-            // no other changes to be made
+            // no other changes to be made.
+            // No effective change has occurred except for possibly forcing
+            // a longer locked position.
+            //
+            // TODO: It may be the case that, we just do *nothing* if lockDuration
+            //       is not long enough. Something to think about.
             return;
         }
-        require(weightedShares >= p.shares);
-
-        // TODO: add error codes for each require statement everywhere
 
         // TODO: think more about what is required.
         // Update state information accordingly;
@@ -1043,6 +1047,11 @@ abstract contract StakingNFT is
         // Compute weighted shares; this weight is determined by the specific
         // Tier selected.
         uint256 weightedAmount = (lockingTierNumerator * amount_) / _LOCKING_TIER_DENOMINATOR;
+
+        require(
+            weightedAmount >= amount_,
+            string(abi.encodePacked(StakingNFTErrorCodes.STAKENFT_INVALID_WEIGHTED_AMOUNT))
+        );
 
         return (weightedAmount, lockedStakingPosition);
     }
