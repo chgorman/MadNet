@@ -462,6 +462,16 @@
     "outputs": [
       {
         "internalType": "uint256",
+        "name": "weightedShares",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "lockedStakingPosition",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
         "name": "shares",
         "type": "uint256"
       },

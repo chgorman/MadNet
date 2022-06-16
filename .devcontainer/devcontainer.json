@@ -23,7 +23,8 @@
             "extensions": [
                 "golang.Go",
                 "ms-azuretools.vscode-docker",
-                "eg2.vscode-npm-script"
+                "eg2.vscode-npm-script",
+                "tintinweb.vscode-solidity-language"
             ]
         }
     },
