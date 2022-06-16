@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,24 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// ATokenBurnerMetaData contains all meta data concerning the ATokenBurner contract.
-var ATokenBurnerMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}]",
-}
-
 // ATokenBurnerABI is the input ABI used to generate the binding from.
-// Deprecated: Use ATokenBurnerMetaData.ABI instead.
-var ATokenBurnerABI = ATokenBurnerMetaData.ABI
+const ATokenBurnerABI = "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}]"
 
 // ATokenBurner is an auto generated Go binding around an Ethereum contract.
 type ATokenBurner struct {
@@ -145,7 +138,7 @@ func bindATokenBurner(address common.Address, caller bind.ContractCaller, transa
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ATokenBurner *ATokenBurnerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ATokenBurner *ATokenBurnerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ATokenBurner.Contract.ATokenBurnerCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -164,7 +157,7 @@ func (_ATokenBurner *ATokenBurnerRaw) Transact(opts *bind.TransactOpts, method s
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ATokenBurner *ATokenBurnerCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ATokenBurner *ATokenBurnerCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ATokenBurner.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -177,37 +170,6 @@ func (_ATokenBurner *ATokenBurnerTransactorRaw) Transfer(opts *bind.TransactOpts
 // Transact invokes the (paid) contract method with params as input values.
 func (_ATokenBurner *ATokenBurnerTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _ATokenBurner.Contract.contract.Transact(opts, method, params...)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ATokenBurner *ATokenBurnerCaller) GetMetamorphicContractAddress(opts *bind.CallOpts, _salt [32]byte, _factory common.Address) (common.Address, error) {
-	var out []interface{}
-	err := _ATokenBurner.contract.Call(opts, &out, "getMetamorphicContractAddress", _salt, _factory)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ATokenBurner *ATokenBurnerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _ATokenBurner.Contract.GetMetamorphicContractAddress(&_ATokenBurner.CallOpts, _salt, _factory)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ATokenBurner *ATokenBurnerCallerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _ATokenBurner.Contract.GetMetamorphicContractAddress(&_ATokenBurner.CallOpts, _salt, _factory)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x9dc29fac.
@@ -229,4 +191,25 @@ func (_ATokenBurner *ATokenBurnerSession) Burn(to common.Address, amount *big.In
 // Solidity: function burn(address to, uint256 amount) returns()
 func (_ATokenBurner *ATokenBurnerTransactorSession) Burn(to common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _ATokenBurner.Contract.Burn(&_ATokenBurner.TransactOpts, to, amount)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ATokenBurner *ATokenBurnerTransactor) GetMetamorphicContractAddress(opts *bind.TransactOpts, _salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ATokenBurner.contract.Transact(opts, "getMetamorphicContractAddress", _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ATokenBurner *ATokenBurnerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ATokenBurner.Contract.GetMetamorphicContractAddress(&_ATokenBurner.TransactOpts, _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ATokenBurner *ATokenBurnerTransactorSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ATokenBurner.Contract.GetMetamorphicContractAddress(&_ATokenBurner.TransactOpts, _salt, _factory)
 }

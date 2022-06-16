@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,30 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// ValidatorData is an auto generated low-level Go binding around an user-defined struct.
-type ValidatorData struct {
-	Address common.Address
-	TokenID *big.Int
-}
-
-// ValidatorPoolMetaData contains all meta data concerning the ValidatorPool contract.
-var ValidatorPoolMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"MaintenanceScheduled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"validatorStakingTokenID\",\"type\":\"uint256\"}],\"name\":\"ValidatorJoined\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"publicStakingTokenID\",\"type\":\"uint256\"}],\"name\":\"ValidatorLeft\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"ValidatorMajorSlashed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"publicStakingTokenID\",\"type\":\"uint256\"}],\"name\":\"ValidatorMinorSlashed\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"CLAIM_PERIOD\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MAX_INTERVAL_WITHOUT_SNAPSHOTS\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"POSITION_LOCK_PERIOD\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"claimExitingNFTPosition\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"collectProfits\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payoutEth\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"payoutToken\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"completeETHDKG\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDisputerReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"validator_\",\"type\":\"address\"}],\"name\":\"getLocation\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validators_\",\"type\":\"address[]\"}],\"name\":\"getLocations\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMaxNumValidators\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getStakeAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index_\",\"type\":\"uint256\"}],\"name\":\"getValidator\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index_\",\"type\":\"uint256\"}],\"name\":\"getValidatorData\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"_address\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenID\",\"type\":\"uint256\"}],\"internalType\":\"structValidatorData\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getValidatorsAddresses\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getValidatorsCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeAmount_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxNumValidators_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"disputerReward_\",\"type\":\"uint256\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initializeETHDKG\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\"}],\"name\":\"isAccusable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isConsensusRunning\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\"}],\"name\":\"isInExitingQueue\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isMaintenanceScheduled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\"}],\"name\":\"isValidator\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"dishonestValidator_\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"disputer_\",\"type\":\"address\"}],\"name\":\"majorSlash\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"dishonestValidator_\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"disputer_\",\"type\":\"address\"}],\"name\":\"minorSlash\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pauseConsensus\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"aliceNetHeight_\",\"type\":\"uint256\"}],\"name\":\"pauseConsensusOnArbitraryHeight\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validators_\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"stakerTokenIDs_\",\"type\":\"uint256[]\"}],\"name\":\"registerValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"scheduleMaintenance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"disputerReward_\",\"type\":\"uint256\"}],\"name\":\"setDisputerReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"ip_\",\"type\":\"string\"}],\"name\":\"setLocation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"maxNumValidators_\",\"type\":\"uint256\"}],\"name\":\"setMaxNumValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeAmount_\",\"type\":\"uint256\"}],\"name\":\"setStakeAmount\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"}],\"name\":\"skimExcessEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"}],\"name\":\"skimExcessToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\"}],\"name\":\"tryGetTokenID\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unregisterAllValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validators_\",\"type\":\"address[]\"}],\"name\":\"unregisterValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]",
-}
-
 // ValidatorPoolABI is the input ABI used to generate the binding from.
-// Deprecated: Use ValidatorPoolMetaData.ABI instead.
-var ValidatorPoolABI = ValidatorPoolMetaData.ABI
+const ValidatorPoolABI = "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"MaintenanceScheduled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"validatorStakingTokenID\",\"type\":\"uint256\"}],\"name\":\"ValidatorJoined\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"publicStakingTokenID\",\"type\":\"uint256\"}],\"name\":\"ValidatorLeft\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"ValidatorMajorSlashed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"publicStakingTokenID\",\"type\":\"uint256\"}],\"name\":\"ValidatorMinorSlashed\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"CLAIM_PERIOD\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MAX_INTERVAL_WITHOUT_SNAPSHOTS\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"POSITION_LOCK_PERIOD\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"claimExitingNFTPosition\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"collectProfits\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payoutEth\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"payoutToken\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"completeETHDKG\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDisputerReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"validator_\",\"type\":\"address\"}],\"name\":\"getLocation\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validators_\",\"type\":\"address[]\"}],\"name\":\"getLocations\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMaxNumValidators\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getStakeAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index_\",\"type\":\"uint256\"}],\"name\":\"getValidator\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index_\",\"type\":\"uint256\"}],\"name\":\"getValidatorData\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"_address\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenID\",\"type\":\"uint256\"}],\"internalType\":\"structValidatorData\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getValidatorsAddresses\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getValidatorsCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeAmount_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxNumValidators_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"disputerReward_\",\"type\":\"uint256\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initializeETHDKG\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\"}],\"name\":\"isAccusable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isConsensusRunning\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\"}],\"name\":\"isInExitingQueue\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isMaintenanceScheduled\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\"}],\"name\":\"isValidator\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"dishonestValidator_\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"disputer_\",\"type\":\"address\"}],\"name\":\"majorSlash\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"dishonestValidator_\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"disputer_\",\"type\":\"address\"}],\"name\":\"minorSlash\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pauseConsensus\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"aliceNetHeight_\",\"type\":\"uint256\"}],\"name\":\"pauseConsensusOnArbitraryHeight\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validators_\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"stakerTokenIDs_\",\"type\":\"uint256[]\"}],\"name\":\"registerValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"scheduleMaintenance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"disputerReward_\",\"type\":\"uint256\"}],\"name\":\"setDisputerReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"ip_\",\"type\":\"string\"}],\"name\":\"setLocation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"maxNumValidators_\",\"type\":\"uint256\"}],\"name\":\"setMaxNumValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeAmount_\",\"type\":\"uint256\"}],\"name\":\"setStakeAmount\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"}],\"name\":\"skimExcessEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"}],\"name\":\"skimExcessToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account_\",\"type\":\"address\"}],\"name\":\"tryGetTokenID\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unregisterAllValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validators_\",\"type\":\"address[]\"}],\"name\":\"unregisterValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]"
 
 // ValidatorPool is an auto generated Go binding around an Ethereum contract.
 type ValidatorPool struct {
@@ -151,7 +138,7 @@ func bindValidatorPool(address common.Address, caller bind.ContractCaller, trans
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ValidatorPool *ValidatorPoolRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ValidatorPool *ValidatorPoolRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ValidatorPool.Contract.ValidatorPoolCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -170,7 +157,7 @@ func (_ValidatorPool *ValidatorPoolRaw) Transact(opts *bind.TransactOpts, method
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ValidatorPool *ValidatorPoolCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ValidatorPool *ValidatorPoolCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ValidatorPool.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -185,595 +172,73 @@ func (_ValidatorPool *ValidatorPoolTransactorRaw) Transact(opts *bind.TransactOp
 	return _ValidatorPool.Contract.contract.Transact(opts, method, params...)
 }
 
-// CLAIMPERIOD is a free data retrieval call binding the contract method 0x21241dfe.
-//
-// Solidity: function CLAIM_PERIOD() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCaller) CLAIMPERIOD(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "CLAIM_PERIOD")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// ValidatorData is an auto generated low-level Go binding around an user-defined struct.
+type ValidatorData struct {
+	Address common.Address
+	TokenID *big.Int
 }
 
-// CLAIMPERIOD is a free data retrieval call binding the contract method 0x21241dfe.
+// CLAIMPERIOD is a paid mutator transaction binding the contract method 0x21241dfe.
 //
-// Solidity: function CLAIM_PERIOD() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolSession) CLAIMPERIOD() (*big.Int, error) {
-	return _ValidatorPool.Contract.CLAIMPERIOD(&_ValidatorPool.CallOpts)
+// Solidity: function CLAIM_PERIOD() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactor) CLAIMPERIOD(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "CLAIM_PERIOD")
 }
 
-// CLAIMPERIOD is a free data retrieval call binding the contract method 0x21241dfe.
+// CLAIMPERIOD is a paid mutator transaction binding the contract method 0x21241dfe.
 //
-// Solidity: function CLAIM_PERIOD() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCallerSession) CLAIMPERIOD() (*big.Int, error) {
-	return _ValidatorPool.Contract.CLAIMPERIOD(&_ValidatorPool.CallOpts)
+// Solidity: function CLAIM_PERIOD() returns(uint256)
+func (_ValidatorPool *ValidatorPoolSession) CLAIMPERIOD() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.CLAIMPERIOD(&_ValidatorPool.TransactOpts)
 }
 
-// MAXINTERVALWITHOUTSNAPSHOTS is a free data retrieval call binding the contract method 0x61aee135.
+// CLAIMPERIOD is a paid mutator transaction binding the contract method 0x21241dfe.
 //
-// Solidity: function MAX_INTERVAL_WITHOUT_SNAPSHOTS() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCaller) MAXINTERVALWITHOUTSNAPSHOTS(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "MAX_INTERVAL_WITHOUT_SNAPSHOTS")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function CLAIM_PERIOD() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactorSession) CLAIMPERIOD() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.CLAIMPERIOD(&_ValidatorPool.TransactOpts)
 }
 
-// MAXINTERVALWITHOUTSNAPSHOTS is a free data retrieval call binding the contract method 0x61aee135.
+// MAXINTERVALWITHOUTSNAPSHOTS is a paid mutator transaction binding the contract method 0x61aee135.
 //
-// Solidity: function MAX_INTERVAL_WITHOUT_SNAPSHOTS() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolSession) MAXINTERVALWITHOUTSNAPSHOTS() (*big.Int, error) {
-	return _ValidatorPool.Contract.MAXINTERVALWITHOUTSNAPSHOTS(&_ValidatorPool.CallOpts)
+// Solidity: function MAX_INTERVAL_WITHOUT_SNAPSHOTS() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactor) MAXINTERVALWITHOUTSNAPSHOTS(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "MAX_INTERVAL_WITHOUT_SNAPSHOTS")
 }
 
-// MAXINTERVALWITHOUTSNAPSHOTS is a free data retrieval call binding the contract method 0x61aee135.
+// MAXINTERVALWITHOUTSNAPSHOTS is a paid mutator transaction binding the contract method 0x61aee135.
 //
-// Solidity: function MAX_INTERVAL_WITHOUT_SNAPSHOTS() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCallerSession) MAXINTERVALWITHOUTSNAPSHOTS() (*big.Int, error) {
-	return _ValidatorPool.Contract.MAXINTERVALWITHOUTSNAPSHOTS(&_ValidatorPool.CallOpts)
+// Solidity: function MAX_INTERVAL_WITHOUT_SNAPSHOTS() returns(uint256)
+func (_ValidatorPool *ValidatorPoolSession) MAXINTERVALWITHOUTSNAPSHOTS() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.MAXINTERVALWITHOUTSNAPSHOTS(&_ValidatorPool.TransactOpts)
 }
 
-// POSITIONLOCKPERIOD is a free data retrieval call binding the contract method 0x9c87e3ed.
+// MAXINTERVALWITHOUTSNAPSHOTS is a paid mutator transaction binding the contract method 0x61aee135.
 //
-// Solidity: function POSITION_LOCK_PERIOD() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCaller) POSITIONLOCKPERIOD(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "POSITION_LOCK_PERIOD")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function MAX_INTERVAL_WITHOUT_SNAPSHOTS() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactorSession) MAXINTERVALWITHOUTSNAPSHOTS() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.MAXINTERVALWITHOUTSNAPSHOTS(&_ValidatorPool.TransactOpts)
 }
 
-// POSITIONLOCKPERIOD is a free data retrieval call binding the contract method 0x9c87e3ed.
+// POSITIONLOCKPERIOD is a paid mutator transaction binding the contract method 0x9c87e3ed.
 //
-// Solidity: function POSITION_LOCK_PERIOD() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolSession) POSITIONLOCKPERIOD() (*big.Int, error) {
-	return _ValidatorPool.Contract.POSITIONLOCKPERIOD(&_ValidatorPool.CallOpts)
+// Solidity: function POSITION_LOCK_PERIOD() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactor) POSITIONLOCKPERIOD(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "POSITION_LOCK_PERIOD")
 }
 
-// POSITIONLOCKPERIOD is a free data retrieval call binding the contract method 0x9c87e3ed.
+// POSITIONLOCKPERIOD is a paid mutator transaction binding the contract method 0x9c87e3ed.
 //
-// Solidity: function POSITION_LOCK_PERIOD() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCallerSession) POSITIONLOCKPERIOD() (*big.Int, error) {
-	return _ValidatorPool.Contract.POSITIONLOCKPERIOD(&_ValidatorPool.CallOpts)
+// Solidity: function POSITION_LOCK_PERIOD() returns(uint256)
+func (_ValidatorPool *ValidatorPoolSession) POSITIONLOCKPERIOD() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.POSITIONLOCKPERIOD(&_ValidatorPool.TransactOpts)
 }
 
-// GetDisputerReward is a free data retrieval call binding the contract method 0x9ccdf830.
+// POSITIONLOCKPERIOD is a paid mutator transaction binding the contract method 0x9c87e3ed.
 //
-// Solidity: function getDisputerReward() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCaller) GetDisputerReward(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getDisputerReward")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetDisputerReward is a free data retrieval call binding the contract method 0x9ccdf830.
-//
-// Solidity: function getDisputerReward() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolSession) GetDisputerReward() (*big.Int, error) {
-	return _ValidatorPool.Contract.GetDisputerReward(&_ValidatorPool.CallOpts)
-}
-
-// GetDisputerReward is a free data retrieval call binding the contract method 0x9ccdf830.
-//
-// Solidity: function getDisputerReward() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCallerSession) GetDisputerReward() (*big.Int, error) {
-	return _ValidatorPool.Contract.GetDisputerReward(&_ValidatorPool.CallOpts)
-}
-
-// GetLocation is a free data retrieval call binding the contract method 0xd9e0dc59.
-//
-// Solidity: function getLocation(address validator_) view returns(string)
-func (_ValidatorPool *ValidatorPoolCaller) GetLocation(opts *bind.CallOpts, validator_ common.Address) (string, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getLocation", validator_)
-
-	if err != nil {
-		return *new(string), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(string)).(*string)
-
-	return out0, err
-
-}
-
-// GetLocation is a free data retrieval call binding the contract method 0xd9e0dc59.
-//
-// Solidity: function getLocation(address validator_) view returns(string)
-func (_ValidatorPool *ValidatorPoolSession) GetLocation(validator_ common.Address) (string, error) {
-	return _ValidatorPool.Contract.GetLocation(&_ValidatorPool.CallOpts, validator_)
-}
-
-// GetLocation is a free data retrieval call binding the contract method 0xd9e0dc59.
-//
-// Solidity: function getLocation(address validator_) view returns(string)
-func (_ValidatorPool *ValidatorPoolCallerSession) GetLocation(validator_ common.Address) (string, error) {
-	return _ValidatorPool.Contract.GetLocation(&_ValidatorPool.CallOpts, validator_)
-}
-
-// GetLocations is a free data retrieval call binding the contract method 0x76207f9c.
-//
-// Solidity: function getLocations(address[] validators_) view returns(string[])
-func (_ValidatorPool *ValidatorPoolCaller) GetLocations(opts *bind.CallOpts, validators_ []common.Address) ([]string, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getLocations", validators_)
-
-	if err != nil {
-		return *new([]string), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]string)).(*[]string)
-
-	return out0, err
-
-}
-
-// GetLocations is a free data retrieval call binding the contract method 0x76207f9c.
-//
-// Solidity: function getLocations(address[] validators_) view returns(string[])
-func (_ValidatorPool *ValidatorPoolSession) GetLocations(validators_ []common.Address) ([]string, error) {
-	return _ValidatorPool.Contract.GetLocations(&_ValidatorPool.CallOpts, validators_)
-}
-
-// GetLocations is a free data retrieval call binding the contract method 0x76207f9c.
-//
-// Solidity: function getLocations(address[] validators_) view returns(string[])
-func (_ValidatorPool *ValidatorPoolCallerSession) GetLocations(validators_ []common.Address) ([]string, error) {
-	return _ValidatorPool.Contract.GetLocations(&_ValidatorPool.CallOpts, validators_)
-}
-
-// GetMaxNumValidators is a free data retrieval call binding the contract method 0xd2992f54.
-//
-// Solidity: function getMaxNumValidators() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCaller) GetMaxNumValidators(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getMaxNumValidators")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetMaxNumValidators is a free data retrieval call binding the contract method 0xd2992f54.
-//
-// Solidity: function getMaxNumValidators() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolSession) GetMaxNumValidators() (*big.Int, error) {
-	return _ValidatorPool.Contract.GetMaxNumValidators(&_ValidatorPool.CallOpts)
-}
-
-// GetMaxNumValidators is a free data retrieval call binding the contract method 0xd2992f54.
-//
-// Solidity: function getMaxNumValidators() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCallerSession) GetMaxNumValidators() (*big.Int, error) {
-	return _ValidatorPool.Contract.GetMaxNumValidators(&_ValidatorPool.CallOpts)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ValidatorPool *ValidatorPoolCaller) GetMetamorphicContractAddress(opts *bind.CallOpts, _salt [32]byte, _factory common.Address) (common.Address, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getMetamorphicContractAddress", _salt, _factory)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ValidatorPool *ValidatorPoolSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _ValidatorPool.Contract.GetMetamorphicContractAddress(&_ValidatorPool.CallOpts, _salt, _factory)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ValidatorPool *ValidatorPoolCallerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _ValidatorPool.Contract.GetMetamorphicContractAddress(&_ValidatorPool.CallOpts, _salt, _factory)
-}
-
-// GetStakeAmount is a free data retrieval call binding the contract method 0x722580b6.
-//
-// Solidity: function getStakeAmount() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCaller) GetStakeAmount(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getStakeAmount")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetStakeAmount is a free data retrieval call binding the contract method 0x722580b6.
-//
-// Solidity: function getStakeAmount() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolSession) GetStakeAmount() (*big.Int, error) {
-	return _ValidatorPool.Contract.GetStakeAmount(&_ValidatorPool.CallOpts)
-}
-
-// GetStakeAmount is a free data retrieval call binding the contract method 0x722580b6.
-//
-// Solidity: function getStakeAmount() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCallerSession) GetStakeAmount() (*big.Int, error) {
-	return _ValidatorPool.Contract.GetStakeAmount(&_ValidatorPool.CallOpts)
-}
-
-// GetValidator is a free data retrieval call binding the contract method 0xb5d89627.
-//
-// Solidity: function getValidator(uint256 index_) view returns(address)
-func (_ValidatorPool *ValidatorPoolCaller) GetValidator(opts *bind.CallOpts, index_ *big.Int) (common.Address, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getValidator", index_)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetValidator is a free data retrieval call binding the contract method 0xb5d89627.
-//
-// Solidity: function getValidator(uint256 index_) view returns(address)
-func (_ValidatorPool *ValidatorPoolSession) GetValidator(index_ *big.Int) (common.Address, error) {
-	return _ValidatorPool.Contract.GetValidator(&_ValidatorPool.CallOpts, index_)
-}
-
-// GetValidator is a free data retrieval call binding the contract method 0xb5d89627.
-//
-// Solidity: function getValidator(uint256 index_) view returns(address)
-func (_ValidatorPool *ValidatorPoolCallerSession) GetValidator(index_ *big.Int) (common.Address, error) {
-	return _ValidatorPool.Contract.GetValidator(&_ValidatorPool.CallOpts, index_)
-}
-
-// GetValidatorData is a free data retrieval call binding the contract method 0xc0951451.
-//
-// Solidity: function getValidatorData(uint256 index_) view returns((address,uint256))
-func (_ValidatorPool *ValidatorPoolCaller) GetValidatorData(opts *bind.CallOpts, index_ *big.Int) (ValidatorData, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getValidatorData", index_)
-
-	if err != nil {
-		return *new(ValidatorData), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(ValidatorData)).(*ValidatorData)
-
-	return out0, err
-
-}
-
-// GetValidatorData is a free data retrieval call binding the contract method 0xc0951451.
-//
-// Solidity: function getValidatorData(uint256 index_) view returns((address,uint256))
-func (_ValidatorPool *ValidatorPoolSession) GetValidatorData(index_ *big.Int) (ValidatorData, error) {
-	return _ValidatorPool.Contract.GetValidatorData(&_ValidatorPool.CallOpts, index_)
-}
-
-// GetValidatorData is a free data retrieval call binding the contract method 0xc0951451.
-//
-// Solidity: function getValidatorData(uint256 index_) view returns((address,uint256))
-func (_ValidatorPool *ValidatorPoolCallerSession) GetValidatorData(index_ *big.Int) (ValidatorData, error) {
-	return _ValidatorPool.Contract.GetValidatorData(&_ValidatorPool.CallOpts, index_)
-}
-
-// GetValidatorsAddresses is a free data retrieval call binding the contract method 0x9c7d8961.
-//
-// Solidity: function getValidatorsAddresses() view returns(address[])
-func (_ValidatorPool *ValidatorPoolCaller) GetValidatorsAddresses(opts *bind.CallOpts) ([]common.Address, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getValidatorsAddresses")
-
-	if err != nil {
-		return *new([]common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]common.Address)).(*[]common.Address)
-
-	return out0, err
-
-}
-
-// GetValidatorsAddresses is a free data retrieval call binding the contract method 0x9c7d8961.
-//
-// Solidity: function getValidatorsAddresses() view returns(address[])
-func (_ValidatorPool *ValidatorPoolSession) GetValidatorsAddresses() ([]common.Address, error) {
-	return _ValidatorPool.Contract.GetValidatorsAddresses(&_ValidatorPool.CallOpts)
-}
-
-// GetValidatorsAddresses is a free data retrieval call binding the contract method 0x9c7d8961.
-//
-// Solidity: function getValidatorsAddresses() view returns(address[])
-func (_ValidatorPool *ValidatorPoolCallerSession) GetValidatorsAddresses() ([]common.Address, error) {
-	return _ValidatorPool.Contract.GetValidatorsAddresses(&_ValidatorPool.CallOpts)
-}
-
-// GetValidatorsCount is a free data retrieval call binding the contract method 0x27498240.
-//
-// Solidity: function getValidatorsCount() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCaller) GetValidatorsCount(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "getValidatorsCount")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetValidatorsCount is a free data retrieval call binding the contract method 0x27498240.
-//
-// Solidity: function getValidatorsCount() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolSession) GetValidatorsCount() (*big.Int, error) {
-	return _ValidatorPool.Contract.GetValidatorsCount(&_ValidatorPool.CallOpts)
-}
-
-// GetValidatorsCount is a free data retrieval call binding the contract method 0x27498240.
-//
-// Solidity: function getValidatorsCount() view returns(uint256)
-func (_ValidatorPool *ValidatorPoolCallerSession) GetValidatorsCount() (*big.Int, error) {
-	return _ValidatorPool.Contract.GetValidatorsCount(&_ValidatorPool.CallOpts)
-}
-
-// IsAccusable is a free data retrieval call binding the contract method 0x20c2856d.
-//
-// Solidity: function isAccusable(address account_) view returns(bool)
-func (_ValidatorPool *ValidatorPoolCaller) IsAccusable(opts *bind.CallOpts, account_ common.Address) (bool, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "isAccusable", account_)
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsAccusable is a free data retrieval call binding the contract method 0x20c2856d.
-//
-// Solidity: function isAccusable(address account_) view returns(bool)
-func (_ValidatorPool *ValidatorPoolSession) IsAccusable(account_ common.Address) (bool, error) {
-	return _ValidatorPool.Contract.IsAccusable(&_ValidatorPool.CallOpts, account_)
-}
-
-// IsAccusable is a free data retrieval call binding the contract method 0x20c2856d.
-//
-// Solidity: function isAccusable(address account_) view returns(bool)
-func (_ValidatorPool *ValidatorPoolCallerSession) IsAccusable(account_ common.Address) (bool, error) {
-	return _ValidatorPool.Contract.IsAccusable(&_ValidatorPool.CallOpts, account_)
-}
-
-// IsConsensusRunning is a free data retrieval call binding the contract method 0xc8d1a5e4.
-//
-// Solidity: function isConsensusRunning() view returns(bool)
-func (_ValidatorPool *ValidatorPoolCaller) IsConsensusRunning(opts *bind.CallOpts) (bool, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "isConsensusRunning")
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsConsensusRunning is a free data retrieval call binding the contract method 0xc8d1a5e4.
-//
-// Solidity: function isConsensusRunning() view returns(bool)
-func (_ValidatorPool *ValidatorPoolSession) IsConsensusRunning() (bool, error) {
-	return _ValidatorPool.Contract.IsConsensusRunning(&_ValidatorPool.CallOpts)
-}
-
-// IsConsensusRunning is a free data retrieval call binding the contract method 0xc8d1a5e4.
-//
-// Solidity: function isConsensusRunning() view returns(bool)
-func (_ValidatorPool *ValidatorPoolCallerSession) IsConsensusRunning() (bool, error) {
-	return _ValidatorPool.Contract.IsConsensusRunning(&_ValidatorPool.CallOpts)
-}
-
-// IsInExitingQueue is a free data retrieval call binding the contract method 0xe4ad75f1.
-//
-// Solidity: function isInExitingQueue(address account_) view returns(bool)
-func (_ValidatorPool *ValidatorPoolCaller) IsInExitingQueue(opts *bind.CallOpts, account_ common.Address) (bool, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "isInExitingQueue", account_)
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsInExitingQueue is a free data retrieval call binding the contract method 0xe4ad75f1.
-//
-// Solidity: function isInExitingQueue(address account_) view returns(bool)
-func (_ValidatorPool *ValidatorPoolSession) IsInExitingQueue(account_ common.Address) (bool, error) {
-	return _ValidatorPool.Contract.IsInExitingQueue(&_ValidatorPool.CallOpts, account_)
-}
-
-// IsInExitingQueue is a free data retrieval call binding the contract method 0xe4ad75f1.
-//
-// Solidity: function isInExitingQueue(address account_) view returns(bool)
-func (_ValidatorPool *ValidatorPoolCallerSession) IsInExitingQueue(account_ common.Address) (bool, error) {
-	return _ValidatorPool.Contract.IsInExitingQueue(&_ValidatorPool.CallOpts, account_)
-}
-
-// IsMaintenanceScheduled is a free data retrieval call binding the contract method 0x1885570f.
-//
-// Solidity: function isMaintenanceScheduled() view returns(bool)
-func (_ValidatorPool *ValidatorPoolCaller) IsMaintenanceScheduled(opts *bind.CallOpts) (bool, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "isMaintenanceScheduled")
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsMaintenanceScheduled is a free data retrieval call binding the contract method 0x1885570f.
-//
-// Solidity: function isMaintenanceScheduled() view returns(bool)
-func (_ValidatorPool *ValidatorPoolSession) IsMaintenanceScheduled() (bool, error) {
-	return _ValidatorPool.Contract.IsMaintenanceScheduled(&_ValidatorPool.CallOpts)
-}
-
-// IsMaintenanceScheduled is a free data retrieval call binding the contract method 0x1885570f.
-//
-// Solidity: function isMaintenanceScheduled() view returns(bool)
-func (_ValidatorPool *ValidatorPoolCallerSession) IsMaintenanceScheduled() (bool, error) {
-	return _ValidatorPool.Contract.IsMaintenanceScheduled(&_ValidatorPool.CallOpts)
-}
-
-// IsValidator is a free data retrieval call binding the contract method 0xfacd743b.
-//
-// Solidity: function isValidator(address account_) view returns(bool)
-func (_ValidatorPool *ValidatorPoolCaller) IsValidator(opts *bind.CallOpts, account_ common.Address) (bool, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "isValidator", account_)
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsValidator is a free data retrieval call binding the contract method 0xfacd743b.
-//
-// Solidity: function isValidator(address account_) view returns(bool)
-func (_ValidatorPool *ValidatorPoolSession) IsValidator(account_ common.Address) (bool, error) {
-	return _ValidatorPool.Contract.IsValidator(&_ValidatorPool.CallOpts, account_)
-}
-
-// IsValidator is a free data retrieval call binding the contract method 0xfacd743b.
-//
-// Solidity: function isValidator(address account_) view returns(bool)
-func (_ValidatorPool *ValidatorPoolCallerSession) IsValidator(account_ common.Address) (bool, error) {
-	return _ValidatorPool.Contract.IsValidator(&_ValidatorPool.CallOpts, account_)
-}
-
-// TryGetTokenID is a free data retrieval call binding the contract method 0xee9e49bd.
-//
-// Solidity: function tryGetTokenID(address account_) view returns(bool, address, uint256)
-func (_ValidatorPool *ValidatorPoolCaller) TryGetTokenID(opts *bind.CallOpts, account_ common.Address) (bool, common.Address, *big.Int, error) {
-	var out []interface{}
-	err := _ValidatorPool.contract.Call(opts, &out, "tryGetTokenID", account_)
-
-	if err != nil {
-		return *new(bool), *new(common.Address), *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-	out1 := *abi.ConvertType(out[1], new(common.Address)).(*common.Address)
-	out2 := *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
-
-	return out0, out1, out2, err
-
-}
-
-// TryGetTokenID is a free data retrieval call binding the contract method 0xee9e49bd.
-//
-// Solidity: function tryGetTokenID(address account_) view returns(bool, address, uint256)
-func (_ValidatorPool *ValidatorPoolSession) TryGetTokenID(account_ common.Address) (bool, common.Address, *big.Int, error) {
-	return _ValidatorPool.Contract.TryGetTokenID(&_ValidatorPool.CallOpts, account_)
-}
-
-// TryGetTokenID is a free data retrieval call binding the contract method 0xee9e49bd.
-//
-// Solidity: function tryGetTokenID(address account_) view returns(bool, address, uint256)
-func (_ValidatorPool *ValidatorPoolCallerSession) TryGetTokenID(account_ common.Address) (bool, common.Address, *big.Int, error) {
-	return _ValidatorPool.Contract.TryGetTokenID(&_ValidatorPool.CallOpts, account_)
+// Solidity: function POSITION_LOCK_PERIOD() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactorSession) POSITIONLOCKPERIOD() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.POSITIONLOCKPERIOD(&_ValidatorPool.TransactOpts)
 }
 
 // ClaimExitingNFTPosition is a paid mutator transaction binding the contract method 0x769cc695.
@@ -839,6 +304,216 @@ func (_ValidatorPool *ValidatorPoolTransactorSession) CompleteETHDKG() (*types.T
 	return _ValidatorPool.Contract.CompleteETHDKG(&_ValidatorPool.TransactOpts)
 }
 
+// GetDisputerReward is a paid mutator transaction binding the contract method 0x9ccdf830.
+//
+// Solidity: function getDisputerReward() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactor) GetDisputerReward(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getDisputerReward")
+}
+
+// GetDisputerReward is a paid mutator transaction binding the contract method 0x9ccdf830.
+//
+// Solidity: function getDisputerReward() returns(uint256)
+func (_ValidatorPool *ValidatorPoolSession) GetDisputerReward() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetDisputerReward(&_ValidatorPool.TransactOpts)
+}
+
+// GetDisputerReward is a paid mutator transaction binding the contract method 0x9ccdf830.
+//
+// Solidity: function getDisputerReward() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetDisputerReward() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetDisputerReward(&_ValidatorPool.TransactOpts)
+}
+
+// GetLocation is a paid mutator transaction binding the contract method 0xd9e0dc59.
+//
+// Solidity: function getLocation(address validator_) returns(string)
+func (_ValidatorPool *ValidatorPoolTransactor) GetLocation(opts *bind.TransactOpts, validator_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getLocation", validator_)
+}
+
+// GetLocation is a paid mutator transaction binding the contract method 0xd9e0dc59.
+//
+// Solidity: function getLocation(address validator_) returns(string)
+func (_ValidatorPool *ValidatorPoolSession) GetLocation(validator_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetLocation(&_ValidatorPool.TransactOpts, validator_)
+}
+
+// GetLocation is a paid mutator transaction binding the contract method 0xd9e0dc59.
+//
+// Solidity: function getLocation(address validator_) returns(string)
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetLocation(validator_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetLocation(&_ValidatorPool.TransactOpts, validator_)
+}
+
+// GetLocations is a paid mutator transaction binding the contract method 0x76207f9c.
+//
+// Solidity: function getLocations(address[] validators_) returns(string[])
+func (_ValidatorPool *ValidatorPoolTransactor) GetLocations(opts *bind.TransactOpts, validators_ []common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getLocations", validators_)
+}
+
+// GetLocations is a paid mutator transaction binding the contract method 0x76207f9c.
+//
+// Solidity: function getLocations(address[] validators_) returns(string[])
+func (_ValidatorPool *ValidatorPoolSession) GetLocations(validators_ []common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetLocations(&_ValidatorPool.TransactOpts, validators_)
+}
+
+// GetLocations is a paid mutator transaction binding the contract method 0x76207f9c.
+//
+// Solidity: function getLocations(address[] validators_) returns(string[])
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetLocations(validators_ []common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetLocations(&_ValidatorPool.TransactOpts, validators_)
+}
+
+// GetMaxNumValidators is a paid mutator transaction binding the contract method 0xd2992f54.
+//
+// Solidity: function getMaxNumValidators() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactor) GetMaxNumValidators(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getMaxNumValidators")
+}
+
+// GetMaxNumValidators is a paid mutator transaction binding the contract method 0xd2992f54.
+//
+// Solidity: function getMaxNumValidators() returns(uint256)
+func (_ValidatorPool *ValidatorPoolSession) GetMaxNumValidators() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetMaxNumValidators(&_ValidatorPool.TransactOpts)
+}
+
+// GetMaxNumValidators is a paid mutator transaction binding the contract method 0xd2992f54.
+//
+// Solidity: function getMaxNumValidators() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetMaxNumValidators() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetMaxNumValidators(&_ValidatorPool.TransactOpts)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ValidatorPool *ValidatorPoolTransactor) GetMetamorphicContractAddress(opts *bind.TransactOpts, _salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getMetamorphicContractAddress", _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ValidatorPool *ValidatorPoolSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetMetamorphicContractAddress(&_ValidatorPool.TransactOpts, _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetMetamorphicContractAddress(&_ValidatorPool.TransactOpts, _salt, _factory)
+}
+
+// GetStakeAmount is a paid mutator transaction binding the contract method 0x722580b6.
+//
+// Solidity: function getStakeAmount() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactor) GetStakeAmount(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getStakeAmount")
+}
+
+// GetStakeAmount is a paid mutator transaction binding the contract method 0x722580b6.
+//
+// Solidity: function getStakeAmount() returns(uint256)
+func (_ValidatorPool *ValidatorPoolSession) GetStakeAmount() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetStakeAmount(&_ValidatorPool.TransactOpts)
+}
+
+// GetStakeAmount is a paid mutator transaction binding the contract method 0x722580b6.
+//
+// Solidity: function getStakeAmount() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetStakeAmount() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetStakeAmount(&_ValidatorPool.TransactOpts)
+}
+
+// GetValidator is a paid mutator transaction binding the contract method 0xb5d89627.
+//
+// Solidity: function getValidator(uint256 index_) returns(address)
+func (_ValidatorPool *ValidatorPoolTransactor) GetValidator(opts *bind.TransactOpts, index_ *big.Int) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getValidator", index_)
+}
+
+// GetValidator is a paid mutator transaction binding the contract method 0xb5d89627.
+//
+// Solidity: function getValidator(uint256 index_) returns(address)
+func (_ValidatorPool *ValidatorPoolSession) GetValidator(index_ *big.Int) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetValidator(&_ValidatorPool.TransactOpts, index_)
+}
+
+// GetValidator is a paid mutator transaction binding the contract method 0xb5d89627.
+//
+// Solidity: function getValidator(uint256 index_) returns(address)
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetValidator(index_ *big.Int) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetValidator(&_ValidatorPool.TransactOpts, index_)
+}
+
+// GetValidatorData is a paid mutator transaction binding the contract method 0xc0951451.
+//
+// Solidity: function getValidatorData(uint256 index_) returns(ValidatorData)
+func (_ValidatorPool *ValidatorPoolTransactor) GetValidatorData(opts *bind.TransactOpts, index_ *big.Int) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getValidatorData", index_)
+}
+
+// GetValidatorData is a paid mutator transaction binding the contract method 0xc0951451.
+//
+// Solidity: function getValidatorData(uint256 index_) returns(ValidatorData)
+func (_ValidatorPool *ValidatorPoolSession) GetValidatorData(index_ *big.Int) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetValidatorData(&_ValidatorPool.TransactOpts, index_)
+}
+
+// GetValidatorData is a paid mutator transaction binding the contract method 0xc0951451.
+//
+// Solidity: function getValidatorData(uint256 index_) returns(ValidatorData)
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetValidatorData(index_ *big.Int) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetValidatorData(&_ValidatorPool.TransactOpts, index_)
+}
+
+// GetValidatorsAddresses is a paid mutator transaction binding the contract method 0x9c7d8961.
+//
+// Solidity: function getValidatorsAddresses() returns(address[])
+func (_ValidatorPool *ValidatorPoolTransactor) GetValidatorsAddresses(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getValidatorsAddresses")
+}
+
+// GetValidatorsAddresses is a paid mutator transaction binding the contract method 0x9c7d8961.
+//
+// Solidity: function getValidatorsAddresses() returns(address[])
+func (_ValidatorPool *ValidatorPoolSession) GetValidatorsAddresses() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetValidatorsAddresses(&_ValidatorPool.TransactOpts)
+}
+
+// GetValidatorsAddresses is a paid mutator transaction binding the contract method 0x9c7d8961.
+//
+// Solidity: function getValidatorsAddresses() returns(address[])
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetValidatorsAddresses() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetValidatorsAddresses(&_ValidatorPool.TransactOpts)
+}
+
+// GetValidatorsCount is a paid mutator transaction binding the contract method 0x27498240.
+//
+// Solidity: function getValidatorsCount() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactor) GetValidatorsCount(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "getValidatorsCount")
+}
+
+// GetValidatorsCount is a paid mutator transaction binding the contract method 0x27498240.
+//
+// Solidity: function getValidatorsCount() returns(uint256)
+func (_ValidatorPool *ValidatorPoolSession) GetValidatorsCount() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetValidatorsCount(&_ValidatorPool.TransactOpts)
+}
+
+// GetValidatorsCount is a paid mutator transaction binding the contract method 0x27498240.
+//
+// Solidity: function getValidatorsCount() returns(uint256)
+func (_ValidatorPool *ValidatorPoolTransactorSession) GetValidatorsCount() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.GetValidatorsCount(&_ValidatorPool.TransactOpts)
+}
+
 // Initialize is a paid mutator transaction binding the contract method 0x80d85911.
 //
 // Solidity: function initialize(uint256 stakeAmount_, uint256 maxNumValidators_, uint256 disputerReward_) returns()
@@ -879,6 +554,111 @@ func (_ValidatorPool *ValidatorPoolSession) InitializeETHDKG() (*types.Transacti
 // Solidity: function initializeETHDKG() returns()
 func (_ValidatorPool *ValidatorPoolTransactorSession) InitializeETHDKG() (*types.Transaction, error) {
 	return _ValidatorPool.Contract.InitializeETHDKG(&_ValidatorPool.TransactOpts)
+}
+
+// IsAccusable is a paid mutator transaction binding the contract method 0x20c2856d.
+//
+// Solidity: function isAccusable(address account_) returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactor) IsAccusable(opts *bind.TransactOpts, account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "isAccusable", account_)
+}
+
+// IsAccusable is a paid mutator transaction binding the contract method 0x20c2856d.
+//
+// Solidity: function isAccusable(address account_) returns(bool)
+func (_ValidatorPool *ValidatorPoolSession) IsAccusable(account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsAccusable(&_ValidatorPool.TransactOpts, account_)
+}
+
+// IsAccusable is a paid mutator transaction binding the contract method 0x20c2856d.
+//
+// Solidity: function isAccusable(address account_) returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactorSession) IsAccusable(account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsAccusable(&_ValidatorPool.TransactOpts, account_)
+}
+
+// IsConsensusRunning is a paid mutator transaction binding the contract method 0xc8d1a5e4.
+//
+// Solidity: function isConsensusRunning() returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactor) IsConsensusRunning(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "isConsensusRunning")
+}
+
+// IsConsensusRunning is a paid mutator transaction binding the contract method 0xc8d1a5e4.
+//
+// Solidity: function isConsensusRunning() returns(bool)
+func (_ValidatorPool *ValidatorPoolSession) IsConsensusRunning() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsConsensusRunning(&_ValidatorPool.TransactOpts)
+}
+
+// IsConsensusRunning is a paid mutator transaction binding the contract method 0xc8d1a5e4.
+//
+// Solidity: function isConsensusRunning() returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactorSession) IsConsensusRunning() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsConsensusRunning(&_ValidatorPool.TransactOpts)
+}
+
+// IsInExitingQueue is a paid mutator transaction binding the contract method 0xe4ad75f1.
+//
+// Solidity: function isInExitingQueue(address account_) returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactor) IsInExitingQueue(opts *bind.TransactOpts, account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "isInExitingQueue", account_)
+}
+
+// IsInExitingQueue is a paid mutator transaction binding the contract method 0xe4ad75f1.
+//
+// Solidity: function isInExitingQueue(address account_) returns(bool)
+func (_ValidatorPool *ValidatorPoolSession) IsInExitingQueue(account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsInExitingQueue(&_ValidatorPool.TransactOpts, account_)
+}
+
+// IsInExitingQueue is a paid mutator transaction binding the contract method 0xe4ad75f1.
+//
+// Solidity: function isInExitingQueue(address account_) returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactorSession) IsInExitingQueue(account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsInExitingQueue(&_ValidatorPool.TransactOpts, account_)
+}
+
+// IsMaintenanceScheduled is a paid mutator transaction binding the contract method 0x1885570f.
+//
+// Solidity: function isMaintenanceScheduled() returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactor) IsMaintenanceScheduled(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "isMaintenanceScheduled")
+}
+
+// IsMaintenanceScheduled is a paid mutator transaction binding the contract method 0x1885570f.
+//
+// Solidity: function isMaintenanceScheduled() returns(bool)
+func (_ValidatorPool *ValidatorPoolSession) IsMaintenanceScheduled() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsMaintenanceScheduled(&_ValidatorPool.TransactOpts)
+}
+
+// IsMaintenanceScheduled is a paid mutator transaction binding the contract method 0x1885570f.
+//
+// Solidity: function isMaintenanceScheduled() returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactorSession) IsMaintenanceScheduled() (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsMaintenanceScheduled(&_ValidatorPool.TransactOpts)
+}
+
+// IsValidator is a paid mutator transaction binding the contract method 0xfacd743b.
+//
+// Solidity: function isValidator(address account_) returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactor) IsValidator(opts *bind.TransactOpts, account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "isValidator", account_)
+}
+
+// IsValidator is a paid mutator transaction binding the contract method 0xfacd743b.
+//
+// Solidity: function isValidator(address account_) returns(bool)
+func (_ValidatorPool *ValidatorPoolSession) IsValidator(account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsValidator(&_ValidatorPool.TransactOpts, account_)
+}
+
+// IsValidator is a paid mutator transaction binding the contract method 0xfacd743b.
+//
+// Solidity: function isValidator(address account_) returns(bool)
+func (_ValidatorPool *ValidatorPoolTransactorSession) IsValidator(account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.IsValidator(&_ValidatorPool.TransactOpts, account_)
 }
 
 // MajorSlash is a paid mutator transaction binding the contract method 0x048d56c7.
@@ -1154,6 +934,27 @@ func (_ValidatorPool *ValidatorPoolTransactorSession) SkimExcessToken(to_ common
 	return _ValidatorPool.Contract.SkimExcessToken(&_ValidatorPool.TransactOpts, to_)
 }
 
+// TryGetTokenID is a paid mutator transaction binding the contract method 0xee9e49bd.
+//
+// Solidity: function tryGetTokenID(address account_) returns(bool, address, uint256)
+func (_ValidatorPool *ValidatorPoolTransactor) TryGetTokenID(opts *bind.TransactOpts, account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.contract.Transact(opts, "tryGetTokenID", account_)
+}
+
+// TryGetTokenID is a paid mutator transaction binding the contract method 0xee9e49bd.
+//
+// Solidity: function tryGetTokenID(address account_) returns(bool, address, uint256)
+func (_ValidatorPool *ValidatorPoolSession) TryGetTokenID(account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.TryGetTokenID(&_ValidatorPool.TransactOpts, account_)
+}
+
+// TryGetTokenID is a paid mutator transaction binding the contract method 0xee9e49bd.
+//
+// Solidity: function tryGetTokenID(address account_) returns(bool, address, uint256)
+func (_ValidatorPool *ValidatorPoolTransactorSession) TryGetTokenID(account_ common.Address) (*types.Transaction, error) {
+	return _ValidatorPool.Contract.TryGetTokenID(&_ValidatorPool.TransactOpts, account_)
+}
+
 // UnregisterAllValidators is a paid mutator transaction binding the contract method 0xf6442e24.
 //
 // Solidity: function unregisterAllValidators() returns()
@@ -1194,27 +995,6 @@ func (_ValidatorPool *ValidatorPoolSession) UnregisterValidators(validators_ []c
 // Solidity: function unregisterValidators(address[] validators_) returns()
 func (_ValidatorPool *ValidatorPoolTransactorSession) UnregisterValidators(validators_ []common.Address) (*types.Transaction, error) {
 	return _ValidatorPool.Contract.UnregisterValidators(&_ValidatorPool.TransactOpts, validators_)
-}
-
-// Receive is a paid mutator transaction binding the contract receive function.
-//
-// Solidity: receive() payable returns()
-func (_ValidatorPool *ValidatorPoolTransactor) Receive(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ValidatorPool.contract.RawTransact(opts, nil) // calldata is disallowed for receive function
-}
-
-// Receive is a paid mutator transaction binding the contract receive function.
-//
-// Solidity: receive() payable returns()
-func (_ValidatorPool *ValidatorPoolSession) Receive() (*types.Transaction, error) {
-	return _ValidatorPool.Contract.Receive(&_ValidatorPool.TransactOpts)
-}
-
-// Receive is a paid mutator transaction binding the contract receive function.
-//
-// Solidity: receive() payable returns()
-func (_ValidatorPool *ValidatorPoolTransactorSession) Receive() (*types.Transaction, error) {
-	return _ValidatorPool.Contract.Receive(&_ValidatorPool.TransactOpts)
 }
 
 // ValidatorPoolMaintenanceScheduledIterator is returned from FilterMaintenanceScheduled and is used to iterate over the raw logs and unpacked data for MaintenanceScheduled events raised by the ValidatorPool contract.
@@ -1346,7 +1126,6 @@ func (_ValidatorPool *ValidatorPoolFilterer) ParseMaintenanceScheduled(log types
 	if err := _ValidatorPool.contract.UnpackLog(event, "MaintenanceScheduled", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1491,7 +1270,6 @@ func (_ValidatorPool *ValidatorPoolFilterer) ParseValidatorJoined(log types.Log)
 	if err := _ValidatorPool.contract.UnpackLog(event, "ValidatorJoined", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1636,7 +1414,6 @@ func (_ValidatorPool *ValidatorPoolFilterer) ParseValidatorLeft(log types.Log) (
 	if err := _ValidatorPool.contract.UnpackLog(event, "ValidatorLeft", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1780,7 +1557,6 @@ func (_ValidatorPool *ValidatorPoolFilterer) ParseValidatorMajorSlashed(log type
 	if err := _ValidatorPool.contract.UnpackLog(event, "ValidatorMajorSlashed", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1925,6 +1701,5 @@ func (_ValidatorPool *ValidatorPoolFilterer) ParseValidatorMinorSlashed(log type
 	if err := _ValidatorPool.contract.UnpackLog(event, "ValidatorMinorSlashed", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }

@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,24 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// ValidatorPoolErrorCodesMetaData contains all meta data concerning the ValidatorPoolErrorCodes contract.
-var ValidatorPoolErrorCodesMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"name\":\"VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ADDRESS_NOT_VALIDATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_CALLER_NOT_VALIDATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_CONSENSUS_RUNNING\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ETHDKG_ROUND_RUNNING\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ETH_BALANCE_CHANGED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_INVALID_INDEX\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_MAX_VALIDATORS_MET\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_MINIMUM_STAKE_NOT_MET\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_PAYOUT_TOO_LOW\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_TOKEN_BALANCE_CHANGED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_WAITING_PERIOD_NOT_MET\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
-}
-
 // ValidatorPoolErrorCodesABI is the input ABI used to generate the binding from.
-// Deprecated: Use ValidatorPoolErrorCodesMetaData.ABI instead.
-var ValidatorPoolErrorCodesABI = ValidatorPoolErrorCodesMetaData.ABI
+const ValidatorPoolErrorCodesABI = "[{\"inputs\":[],\"name\":\"VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ADDRESS_NOT_VALIDATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_CALLER_NOT_VALIDATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_CONSENSUS_RUNNING\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ETHDKG_ROUND_RUNNING\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ETH_BALANCE_CHANGED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_INVALID_INDEX\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_MAX_VALIDATORS_MET\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_MINIMUM_STAKE_NOT_MET\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_PAYOUT_TOO_LOW\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_TOKEN_BALANCE_CHANGED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VALIDATORPOOL_WAITING_PERIOD_NOT_MET\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // ValidatorPoolErrorCodes is an auto generated Go binding around an Ethereum contract.
 type ValidatorPoolErrorCodes struct {
@@ -145,7 +138,7 @@ func bindValidatorPoolErrorCodes(address common.Address, caller bind.ContractCal
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ValidatorPoolErrorCodes.Contract.ValidatorPoolErrorCodesCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -164,7 +157,7 @@ func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesRaw) Transact(opts *bind.
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ValidatorPoolErrorCodes.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -179,684 +172,464 @@ func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorRaw) Transact(o
 	return _ValidatorPoolErrorCodes.Contract.contract.Transact(opts, method, params...)
 }
 
-// VALIDATORPOOLADDRESSALREADYVALIDATOR is a free data retrieval call binding the contract method 0xb8e6dc4d.
+// VALIDATORPOOLADDRESSALREADYVALIDATOR is a paid mutator transaction binding the contract method 0xb8e6dc4d.
 //
-// Solidity: function VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLADDRESSALREADYVALIDATOR(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLADDRESSALREADYVALIDATOR(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR")
 }
 
-// VALIDATORPOOLADDRESSALREADYVALIDATOR is a free data retrieval call binding the contract method 0xb8e6dc4d.
+// VALIDATORPOOLADDRESSALREADYVALIDATOR is a paid mutator transaction binding the contract method 0xb8e6dc4d.
 //
-// Solidity: function VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLADDRESSALREADYVALIDATOR() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSALREADYVALIDATOR(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLADDRESSALREADYVALIDATOR() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSALREADYVALIDATOR(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLADDRESSALREADYVALIDATOR is a free data retrieval call binding the contract method 0xb8e6dc4d.
+// VALIDATORPOOLADDRESSALREADYVALIDATOR is a paid mutator transaction binding the contract method 0xb8e6dc4d.
 //
-// Solidity: function VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLADDRESSALREADYVALIDATOR() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSALREADYVALIDATOR(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ADDRESS_ALREADY_VALIDATOR() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLADDRESSALREADYVALIDATOR() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSALREADYVALIDATOR(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLADDRESSNOTACCUSABLE is a free data retrieval call binding the contract method 0x0e144d69.
+// VALIDATORPOOLADDRESSNOTACCUSABLE is a paid mutator transaction binding the contract method 0x0e144d69.
 //
-// Solidity: function VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLADDRESSNOTACCUSABLE(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLADDRESSNOTACCUSABLE(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE")
 }
 
-// VALIDATORPOOLADDRESSNOTACCUSABLE is a free data retrieval call binding the contract method 0x0e144d69.
+// VALIDATORPOOLADDRESSNOTACCUSABLE is a paid mutator transaction binding the contract method 0x0e144d69.
 //
-// Solidity: function VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLADDRESSNOTACCUSABLE() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSNOTACCUSABLE(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLADDRESSNOTACCUSABLE() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSNOTACCUSABLE(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLADDRESSNOTACCUSABLE is a free data retrieval call binding the contract method 0x0e144d69.
+// VALIDATORPOOLADDRESSNOTACCUSABLE is a paid mutator transaction binding the contract method 0x0e144d69.
 //
-// Solidity: function VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLADDRESSNOTACCUSABLE() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSNOTACCUSABLE(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ADDRESS_NOT_ACCUSABLE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLADDRESSNOTACCUSABLE() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSNOTACCUSABLE(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLADDRESSNOTVALIDATOR is a free data retrieval call binding the contract method 0x4ce78d00.
+// VALIDATORPOOLADDRESSNOTVALIDATOR is a paid mutator transaction binding the contract method 0x4ce78d00.
 //
-// Solidity: function VALIDATORPOOL_ADDRESS_NOT_VALIDATOR() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLADDRESSNOTVALIDATOR(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_ADDRESS_NOT_VALIDATOR")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_ADDRESS_NOT_VALIDATOR() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLADDRESSNOTVALIDATOR(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_ADDRESS_NOT_VALIDATOR")
 }
 
-// VALIDATORPOOLADDRESSNOTVALIDATOR is a free data retrieval call binding the contract method 0x4ce78d00.
+// VALIDATORPOOLADDRESSNOTVALIDATOR is a paid mutator transaction binding the contract method 0x4ce78d00.
 //
-// Solidity: function VALIDATORPOOL_ADDRESS_NOT_VALIDATOR() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLADDRESSNOTVALIDATOR() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSNOTVALIDATOR(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ADDRESS_NOT_VALIDATOR() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLADDRESSNOTVALIDATOR() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSNOTVALIDATOR(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLADDRESSNOTVALIDATOR is a free data retrieval call binding the contract method 0x4ce78d00.
+// VALIDATORPOOLADDRESSNOTVALIDATOR is a paid mutator transaction binding the contract method 0x4ce78d00.
 //
-// Solidity: function VALIDATORPOOL_ADDRESS_NOT_VALIDATOR() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLADDRESSNOTVALIDATOR() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSNOTVALIDATOR(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ADDRESS_NOT_VALIDATOR() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLADDRESSNOTVALIDATOR() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLADDRESSNOTVALIDATOR(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLCALLERNOTVALIDATOR is a free data retrieval call binding the contract method 0xdf6f3c26.
+// VALIDATORPOOLCALLERNOTVALIDATOR is a paid mutator transaction binding the contract method 0xdf6f3c26.
 //
-// Solidity: function VALIDATORPOOL_CALLER_NOT_VALIDATOR() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLCALLERNOTVALIDATOR(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_CALLER_NOT_VALIDATOR")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_CALLER_NOT_VALIDATOR() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLCALLERNOTVALIDATOR(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_CALLER_NOT_VALIDATOR")
 }
 
-// VALIDATORPOOLCALLERNOTVALIDATOR is a free data retrieval call binding the contract method 0xdf6f3c26.
+// VALIDATORPOOLCALLERNOTVALIDATOR is a paid mutator transaction binding the contract method 0xdf6f3c26.
 //
-// Solidity: function VALIDATORPOOL_CALLER_NOT_VALIDATOR() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLCALLERNOTVALIDATOR() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLCALLERNOTVALIDATOR(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_CALLER_NOT_VALIDATOR() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLCALLERNOTVALIDATOR() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLCALLERNOTVALIDATOR(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLCALLERNOTVALIDATOR is a free data retrieval call binding the contract method 0xdf6f3c26.
+// VALIDATORPOOLCALLERNOTVALIDATOR is a paid mutator transaction binding the contract method 0xdf6f3c26.
 //
-// Solidity: function VALIDATORPOOL_CALLER_NOT_VALIDATOR() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLCALLERNOTVALIDATOR() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLCALLERNOTVALIDATOR(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_CALLER_NOT_VALIDATOR() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLCALLERNOTVALIDATOR() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLCALLERNOTVALIDATOR(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLCONSENSUSRUNNING is a free data retrieval call binding the contract method 0x8ee837c4.
+// VALIDATORPOOLCONSENSUSRUNNING is a paid mutator transaction binding the contract method 0x8ee837c4.
 //
-// Solidity: function VALIDATORPOOL_CONSENSUS_RUNNING() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLCONSENSUSRUNNING(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_CONSENSUS_RUNNING")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_CONSENSUS_RUNNING() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLCONSENSUSRUNNING(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_CONSENSUS_RUNNING")
 }
 
-// VALIDATORPOOLCONSENSUSRUNNING is a free data retrieval call binding the contract method 0x8ee837c4.
+// VALIDATORPOOLCONSENSUSRUNNING is a paid mutator transaction binding the contract method 0x8ee837c4.
 //
-// Solidity: function VALIDATORPOOL_CONSENSUS_RUNNING() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLCONSENSUSRUNNING() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLCONSENSUSRUNNING(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_CONSENSUS_RUNNING() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLCONSENSUSRUNNING() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLCONSENSUSRUNNING(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLCONSENSUSRUNNING is a free data retrieval call binding the contract method 0x8ee837c4.
+// VALIDATORPOOLCONSENSUSRUNNING is a paid mutator transaction binding the contract method 0x8ee837c4.
 //
-// Solidity: function VALIDATORPOOL_CONSENSUS_RUNNING() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLCONSENSUSRUNNING() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLCONSENSUSRUNNING(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_CONSENSUS_RUNNING() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLCONSENSUSRUNNING() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLCONSENSUSRUNNING(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE is a free data retrieval call binding the contract method 0x4c08af9b.
+// VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE is a paid mutator transaction binding the contract method 0x4c08af9b.
 //
-// Solidity: function VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE")
 }
 
-// VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE is a free data retrieval call binding the contract method 0x4c08af9b.
+// VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE is a paid mutator transaction binding the contract method 0x4c08af9b.
 //
-// Solidity: function VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE is a free data retrieval call binding the contract method 0x4c08af9b.
+// VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE is a paid mutator transaction binding the contract method 0x4c08af9b.
 //
-// Solidity: function VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_DISHONEST_VALIDATOR_NOT_ACCUSABLE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLDISHONESTVALIDATORNOTACCUSABLE(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLETHDKGROUNDRUNNING is a free data retrieval call binding the contract method 0x9126af77.
+// VALIDATORPOOLETHDKGROUNDRUNNING is a paid mutator transaction binding the contract method 0x9126af77.
 //
-// Solidity: function VALIDATORPOOL_ETHDKG_ROUND_RUNNING() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLETHDKGROUNDRUNNING(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_ETHDKG_ROUND_RUNNING")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_ETHDKG_ROUND_RUNNING() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLETHDKGROUNDRUNNING(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_ETHDKG_ROUND_RUNNING")
 }
 
-// VALIDATORPOOLETHDKGROUNDRUNNING is a free data retrieval call binding the contract method 0x9126af77.
+// VALIDATORPOOLETHDKGROUNDRUNNING is a paid mutator transaction binding the contract method 0x9126af77.
 //
-// Solidity: function VALIDATORPOOL_ETHDKG_ROUND_RUNNING() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLETHDKGROUNDRUNNING() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLETHDKGROUNDRUNNING(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ETHDKG_ROUND_RUNNING() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLETHDKGROUNDRUNNING() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLETHDKGROUNDRUNNING(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLETHDKGROUNDRUNNING is a free data retrieval call binding the contract method 0x9126af77.
+// VALIDATORPOOLETHDKGROUNDRUNNING is a paid mutator transaction binding the contract method 0x9126af77.
 //
-// Solidity: function VALIDATORPOOL_ETHDKG_ROUND_RUNNING() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLETHDKGROUNDRUNNING() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLETHDKGROUNDRUNNING(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ETHDKG_ROUND_RUNNING() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLETHDKGROUNDRUNNING() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLETHDKGROUNDRUNNING(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLETHBALANCECHANGED is a free data retrieval call binding the contract method 0x826b711b.
+// VALIDATORPOOLETHBALANCECHANGED is a paid mutator transaction binding the contract method 0x826b711b.
 //
-// Solidity: function VALIDATORPOOL_ETH_BALANCE_CHANGED() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLETHBALANCECHANGED(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_ETH_BALANCE_CHANGED")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_ETH_BALANCE_CHANGED() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLETHBALANCECHANGED(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_ETH_BALANCE_CHANGED")
 }
 
-// VALIDATORPOOLETHBALANCECHANGED is a free data retrieval call binding the contract method 0x826b711b.
+// VALIDATORPOOLETHBALANCECHANGED is a paid mutator transaction binding the contract method 0x826b711b.
 //
-// Solidity: function VALIDATORPOOL_ETH_BALANCE_CHANGED() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLETHBALANCECHANGED() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLETHBALANCECHANGED(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ETH_BALANCE_CHANGED() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLETHBALANCECHANGED() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLETHBALANCECHANGED(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLETHBALANCECHANGED is a free data retrieval call binding the contract method 0x826b711b.
+// VALIDATORPOOLETHBALANCECHANGED is a paid mutator transaction binding the contract method 0x826b711b.
 //
-// Solidity: function VALIDATORPOOL_ETH_BALANCE_CHANGED() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLETHBALANCECHANGED() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLETHBALANCECHANGED(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ETH_BALANCE_CHANGED() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLETHBALANCECHANGED() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLETHBALANCECHANGED(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLFACTORYSHOULDOWNPOSITION is a free data retrieval call binding the contract method 0x527991a3.
+// VALIDATORPOOLFACTORYSHOULDOWNPOSITION is a paid mutator transaction binding the contract method 0x527991a3.
 //
-// Solidity: function VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLFACTORYSHOULDOWNPOSITION(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLFACTORYSHOULDOWNPOSITION(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION")
 }
 
-// VALIDATORPOOLFACTORYSHOULDOWNPOSITION is a free data retrieval call binding the contract method 0x527991a3.
+// VALIDATORPOOLFACTORYSHOULDOWNPOSITION is a paid mutator transaction binding the contract method 0x527991a3.
 //
-// Solidity: function VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLFACTORYSHOULDOWNPOSITION() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLFACTORYSHOULDOWNPOSITION(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLFACTORYSHOULDOWNPOSITION() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLFACTORYSHOULDOWNPOSITION(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLFACTORYSHOULDOWNPOSITION is a free data retrieval call binding the contract method 0x527991a3.
+// VALIDATORPOOLFACTORYSHOULDOWNPOSITION is a paid mutator transaction binding the contract method 0x527991a3.
 //
-// Solidity: function VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLFACTORYSHOULDOWNPOSITION() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLFACTORYSHOULDOWNPOSITION(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_FACTORY_SHOULD_OWN_POSITION() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLFACTORYSHOULDOWNPOSITION() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLFACTORYSHOULDOWNPOSITION(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION is a free data retrieval call binding the contract method 0x2c20647a.
+// VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION is a paid mutator transaction binding the contract method 0x2c20647a.
 //
-// Solidity: function VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION")
 }
 
-// VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION is a free data retrieval call binding the contract method 0x2c20647a.
+// VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION is a paid mutator transaction binding the contract method 0x2c20647a.
 //
-// Solidity: function VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION is a free data retrieval call binding the contract method 0x2c20647a.
+// VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION is a paid mutator transaction binding the contract method 0x2c20647a.
 //
-// Solidity: function VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_INSUFFICIENT_FUNDS_IN_STAKE_POSITION() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLINSUFFICIENTFUNDSINSTAKEPOSITION(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLINVALIDINDEX is a free data retrieval call binding the contract method 0x38dce6e0.
+// VALIDATORPOOLINVALIDINDEX is a paid mutator transaction binding the contract method 0x38dce6e0.
 //
-// Solidity: function VALIDATORPOOL_INVALID_INDEX() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLINVALIDINDEX(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_INVALID_INDEX")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_INVALID_INDEX() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLINVALIDINDEX(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_INVALID_INDEX")
 }
 
-// VALIDATORPOOLINVALIDINDEX is a free data retrieval call binding the contract method 0x38dce6e0.
+// VALIDATORPOOLINVALIDINDEX is a paid mutator transaction binding the contract method 0x38dce6e0.
 //
-// Solidity: function VALIDATORPOOL_INVALID_INDEX() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLINVALIDINDEX() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLINVALIDINDEX(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_INVALID_INDEX() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLINVALIDINDEX() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLINVALIDINDEX(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLINVALIDINDEX is a free data retrieval call binding the contract method 0x38dce6e0.
+// VALIDATORPOOLINVALIDINDEX is a paid mutator transaction binding the contract method 0x38dce6e0.
 //
-// Solidity: function VALIDATORPOOL_INVALID_INDEX() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLINVALIDINDEX() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLINVALIDINDEX(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_INVALID_INDEX() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLINVALIDINDEX() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLINVALIDINDEX(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLMAXVALIDATORSMET is a free data retrieval call binding the contract method 0xfb5f6a21.
+// VALIDATORPOOLMAXVALIDATORSMET is a paid mutator transaction binding the contract method 0xfb5f6a21.
 //
-// Solidity: function VALIDATORPOOL_MAX_VALIDATORS_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLMAXVALIDATORSMET(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_MAX_VALIDATORS_MET")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_MAX_VALIDATORS_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLMAXVALIDATORSMET(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_MAX_VALIDATORS_MET")
 }
 
-// VALIDATORPOOLMAXVALIDATORSMET is a free data retrieval call binding the contract method 0xfb5f6a21.
+// VALIDATORPOOLMAXVALIDATORSMET is a paid mutator transaction binding the contract method 0xfb5f6a21.
 //
-// Solidity: function VALIDATORPOOL_MAX_VALIDATORS_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLMAXVALIDATORSMET() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMAXVALIDATORSMET(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_MAX_VALIDATORS_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLMAXVALIDATORSMET() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMAXVALIDATORSMET(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLMAXVALIDATORSMET is a free data retrieval call binding the contract method 0xfb5f6a21.
+// VALIDATORPOOLMAXVALIDATORSMET is a paid mutator transaction binding the contract method 0xfb5f6a21.
 //
-// Solidity: function VALIDATORPOOL_MAX_VALIDATORS_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLMAXVALIDATORSMET() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMAXVALIDATORSMET(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_MAX_VALIDATORS_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLMAXVALIDATORSMET() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMAXVALIDATORSMET(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLMINIMUMSTAKENOTMET is a free data retrieval call binding the contract method 0x057f2b29.
+// VALIDATORPOOLMINIMUMSTAKENOTMET is a paid mutator transaction binding the contract method 0x057f2b29.
 //
-// Solidity: function VALIDATORPOOL_MINIMUM_STAKE_NOT_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLMINIMUMSTAKENOTMET(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_MINIMUM_STAKE_NOT_MET")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_MINIMUM_STAKE_NOT_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLMINIMUMSTAKENOTMET(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_MINIMUM_STAKE_NOT_MET")
 }
 
-// VALIDATORPOOLMINIMUMSTAKENOTMET is a free data retrieval call binding the contract method 0x057f2b29.
+// VALIDATORPOOLMINIMUMSTAKENOTMET is a paid mutator transaction binding the contract method 0x057f2b29.
 //
-// Solidity: function VALIDATORPOOL_MINIMUM_STAKE_NOT_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLMINIMUMSTAKENOTMET() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMINIMUMSTAKENOTMET(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_MINIMUM_STAKE_NOT_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLMINIMUMSTAKENOTMET() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMINIMUMSTAKENOTMET(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLMINIMUMSTAKENOTMET is a free data retrieval call binding the contract method 0x057f2b29.
+// VALIDATORPOOLMINIMUMSTAKENOTMET is a paid mutator transaction binding the contract method 0x057f2b29.
 //
-// Solidity: function VALIDATORPOOL_MINIMUM_STAKE_NOT_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLMINIMUMSTAKENOTMET() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMINIMUMSTAKENOTMET(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_MINIMUM_STAKE_NOT_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLMINIMUMSTAKENOTMET() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMINIMUMSTAKENOTMET(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLMINBLOCKINTERVALNOTMET is a free data retrieval call binding the contract method 0x08abeefe.
+// VALIDATORPOOLMINBLOCKINTERVALNOTMET is a paid mutator transaction binding the contract method 0x08abeefe.
 //
-// Solidity: function VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLMINBLOCKINTERVALNOTMET(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLMINBLOCKINTERVALNOTMET(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET")
 }
 
-// VALIDATORPOOLMINBLOCKINTERVALNOTMET is a free data retrieval call binding the contract method 0x08abeefe.
+// VALIDATORPOOLMINBLOCKINTERVALNOTMET is a paid mutator transaction binding the contract method 0x08abeefe.
 //
-// Solidity: function VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLMINBLOCKINTERVALNOTMET() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMINBLOCKINTERVALNOTMET(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLMINBLOCKINTERVALNOTMET() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMINBLOCKINTERVALNOTMET(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLMINBLOCKINTERVALNOTMET is a free data retrieval call binding the contract method 0x08abeefe.
+// VALIDATORPOOLMINBLOCKINTERVALNOTMET is a paid mutator transaction binding the contract method 0x08abeefe.
 //
-// Solidity: function VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLMINBLOCKINTERVALNOTMET() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMINBLOCKINTERVALNOTMET(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_MIN_BLOCK_INTERVAL_NOT_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLMINBLOCKINTERVALNOTMET() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLMINBLOCKINTERVALNOTMET(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLONLYCONTRACTSALLOWED is a free data retrieval call binding the contract method 0x7527a98f.
+// VALIDATORPOOLONLYCONTRACTSALLOWED is a paid mutator transaction binding the contract method 0x7527a98f.
 //
-// Solidity: function VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLONLYCONTRACTSALLOWED(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLONLYCONTRACTSALLOWED(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED")
 }
 
-// VALIDATORPOOLONLYCONTRACTSALLOWED is a free data retrieval call binding the contract method 0x7527a98f.
+// VALIDATORPOOLONLYCONTRACTSALLOWED is a paid mutator transaction binding the contract method 0x7527a98f.
 //
-// Solidity: function VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLONLYCONTRACTSALLOWED() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLONLYCONTRACTSALLOWED(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLONLYCONTRACTSALLOWED() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLONLYCONTRACTSALLOWED(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLONLYCONTRACTSALLOWED is a free data retrieval call binding the contract method 0x7527a98f.
+// VALIDATORPOOLONLYCONTRACTSALLOWED is a paid mutator transaction binding the contract method 0x7527a98f.
 //
-// Solidity: function VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLONLYCONTRACTSALLOWED() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLONLYCONTRACTSALLOWED(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_ONLY_CONTRACTS_ALLOWED() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLONLYCONTRACTSALLOWED() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLONLYCONTRACTSALLOWED(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLPAYOUTTOOLOW is a free data retrieval call binding the contract method 0x0ce7d41e.
+// VALIDATORPOOLPAYOUTTOOLOW is a paid mutator transaction binding the contract method 0x0ce7d41e.
 //
-// Solidity: function VALIDATORPOOL_PAYOUT_TOO_LOW() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLPAYOUTTOOLOW(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_PAYOUT_TOO_LOW")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_PAYOUT_TOO_LOW() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLPAYOUTTOOLOW(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_PAYOUT_TOO_LOW")
 }
 
-// VALIDATORPOOLPAYOUTTOOLOW is a free data retrieval call binding the contract method 0x0ce7d41e.
+// VALIDATORPOOLPAYOUTTOOLOW is a paid mutator transaction binding the contract method 0x0ce7d41e.
 //
-// Solidity: function VALIDATORPOOL_PAYOUT_TOO_LOW() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLPAYOUTTOOLOW() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLPAYOUTTOOLOW(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_PAYOUT_TOO_LOW() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLPAYOUTTOOLOW() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLPAYOUTTOOLOW(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLPAYOUTTOOLOW is a free data retrieval call binding the contract method 0x0ce7d41e.
+// VALIDATORPOOLPAYOUTTOOLOW is a paid mutator transaction binding the contract method 0x0ce7d41e.
 //
-// Solidity: function VALIDATORPOOL_PAYOUT_TOO_LOW() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLPAYOUTTOOLOW() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLPAYOUTTOOLOW(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_PAYOUT_TOO_LOW() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLPAYOUTTOOLOW() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLPAYOUTTOOLOW(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS is a free data retrieval call binding the contract method 0x4c454a97.
+// VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS is a paid mutator transaction binding the contract method 0x4c454a97.
 //
-// Solidity: function VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS")
 }
 
-// VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS is a free data retrieval call binding the contract method 0x4c454a97.
+// VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS is a paid mutator transaction binding the contract method 0x4c454a97.
 //
-// Solidity: function VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS is a free data retrieval call binding the contract method 0x4c454a97.
+// VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS is a paid mutator transaction binding the contract method 0x4c454a97.
 //
-// Solidity: function VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_PROFITS_ONLY_CLAIMABLE_DURING_CONSENSUS() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLPROFITSONLYCLAIMABLEDURINGCONSENSUS(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH is a free data retrieval call binding the contract method 0xe5b50fe6.
+// VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH is a paid mutator transaction binding the contract method 0xe5b50fe6.
 //
-// Solidity: function VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH")
 }
 
-// VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH is a free data retrieval call binding the contract method 0xe5b50fe6.
+// VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH is a paid mutator transaction binding the contract method 0xe5b50fe6.
 //
-// Solidity: function VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH is a free data retrieval call binding the contract method 0xe5b50fe6.
+// VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH is a paid mutator transaction binding the contract method 0xe5b50fe6.
 //
-// Solidity: function VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_REGISTRATION_PARAMETER_LENGTH_MISMATCH() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLREGISTRATIONPARAMETERLENGTHMISMATCH(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLSENDERNOTINEXITINGQUEUE is a free data retrieval call binding the contract method 0x55efc658.
+// VALIDATORPOOLSENDERNOTINEXITINGQUEUE is a paid mutator transaction binding the contract method 0x55efc658.
 //
-// Solidity: function VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLSENDERNOTINEXITINGQUEUE(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLSENDERNOTINEXITINGQUEUE(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE")
 }
 
-// VALIDATORPOOLSENDERNOTINEXITINGQUEUE is a free data retrieval call binding the contract method 0x55efc658.
+// VALIDATORPOOLSENDERNOTINEXITINGQUEUE is a paid mutator transaction binding the contract method 0x55efc658.
 //
-// Solidity: function VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLSENDERNOTINEXITINGQUEUE() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLSENDERNOTINEXITINGQUEUE(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLSENDERNOTINEXITINGQUEUE() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLSENDERNOTINEXITINGQUEUE(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLSENDERNOTINEXITINGQUEUE is a free data retrieval call binding the contract method 0x55efc658.
+// VALIDATORPOOLSENDERNOTINEXITINGQUEUE is a paid mutator transaction binding the contract method 0x55efc658.
 //
-// Solidity: function VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLSENDERNOTINEXITINGQUEUE() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLSENDERNOTINEXITINGQUEUE(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_SENDER_NOT_IN_EXITING_QUEUE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLSENDERNOTINEXITINGQUEUE() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLSENDERNOTINEXITINGQUEUE(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLTOKENBALANCECHANGED is a free data retrieval call binding the contract method 0x329fa341.
+// VALIDATORPOOLTOKENBALANCECHANGED is a paid mutator transaction binding the contract method 0x329fa341.
 //
-// Solidity: function VALIDATORPOOL_TOKEN_BALANCE_CHANGED() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLTOKENBALANCECHANGED(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_TOKEN_BALANCE_CHANGED")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_TOKEN_BALANCE_CHANGED() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLTOKENBALANCECHANGED(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_TOKEN_BALANCE_CHANGED")
 }
 
-// VALIDATORPOOLTOKENBALANCECHANGED is a free data retrieval call binding the contract method 0x329fa341.
+// VALIDATORPOOLTOKENBALANCECHANGED is a paid mutator transaction binding the contract method 0x329fa341.
 //
-// Solidity: function VALIDATORPOOL_TOKEN_BALANCE_CHANGED() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLTOKENBALANCECHANGED() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLTOKENBALANCECHANGED(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_TOKEN_BALANCE_CHANGED() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLTOKENBALANCECHANGED() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLTOKENBALANCECHANGED(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLTOKENBALANCECHANGED is a free data retrieval call binding the contract method 0x329fa341.
+// VALIDATORPOOLTOKENBALANCECHANGED is a paid mutator transaction binding the contract method 0x329fa341.
 //
-// Solidity: function VALIDATORPOOL_TOKEN_BALANCE_CHANGED() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLTOKENBALANCECHANGED() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLTOKENBALANCECHANGED(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_TOKEN_BALANCE_CHANGED() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLTOKENBALANCECHANGED() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLTOKENBALANCECHANGED(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE is a free data retrieval call binding the contract method 0x7cd62d16.
+// VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE is a paid mutator transaction binding the contract method 0x7cd62d16.
 //
-// Solidity: function VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE")
 }
 
-// VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE is a free data retrieval call binding the contract method 0x7cd62d16.
+// VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE is a paid mutator transaction binding the contract method 0x7cd62d16.
 //
-// Solidity: function VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE is a free data retrieval call binding the contract method 0x7cd62d16.
+// VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE is a paid mutator transaction binding the contract method 0x7cd62d16.
 //
-// Solidity: function VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_VALIDATORS_GREATER_THAN_AVAILABLE() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLVALIDATORSGREATERTHANAVAILABLE(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLWAITINGPERIODNOTMET is a free data retrieval call binding the contract method 0x0e2d4d55.
+// VALIDATORPOOLWAITINGPERIODNOTMET is a paid mutator transaction binding the contract method 0x0e2d4d55.
 //
-// Solidity: function VALIDATORPOOL_WAITING_PERIOD_NOT_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCaller) VALIDATORPOOLWAITINGPERIODNOTMET(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ValidatorPoolErrorCodes.contract.Call(opts, &out, "VALIDATORPOOL_WAITING_PERIOD_NOT_MET")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function VALIDATORPOOL_WAITING_PERIOD_NOT_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactor) VALIDATORPOOLWAITINGPERIODNOTMET(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.contract.Transact(opts, "VALIDATORPOOL_WAITING_PERIOD_NOT_MET")
 }
 
-// VALIDATORPOOLWAITINGPERIODNOTMET is a free data retrieval call binding the contract method 0x0e2d4d55.
+// VALIDATORPOOLWAITINGPERIODNOTMET is a paid mutator transaction binding the contract method 0x0e2d4d55.
 //
-// Solidity: function VALIDATORPOOL_WAITING_PERIOD_NOT_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLWAITINGPERIODNOTMET() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLWAITINGPERIODNOTMET(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_WAITING_PERIOD_NOT_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesSession) VALIDATORPOOLWAITINGPERIODNOTMET() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLWAITINGPERIODNOTMET(&_ValidatorPoolErrorCodes.TransactOpts)
 }
 
-// VALIDATORPOOLWAITINGPERIODNOTMET is a free data retrieval call binding the contract method 0x0e2d4d55.
+// VALIDATORPOOLWAITINGPERIODNOTMET is a paid mutator transaction binding the contract method 0x0e2d4d55.
 //
-// Solidity: function VALIDATORPOOL_WAITING_PERIOD_NOT_MET() view returns(bytes32)
-func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesCallerSession) VALIDATORPOOLWAITINGPERIODNOTMET() ([32]byte, error) {
-	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLWAITINGPERIODNOTMET(&_ValidatorPoolErrorCodes.CallOpts)
+// Solidity: function VALIDATORPOOL_WAITING_PERIOD_NOT_MET() returns(bytes32)
+func (_ValidatorPoolErrorCodes *ValidatorPoolErrorCodesTransactorSession) VALIDATORPOOLWAITINGPERIODNOTMET() (*types.Transaction, error) {
+	return _ValidatorPoolErrorCodes.Contract.VALIDATORPOOLWAITINGPERIODNOTMET(&_ValidatorPoolErrorCodes.TransactOpts)
 }

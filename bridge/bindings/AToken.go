@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,24 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// ATokenMetaData contains all meta data concerning the AToken contract.
-var ATokenMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"legacyToken_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"allowMigration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseAllowance\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"externalBurn\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"externalMint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLegacyTokenAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseAllowance\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"migrate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-}
-
 // ATokenABI is the input ABI used to generate the binding from.
-// Deprecated: Use ATokenMetaData.ABI instead.
-var ATokenABI = ATokenMetaData.ABI
+const ATokenABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"legacyToken_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"allowMigration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"subtractedValue\",\"type\":\"uint256\"}],\"name\":\"decreaseAllowance\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"externalBurn\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"externalMint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLegacyTokenAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"addedValue\",\"type\":\"uint256\"}],\"name\":\"increaseAllowance\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"migrate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // AToken is an auto generated Go binding around an Ethereum contract.
 type AToken struct {
@@ -145,7 +138,7 @@ func bindAToken(address common.Address, caller bind.ContractCaller, transactor b
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_AToken *ATokenRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_AToken *ATokenRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _AToken.Contract.ATokenCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -164,7 +157,7 @@ func (_AToken *ATokenRaw) Transact(opts *bind.TransactOpts, method string, param
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_AToken *ATokenCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_AToken *ATokenCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _AToken.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -177,254 +170,6 @@ func (_AToken *ATokenTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Tr
 // Transact invokes the (paid) contract method with params as input values.
 func (_AToken *ATokenTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _AToken.Contract.contract.Transact(opts, method, params...)
-}
-
-// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
-//
-// Solidity: function allowance(address owner, address spender) view returns(uint256)
-func (_AToken *ATokenCaller) Allowance(opts *bind.CallOpts, owner common.Address, spender common.Address) (*big.Int, error) {
-	var out []interface{}
-	err := _AToken.contract.Call(opts, &out, "allowance", owner, spender)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
-//
-// Solidity: function allowance(address owner, address spender) view returns(uint256)
-func (_AToken *ATokenSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _AToken.Contract.Allowance(&_AToken.CallOpts, owner, spender)
-}
-
-// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
-//
-// Solidity: function allowance(address owner, address spender) view returns(uint256)
-func (_AToken *ATokenCallerSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
-	return _AToken.Contract.Allowance(&_AToken.CallOpts, owner, spender)
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address account) view returns(uint256)
-func (_AToken *ATokenCaller) BalanceOf(opts *bind.CallOpts, account common.Address) (*big.Int, error) {
-	var out []interface{}
-	err := _AToken.contract.Call(opts, &out, "balanceOf", account)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address account) view returns(uint256)
-func (_AToken *ATokenSession) BalanceOf(account common.Address) (*big.Int, error) {
-	return _AToken.Contract.BalanceOf(&_AToken.CallOpts, account)
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address account) view returns(uint256)
-func (_AToken *ATokenCallerSession) BalanceOf(account common.Address) (*big.Int, error) {
-	return _AToken.Contract.BalanceOf(&_AToken.CallOpts, account)
-}
-
-// Decimals is a free data retrieval call binding the contract method 0x313ce567.
-//
-// Solidity: function decimals() view returns(uint8)
-func (_AToken *ATokenCaller) Decimals(opts *bind.CallOpts) (uint8, error) {
-	var out []interface{}
-	err := _AToken.contract.Call(opts, &out, "decimals")
-
-	if err != nil {
-		return *new(uint8), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
-
-	return out0, err
-
-}
-
-// Decimals is a free data retrieval call binding the contract method 0x313ce567.
-//
-// Solidity: function decimals() view returns(uint8)
-func (_AToken *ATokenSession) Decimals() (uint8, error) {
-	return _AToken.Contract.Decimals(&_AToken.CallOpts)
-}
-
-// Decimals is a free data retrieval call binding the contract method 0x313ce567.
-//
-// Solidity: function decimals() view returns(uint8)
-func (_AToken *ATokenCallerSession) Decimals() (uint8, error) {
-	return _AToken.Contract.Decimals(&_AToken.CallOpts)
-}
-
-// GetLegacyTokenAddress is a free data retrieval call binding the contract method 0x035c7099.
-//
-// Solidity: function getLegacyTokenAddress() view returns(address)
-func (_AToken *ATokenCaller) GetLegacyTokenAddress(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _AToken.contract.Call(opts, &out, "getLegacyTokenAddress")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetLegacyTokenAddress is a free data retrieval call binding the contract method 0x035c7099.
-//
-// Solidity: function getLegacyTokenAddress() view returns(address)
-func (_AToken *ATokenSession) GetLegacyTokenAddress() (common.Address, error) {
-	return _AToken.Contract.GetLegacyTokenAddress(&_AToken.CallOpts)
-}
-
-// GetLegacyTokenAddress is a free data retrieval call binding the contract method 0x035c7099.
-//
-// Solidity: function getLegacyTokenAddress() view returns(address)
-func (_AToken *ATokenCallerSession) GetLegacyTokenAddress() (common.Address, error) {
-	return _AToken.Contract.GetLegacyTokenAddress(&_AToken.CallOpts)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_AToken *ATokenCaller) GetMetamorphicContractAddress(opts *bind.CallOpts, _salt [32]byte, _factory common.Address) (common.Address, error) {
-	var out []interface{}
-	err := _AToken.contract.Call(opts, &out, "getMetamorphicContractAddress", _salt, _factory)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_AToken *ATokenSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _AToken.Contract.GetMetamorphicContractAddress(&_AToken.CallOpts, _salt, _factory)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_AToken *ATokenCallerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _AToken.Contract.GetMetamorphicContractAddress(&_AToken.CallOpts, _salt, _factory)
-}
-
-// Name is a free data retrieval call binding the contract method 0x06fdde03.
-//
-// Solidity: function name() view returns(string)
-func (_AToken *ATokenCaller) Name(opts *bind.CallOpts) (string, error) {
-	var out []interface{}
-	err := _AToken.contract.Call(opts, &out, "name")
-
-	if err != nil {
-		return *new(string), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(string)).(*string)
-
-	return out0, err
-
-}
-
-// Name is a free data retrieval call binding the contract method 0x06fdde03.
-//
-// Solidity: function name() view returns(string)
-func (_AToken *ATokenSession) Name() (string, error) {
-	return _AToken.Contract.Name(&_AToken.CallOpts)
-}
-
-// Name is a free data retrieval call binding the contract method 0x06fdde03.
-//
-// Solidity: function name() view returns(string)
-func (_AToken *ATokenCallerSession) Name() (string, error) {
-	return _AToken.Contract.Name(&_AToken.CallOpts)
-}
-
-// Symbol is a free data retrieval call binding the contract method 0x95d89b41.
-//
-// Solidity: function symbol() view returns(string)
-func (_AToken *ATokenCaller) Symbol(opts *bind.CallOpts) (string, error) {
-	var out []interface{}
-	err := _AToken.contract.Call(opts, &out, "symbol")
-
-	if err != nil {
-		return *new(string), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(string)).(*string)
-
-	return out0, err
-
-}
-
-// Symbol is a free data retrieval call binding the contract method 0x95d89b41.
-//
-// Solidity: function symbol() view returns(string)
-func (_AToken *ATokenSession) Symbol() (string, error) {
-	return _AToken.Contract.Symbol(&_AToken.CallOpts)
-}
-
-// Symbol is a free data retrieval call binding the contract method 0x95d89b41.
-//
-// Solidity: function symbol() view returns(string)
-func (_AToken *ATokenCallerSession) Symbol() (string, error) {
-	return _AToken.Contract.Symbol(&_AToken.CallOpts)
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() view returns(uint256)
-func (_AToken *ATokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _AToken.contract.Call(opts, &out, "totalSupply")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() view returns(uint256)
-func (_AToken *ATokenSession) TotalSupply() (*big.Int, error) {
-	return _AToken.Contract.TotalSupply(&_AToken.CallOpts)
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() view returns(uint256)
-func (_AToken *ATokenCallerSession) TotalSupply() (*big.Int, error) {
-	return _AToken.Contract.TotalSupply(&_AToken.CallOpts)
 }
 
 // AllowMigration is a paid mutator transaction binding the contract method 0x35d69059.
@@ -448,6 +193,27 @@ func (_AToken *ATokenTransactorSession) AllowMigration() (*types.Transaction, er
 	return _AToken.Contract.AllowMigration(&_AToken.TransactOpts)
 }
 
+// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+//
+// Solidity: function allowance(address owner, address spender) returns(uint256)
+func (_AToken *ATokenTransactor) Allowance(opts *bind.TransactOpts, owner common.Address, spender common.Address) (*types.Transaction, error) {
+	return _AToken.contract.Transact(opts, "allowance", owner, spender)
+}
+
+// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+//
+// Solidity: function allowance(address owner, address spender) returns(uint256)
+func (_AToken *ATokenSession) Allowance(owner common.Address, spender common.Address) (*types.Transaction, error) {
+	return _AToken.Contract.Allowance(&_AToken.TransactOpts, owner, spender)
+}
+
+// Allowance is a paid mutator transaction binding the contract method 0xdd62ed3e.
+//
+// Solidity: function allowance(address owner, address spender) returns(uint256)
+func (_AToken *ATokenTransactorSession) Allowance(owner common.Address, spender common.Address) (*types.Transaction, error) {
+	return _AToken.Contract.Allowance(&_AToken.TransactOpts, owner, spender)
+}
+
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(address spender, uint256 amount) returns(bool)
@@ -467,6 +233,48 @@ func (_AToken *ATokenSession) Approve(spender common.Address, amount *big.Int) (
 // Solidity: function approve(address spender, uint256 amount) returns(bool)
 func (_AToken *ATokenTransactorSession) Approve(spender common.Address, amount *big.Int) (*types.Transaction, error) {
 	return _AToken.Contract.Approve(&_AToken.TransactOpts, spender, amount)
+}
+
+// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address account) returns(uint256)
+func (_AToken *ATokenTransactor) BalanceOf(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
+	return _AToken.contract.Transact(opts, "balanceOf", account)
+}
+
+// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address account) returns(uint256)
+func (_AToken *ATokenSession) BalanceOf(account common.Address) (*types.Transaction, error) {
+	return _AToken.Contract.BalanceOf(&_AToken.TransactOpts, account)
+}
+
+// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address account) returns(uint256)
+func (_AToken *ATokenTransactorSession) BalanceOf(account common.Address) (*types.Transaction, error) {
+	return _AToken.Contract.BalanceOf(&_AToken.TransactOpts, account)
+}
+
+// Decimals is a paid mutator transaction binding the contract method 0x313ce567.
+//
+// Solidity: function decimals() returns(uint8)
+func (_AToken *ATokenTransactor) Decimals(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AToken.contract.Transact(opts, "decimals")
+}
+
+// Decimals is a paid mutator transaction binding the contract method 0x313ce567.
+//
+// Solidity: function decimals() returns(uint8)
+func (_AToken *ATokenSession) Decimals() (*types.Transaction, error) {
+	return _AToken.Contract.Decimals(&_AToken.TransactOpts)
+}
+
+// Decimals is a paid mutator transaction binding the contract method 0x313ce567.
+//
+// Solidity: function decimals() returns(uint8)
+func (_AToken *ATokenTransactorSession) Decimals() (*types.Transaction, error) {
+	return _AToken.Contract.Decimals(&_AToken.TransactOpts)
 }
 
 // DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
@@ -532,6 +340,48 @@ func (_AToken *ATokenTransactorSession) ExternalMint(to common.Address, amount *
 	return _AToken.Contract.ExternalMint(&_AToken.TransactOpts, to, amount)
 }
 
+// GetLegacyTokenAddress is a paid mutator transaction binding the contract method 0x035c7099.
+//
+// Solidity: function getLegacyTokenAddress() returns(address)
+func (_AToken *ATokenTransactor) GetLegacyTokenAddress(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AToken.contract.Transact(opts, "getLegacyTokenAddress")
+}
+
+// GetLegacyTokenAddress is a paid mutator transaction binding the contract method 0x035c7099.
+//
+// Solidity: function getLegacyTokenAddress() returns(address)
+func (_AToken *ATokenSession) GetLegacyTokenAddress() (*types.Transaction, error) {
+	return _AToken.Contract.GetLegacyTokenAddress(&_AToken.TransactOpts)
+}
+
+// GetLegacyTokenAddress is a paid mutator transaction binding the contract method 0x035c7099.
+//
+// Solidity: function getLegacyTokenAddress() returns(address)
+func (_AToken *ATokenTransactorSession) GetLegacyTokenAddress() (*types.Transaction, error) {
+	return _AToken.Contract.GetLegacyTokenAddress(&_AToken.TransactOpts)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_AToken *ATokenTransactor) GetMetamorphicContractAddress(opts *bind.TransactOpts, _salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _AToken.contract.Transact(opts, "getMetamorphicContractAddress", _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_AToken *ATokenSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _AToken.Contract.GetMetamorphicContractAddress(&_AToken.TransactOpts, _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_AToken *ATokenTransactorSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _AToken.Contract.GetMetamorphicContractAddress(&_AToken.TransactOpts, _salt, _factory)
+}
+
 // IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
 // Solidity: function increaseAllowance(address spender, uint256 addedValue) returns(bool)
@@ -593,6 +443,69 @@ func (_AToken *ATokenSession) Migrate(amount *big.Int) (*types.Transaction, erro
 // Solidity: function migrate(uint256 amount) returns()
 func (_AToken *ATokenTransactorSession) Migrate(amount *big.Int) (*types.Transaction, error) {
 	return _AToken.Contract.Migrate(&_AToken.TransactOpts, amount)
+}
+
+// Name is a paid mutator transaction binding the contract method 0x06fdde03.
+//
+// Solidity: function name() returns(string)
+func (_AToken *ATokenTransactor) Name(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AToken.contract.Transact(opts, "name")
+}
+
+// Name is a paid mutator transaction binding the contract method 0x06fdde03.
+//
+// Solidity: function name() returns(string)
+func (_AToken *ATokenSession) Name() (*types.Transaction, error) {
+	return _AToken.Contract.Name(&_AToken.TransactOpts)
+}
+
+// Name is a paid mutator transaction binding the contract method 0x06fdde03.
+//
+// Solidity: function name() returns(string)
+func (_AToken *ATokenTransactorSession) Name() (*types.Transaction, error) {
+	return _AToken.Contract.Name(&_AToken.TransactOpts)
+}
+
+// Symbol is a paid mutator transaction binding the contract method 0x95d89b41.
+//
+// Solidity: function symbol() returns(string)
+func (_AToken *ATokenTransactor) Symbol(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AToken.contract.Transact(opts, "symbol")
+}
+
+// Symbol is a paid mutator transaction binding the contract method 0x95d89b41.
+//
+// Solidity: function symbol() returns(string)
+func (_AToken *ATokenSession) Symbol() (*types.Transaction, error) {
+	return _AToken.Contract.Symbol(&_AToken.TransactOpts)
+}
+
+// Symbol is a paid mutator transaction binding the contract method 0x95d89b41.
+//
+// Solidity: function symbol() returns(string)
+func (_AToken *ATokenTransactorSession) Symbol() (*types.Transaction, error) {
+	return _AToken.Contract.Symbol(&_AToken.TransactOpts)
+}
+
+// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() returns(uint256)
+func (_AToken *ATokenTransactor) TotalSupply(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AToken.contract.Transact(opts, "totalSupply")
+}
+
+// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() returns(uint256)
+func (_AToken *ATokenSession) TotalSupply() (*types.Transaction, error) {
+	return _AToken.Contract.TotalSupply(&_AToken.TransactOpts)
+}
+
+// TotalSupply is a paid mutator transaction binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() returns(uint256)
+func (_AToken *ATokenTransactorSession) TotalSupply() (*types.Transaction, error) {
+	return _AToken.Contract.TotalSupply(&_AToken.TransactOpts)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
@@ -787,7 +700,6 @@ func (_AToken *ATokenFilterer) ParseApproval(log types.Log) (*ATokenApproval, er
 	if err := _AToken.contract.UnpackLog(event, "Approval", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -941,6 +853,5 @@ func (_AToken *ATokenFilterer) ParseTransfer(log types.Log) (*ATokenTransfer, er
 	if err := _AToken.contract.UnpackLog(event, "Transfer", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }

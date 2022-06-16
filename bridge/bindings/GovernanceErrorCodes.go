@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,24 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// GovernanceErrorCodesMetaData contains all meta data concerning the GovernanceErrorCodes contract.
-var GovernanceErrorCodesMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"name\":\"GOVERNANCE_ONLY_FACTORY_ALLOWED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
-}
-
 // GovernanceErrorCodesABI is the input ABI used to generate the binding from.
-// Deprecated: Use GovernanceErrorCodesMetaData.ABI instead.
-var GovernanceErrorCodesABI = GovernanceErrorCodesMetaData.ABI
+const GovernanceErrorCodesABI = "[{\"inputs\":[],\"name\":\"GOVERNANCE_ONLY_FACTORY_ALLOWED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // GovernanceErrorCodes is an auto generated Go binding around an Ethereum contract.
 type GovernanceErrorCodes struct {
@@ -145,7 +138,7 @@ func bindGovernanceErrorCodes(address common.Address, caller bind.ContractCaller
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_GovernanceErrorCodes *GovernanceErrorCodesRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_GovernanceErrorCodes *GovernanceErrorCodesRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _GovernanceErrorCodes.Contract.GovernanceErrorCodesCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -164,7 +157,7 @@ func (_GovernanceErrorCodes *GovernanceErrorCodesRaw) Transact(opts *bind.Transa
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_GovernanceErrorCodes *GovernanceErrorCodesCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_GovernanceErrorCodes *GovernanceErrorCodesCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _GovernanceErrorCodes.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -179,33 +172,23 @@ func (_GovernanceErrorCodes *GovernanceErrorCodesTransactorRaw) Transact(opts *b
 	return _GovernanceErrorCodes.Contract.contract.Transact(opts, method, params...)
 }
 
-// GOVERNANCEONLYFACTORYALLOWED is a free data retrieval call binding the contract method 0x4ce9164d.
+// GOVERNANCEONLYFACTORYALLOWED is a paid mutator transaction binding the contract method 0x4ce9164d.
 //
-// Solidity: function GOVERNANCE_ONLY_FACTORY_ALLOWED() view returns(bytes32)
-func (_GovernanceErrorCodes *GovernanceErrorCodesCaller) GOVERNANCEONLYFACTORYALLOWED(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _GovernanceErrorCodes.contract.Call(opts, &out, "GOVERNANCE_ONLY_FACTORY_ALLOWED")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function GOVERNANCE_ONLY_FACTORY_ALLOWED() returns(bytes32)
+func (_GovernanceErrorCodes *GovernanceErrorCodesTransactor) GOVERNANCEONLYFACTORYALLOWED(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _GovernanceErrorCodes.contract.Transact(opts, "GOVERNANCE_ONLY_FACTORY_ALLOWED")
 }
 
-// GOVERNANCEONLYFACTORYALLOWED is a free data retrieval call binding the contract method 0x4ce9164d.
+// GOVERNANCEONLYFACTORYALLOWED is a paid mutator transaction binding the contract method 0x4ce9164d.
 //
-// Solidity: function GOVERNANCE_ONLY_FACTORY_ALLOWED() view returns(bytes32)
-func (_GovernanceErrorCodes *GovernanceErrorCodesSession) GOVERNANCEONLYFACTORYALLOWED() ([32]byte, error) {
-	return _GovernanceErrorCodes.Contract.GOVERNANCEONLYFACTORYALLOWED(&_GovernanceErrorCodes.CallOpts)
+// Solidity: function GOVERNANCE_ONLY_FACTORY_ALLOWED() returns(bytes32)
+func (_GovernanceErrorCodes *GovernanceErrorCodesSession) GOVERNANCEONLYFACTORYALLOWED() (*types.Transaction, error) {
+	return _GovernanceErrorCodes.Contract.GOVERNANCEONLYFACTORYALLOWED(&_GovernanceErrorCodes.TransactOpts)
 }
 
-// GOVERNANCEONLYFACTORYALLOWED is a free data retrieval call binding the contract method 0x4ce9164d.
+// GOVERNANCEONLYFACTORYALLOWED is a paid mutator transaction binding the contract method 0x4ce9164d.
 //
-// Solidity: function GOVERNANCE_ONLY_FACTORY_ALLOWED() view returns(bytes32)
-func (_GovernanceErrorCodes *GovernanceErrorCodesCallerSession) GOVERNANCEONLYFACTORYALLOWED() ([32]byte, error) {
-	return _GovernanceErrorCodes.Contract.GOVERNANCEONLYFACTORYALLOWED(&_GovernanceErrorCodes.CallOpts)
+// Solidity: function GOVERNANCE_ONLY_FACTORY_ALLOWED() returns(bytes32)
+func (_GovernanceErrorCodes *GovernanceErrorCodesTransactorSession) GOVERNANCEONLYFACTORYALLOWED() (*types.Transaction, error) {
+	return _GovernanceErrorCodes.Contract.GOVERNANCEONLYFACTORYALLOWED(&_GovernanceErrorCodes.TransactOpts)
 }

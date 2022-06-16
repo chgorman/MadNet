@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,41 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// BClaimsParserLibraryBClaims is an auto generated low-level Go binding around an user-defined struct.
-type BClaimsParserLibraryBClaims struct {
-	ChainId    uint32
-	Height     uint32
-	TxCount    uint32
-	PrevBlock  [32]byte
-	TxRoot     [32]byte
-	StateRoot  [32]byte
-	HeaderRoot [32]byte
-}
-
-// Snapshot is an auto generated low-level Go binding around an user-defined struct.
-type Snapshot struct {
-	CommittedAt *big.Int
-	BlockClaims BClaimsParserLibraryBClaims
-}
-
-// SnapshotsMetaData contains all meta data concerning the Snapshots contract.
-var SnapshotsMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"chainID_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"epochLength_\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"validator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"isSafeToProceedConsensus\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"signatureRaw\",\"type\":\"bytes\"}],\"name\":\"SnapshotTaken\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"getAliceNetHeightFromLatestSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getAliceNetHeightFromSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBlockClaimsFromLatestSnapshot\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"chainId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"height\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"txCount\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"prevBlock\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"headerRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structBClaimsParserLibrary.BClaims\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getBlockClaimsFromSnapshot\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"chainId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"height\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"txCount\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"prevBlock\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"headerRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structBClaimsParserLibrary.BClaims\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getChainId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getChainIdFromLatestSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getChainIdFromSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getCommittedHeightFromLatestSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getCommittedHeightFromSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getEpoch\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"}],\"name\":\"getEpochFromHeight\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getEpochLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLatestSnapshot\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"committedAt\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint32\",\"name\":\"chainId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"height\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"txCount\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"prevBlock\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"headerRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structBClaimsParserLibrary.BClaims\",\"name\":\"blockClaims\",\"type\":\"tuple\"}],\"internalType\":\"structSnapshot\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMinimumIntervalBetweenSnapshots\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getSnapshot\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"committedAt\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint32\",\"name\":\"chainId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"height\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"txCount\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"prevBlock\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"headerRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structBClaimsParserLibrary.BClaims\",\"name\":\"blockClaims\",\"type\":\"tuple\"}],\"internalType\":\"structSnapshot\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSnapshotDesperationDelay\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSnapshotDesperationFactor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"desperationDelay_\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"desperationFactor_\",\"type\":\"uint32\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"numValidators\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"myIdx\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"blocksSinceDesperation\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"blsig\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"desperationFactor\",\"type\":\"uint256\"}],\"name\":\"mayValidatorSnapshot\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes[]\",\"name\":\"groupSignature_\",\"type\":\"bytes[]\"},{\"internalType\":\"bytes[]\",\"name\":\"bClaims_\",\"type\":\"bytes[]\"}],\"name\":\"migrateSnapshots\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"minimumIntervalBetweenSnapshots_\",\"type\":\"uint32\"}],\"name\":\"setMinimumIntervalBetweenSnapshots\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"desperationDelay_\",\"type\":\"uint32\"}],\"name\":\"setSnapshotDesperationDelay\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"desperationFactor_\",\"type\":\"uint32\"}],\"name\":\"setSnapshotDesperationFactor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"groupSignature_\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"bClaims_\",\"type\":\"bytes\"}],\"name\":\"snapshot\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-}
-
 // SnapshotsABI is the input ABI used to generate the binding from.
-// Deprecated: Use SnapshotsMetaData.ABI instead.
-var SnapshotsABI = SnapshotsMetaData.ABI
+const SnapshotsABI = "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"chainID_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"epochLength_\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"validator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"isSafeToProceedConsensus\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"signatureRaw\",\"type\":\"bytes\"}],\"name\":\"SnapshotTaken\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"getAliceNetHeightFromLatestSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getAliceNetHeightFromSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBlockClaimsFromLatestSnapshot\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"chainId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"height\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"txCount\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"prevBlock\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"headerRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structBClaimsParserLibrary.BClaims\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getBlockClaimsFromSnapshot\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"chainId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"height\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"txCount\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"prevBlock\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"headerRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structBClaimsParserLibrary.BClaims\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getChainId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getChainIdFromLatestSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getChainIdFromSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getCommittedHeightFromLatestSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getCommittedHeightFromSnapshot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getEpoch\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"height\",\"type\":\"uint256\"}],\"name\":\"getEpochFromHeight\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getEpochLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLatestSnapshot\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"committedAt\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint32\",\"name\":\"chainId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"height\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"txCount\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"prevBlock\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"headerRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structBClaimsParserLibrary.BClaims\",\"name\":\"blockClaims\",\"type\":\"tuple\"}],\"internalType\":\"structSnapshot\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMinimumIntervalBetweenSnapshots\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"}],\"name\":\"getSnapshot\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"committedAt\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint32\",\"name\":\"chainId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"height\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"txCount\",\"type\":\"uint32\"},{\"internalType\":\"bytes32\",\"name\":\"prevBlock\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"txRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"stateRoot\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"headerRoot\",\"type\":\"bytes32\"}],\"internalType\":\"structBClaimsParserLibrary.BClaims\",\"name\":\"blockClaims\",\"type\":\"tuple\"}],\"internalType\":\"structSnapshot\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSnapshotDesperationDelay\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSnapshotDesperationFactor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"desperationDelay_\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"desperationFactor_\",\"type\":\"uint32\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"numValidators\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"myIdx\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"blocksSinceDesperation\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"blsig\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"desperationFactor\",\"type\":\"uint256\"}],\"name\":\"mayValidatorSnapshot\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes[]\",\"name\":\"groupSignature_\",\"type\":\"bytes[]\"},{\"internalType\":\"bytes[]\",\"name\":\"bClaims_\",\"type\":\"bytes[]\"}],\"name\":\"migrateSnapshots\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"minimumIntervalBetweenSnapshots_\",\"type\":\"uint32\"}],\"name\":\"setMinimumIntervalBetweenSnapshots\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"desperationDelay_\",\"type\":\"uint32\"}],\"name\":\"setSnapshotDesperationDelay\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"desperationFactor_\",\"type\":\"uint32\"}],\"name\":\"setSnapshotDesperationFactor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"groupSignature_\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"bClaims_\",\"type\":\"bytes\"}],\"name\":\"snapshot\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // Snapshots is an auto generated Go binding around an Ethereum contract.
 type Snapshots struct {
@@ -162,7 +138,7 @@ func bindSnapshots(address common.Address, caller bind.ContractCaller, transacto
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Snapshots *SnapshotsRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_Snapshots *SnapshotsRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _Snapshots.Contract.SnapshotsCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -181,7 +157,7 @@ func (_Snapshots *SnapshotsRaw) Transact(opts *bind.TransactOpts, method string,
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Snapshots *SnapshotsCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_Snapshots *SnapshotsCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _Snapshots.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -196,593 +172,399 @@ func (_Snapshots *SnapshotsTransactorRaw) Transact(opts *bind.TransactOpts, meth
 	return _Snapshots.Contract.contract.Transact(opts, method, params...)
 }
 
-// GetAliceNetHeightFromLatestSnapshot is a free data retrieval call binding the contract method 0xff07fc0e.
-//
-// Solidity: function getAliceNetHeightFromLatestSnapshot() view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetAliceNetHeightFromLatestSnapshot(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getAliceNetHeightFromLatestSnapshot")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// BClaimsParserLibraryBClaims is an auto generated low-level Go binding around an user-defined struct.
+type BClaimsParserLibraryBClaims struct {
+	ChainId    uint32
+	Height     uint32
+	TxCount    uint32
+	PrevBlock  [32]byte
+	TxRoot     [32]byte
+	StateRoot  [32]byte
+	HeaderRoot [32]byte
 }
 
-// GetAliceNetHeightFromLatestSnapshot is a free data retrieval call binding the contract method 0xff07fc0e.
-//
-// Solidity: function getAliceNetHeightFromLatestSnapshot() view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetAliceNetHeightFromLatestSnapshot() (*big.Int, error) {
-	return _Snapshots.Contract.GetAliceNetHeightFromLatestSnapshot(&_Snapshots.CallOpts)
+// Snapshot is an auto generated low-level Go binding around an user-defined struct.
+type Snapshot struct {
+	CommittedAt *big.Int
+	BlockClaims BClaimsParserLibraryBClaims
 }
 
-// GetAliceNetHeightFromLatestSnapshot is a free data retrieval call binding the contract method 0xff07fc0e.
+// GetAliceNetHeightFromLatestSnapshot is a paid mutator transaction binding the contract method 0xff07fc0e.
 //
-// Solidity: function getAliceNetHeightFromLatestSnapshot() view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetAliceNetHeightFromLatestSnapshot() (*big.Int, error) {
-	return _Snapshots.Contract.GetAliceNetHeightFromLatestSnapshot(&_Snapshots.CallOpts)
+// Solidity: function getAliceNetHeightFromLatestSnapshot() returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetAliceNetHeightFromLatestSnapshot(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getAliceNetHeightFromLatestSnapshot")
 }
 
-// GetAliceNetHeightFromSnapshot is a free data retrieval call binding the contract method 0xc5e8fde1.
+// GetAliceNetHeightFromLatestSnapshot is a paid mutator transaction binding the contract method 0xff07fc0e.
 //
-// Solidity: function getAliceNetHeightFromSnapshot(uint256 epoch_) view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetAliceNetHeightFromSnapshot(opts *bind.CallOpts, epoch_ *big.Int) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getAliceNetHeightFromSnapshot", epoch_)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getAliceNetHeightFromLatestSnapshot() returns(uint256)
+func (_Snapshots *SnapshotsSession) GetAliceNetHeightFromLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetAliceNetHeightFromLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetAliceNetHeightFromSnapshot is a free data retrieval call binding the contract method 0xc5e8fde1.
+// GetAliceNetHeightFromLatestSnapshot is a paid mutator transaction binding the contract method 0xff07fc0e.
 //
-// Solidity: function getAliceNetHeightFromSnapshot(uint256 epoch_) view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetAliceNetHeightFromSnapshot(epoch_ *big.Int) (*big.Int, error) {
-	return _Snapshots.Contract.GetAliceNetHeightFromSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getAliceNetHeightFromLatestSnapshot() returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetAliceNetHeightFromLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetAliceNetHeightFromLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetAliceNetHeightFromSnapshot is a free data retrieval call binding the contract method 0xc5e8fde1.
+// GetAliceNetHeightFromSnapshot is a paid mutator transaction binding the contract method 0xc5e8fde1.
 //
-// Solidity: function getAliceNetHeightFromSnapshot(uint256 epoch_) view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetAliceNetHeightFromSnapshot(epoch_ *big.Int) (*big.Int, error) {
-	return _Snapshots.Contract.GetAliceNetHeightFromSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getAliceNetHeightFromSnapshot(uint256 epoch_) returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetAliceNetHeightFromSnapshot(opts *bind.TransactOpts, epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getAliceNetHeightFromSnapshot", epoch_)
 }
 
-// GetBlockClaimsFromLatestSnapshot is a free data retrieval call binding the contract method 0xc2ea6603.
+// GetAliceNetHeightFromSnapshot is a paid mutator transaction binding the contract method 0xc5e8fde1.
 //
-// Solidity: function getBlockClaimsFromLatestSnapshot() view returns((uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32))
-func (_Snapshots *SnapshotsCaller) GetBlockClaimsFromLatestSnapshot(opts *bind.CallOpts) (BClaimsParserLibraryBClaims, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getBlockClaimsFromLatestSnapshot")
-
-	if err != nil {
-		return *new(BClaimsParserLibraryBClaims), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(BClaimsParserLibraryBClaims)).(*BClaimsParserLibraryBClaims)
-
-	return out0, err
-
+// Solidity: function getAliceNetHeightFromSnapshot(uint256 epoch_) returns(uint256)
+func (_Snapshots *SnapshotsSession) GetAliceNetHeightFromSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetAliceNetHeightFromSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetBlockClaimsFromLatestSnapshot is a free data retrieval call binding the contract method 0xc2ea6603.
+// GetAliceNetHeightFromSnapshot is a paid mutator transaction binding the contract method 0xc5e8fde1.
 //
-// Solidity: function getBlockClaimsFromLatestSnapshot() view returns((uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32))
-func (_Snapshots *SnapshotsSession) GetBlockClaimsFromLatestSnapshot() (BClaimsParserLibraryBClaims, error) {
-	return _Snapshots.Contract.GetBlockClaimsFromLatestSnapshot(&_Snapshots.CallOpts)
+// Solidity: function getAliceNetHeightFromSnapshot(uint256 epoch_) returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetAliceNetHeightFromSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetAliceNetHeightFromSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetBlockClaimsFromLatestSnapshot is a free data retrieval call binding the contract method 0xc2ea6603.
+// GetBlockClaimsFromLatestSnapshot is a paid mutator transaction binding the contract method 0xc2ea6603.
 //
-// Solidity: function getBlockClaimsFromLatestSnapshot() view returns((uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32))
-func (_Snapshots *SnapshotsCallerSession) GetBlockClaimsFromLatestSnapshot() (BClaimsParserLibraryBClaims, error) {
-	return _Snapshots.Contract.GetBlockClaimsFromLatestSnapshot(&_Snapshots.CallOpts)
+// Solidity: function getBlockClaimsFromLatestSnapshot() returns(BClaimsParserLibraryBClaims)
+func (_Snapshots *SnapshotsTransactor) GetBlockClaimsFromLatestSnapshot(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getBlockClaimsFromLatestSnapshot")
 }
 
-// GetBlockClaimsFromSnapshot is a free data retrieval call binding the contract method 0x45dfc599.
+// GetBlockClaimsFromLatestSnapshot is a paid mutator transaction binding the contract method 0xc2ea6603.
 //
-// Solidity: function getBlockClaimsFromSnapshot(uint256 epoch_) view returns((uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32))
-func (_Snapshots *SnapshotsCaller) GetBlockClaimsFromSnapshot(opts *bind.CallOpts, epoch_ *big.Int) (BClaimsParserLibraryBClaims, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getBlockClaimsFromSnapshot", epoch_)
-
-	if err != nil {
-		return *new(BClaimsParserLibraryBClaims), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(BClaimsParserLibraryBClaims)).(*BClaimsParserLibraryBClaims)
-
-	return out0, err
-
+// Solidity: function getBlockClaimsFromLatestSnapshot() returns(BClaimsParserLibraryBClaims)
+func (_Snapshots *SnapshotsSession) GetBlockClaimsFromLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetBlockClaimsFromLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetBlockClaimsFromSnapshot is a free data retrieval call binding the contract method 0x45dfc599.
+// GetBlockClaimsFromLatestSnapshot is a paid mutator transaction binding the contract method 0xc2ea6603.
 //
-// Solidity: function getBlockClaimsFromSnapshot(uint256 epoch_) view returns((uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32))
-func (_Snapshots *SnapshotsSession) GetBlockClaimsFromSnapshot(epoch_ *big.Int) (BClaimsParserLibraryBClaims, error) {
-	return _Snapshots.Contract.GetBlockClaimsFromSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getBlockClaimsFromLatestSnapshot() returns(BClaimsParserLibraryBClaims)
+func (_Snapshots *SnapshotsTransactorSession) GetBlockClaimsFromLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetBlockClaimsFromLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetBlockClaimsFromSnapshot is a free data retrieval call binding the contract method 0x45dfc599.
+// GetBlockClaimsFromSnapshot is a paid mutator transaction binding the contract method 0x45dfc599.
 //
-// Solidity: function getBlockClaimsFromSnapshot(uint256 epoch_) view returns((uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32))
-func (_Snapshots *SnapshotsCallerSession) GetBlockClaimsFromSnapshot(epoch_ *big.Int) (BClaimsParserLibraryBClaims, error) {
-	return _Snapshots.Contract.GetBlockClaimsFromSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getBlockClaimsFromSnapshot(uint256 epoch_) returns(BClaimsParserLibraryBClaims)
+func (_Snapshots *SnapshotsTransactor) GetBlockClaimsFromSnapshot(opts *bind.TransactOpts, epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getBlockClaimsFromSnapshot", epoch_)
 }
 
-// GetChainId is a free data retrieval call binding the contract method 0x3408e470.
+// GetBlockClaimsFromSnapshot is a paid mutator transaction binding the contract method 0x45dfc599.
 //
-// Solidity: function getChainId() view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetChainId(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getChainId")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getBlockClaimsFromSnapshot(uint256 epoch_) returns(BClaimsParserLibraryBClaims)
+func (_Snapshots *SnapshotsSession) GetBlockClaimsFromSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetBlockClaimsFromSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetChainId is a free data retrieval call binding the contract method 0x3408e470.
+// GetBlockClaimsFromSnapshot is a paid mutator transaction binding the contract method 0x45dfc599.
 //
-// Solidity: function getChainId() view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetChainId() (*big.Int, error) {
-	return _Snapshots.Contract.GetChainId(&_Snapshots.CallOpts)
+// Solidity: function getBlockClaimsFromSnapshot(uint256 epoch_) returns(BClaimsParserLibraryBClaims)
+func (_Snapshots *SnapshotsTransactorSession) GetBlockClaimsFromSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetBlockClaimsFromSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetChainId is a free data retrieval call binding the contract method 0x3408e470.
+// GetChainId is a paid mutator transaction binding the contract method 0x3408e470.
 //
-// Solidity: function getChainId() view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetChainId() (*big.Int, error) {
-	return _Snapshots.Contract.GetChainId(&_Snapshots.CallOpts)
+// Solidity: function getChainId() returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetChainId(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getChainId")
 }
 
-// GetChainIdFromLatestSnapshot is a free data retrieval call binding the contract method 0xd9c11657.
+// GetChainId is a paid mutator transaction binding the contract method 0x3408e470.
 //
-// Solidity: function getChainIdFromLatestSnapshot() view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetChainIdFromLatestSnapshot(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getChainIdFromLatestSnapshot")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getChainId() returns(uint256)
+func (_Snapshots *SnapshotsSession) GetChainId() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetChainId(&_Snapshots.TransactOpts)
 }
 
-// GetChainIdFromLatestSnapshot is a free data retrieval call binding the contract method 0xd9c11657.
+// GetChainId is a paid mutator transaction binding the contract method 0x3408e470.
 //
-// Solidity: function getChainIdFromLatestSnapshot() view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetChainIdFromLatestSnapshot() (*big.Int, error) {
-	return _Snapshots.Contract.GetChainIdFromLatestSnapshot(&_Snapshots.CallOpts)
+// Solidity: function getChainId() returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetChainId() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetChainId(&_Snapshots.TransactOpts)
 }
 
-// GetChainIdFromLatestSnapshot is a free data retrieval call binding the contract method 0xd9c11657.
+// GetChainIdFromLatestSnapshot is a paid mutator transaction binding the contract method 0xd9c11657.
 //
-// Solidity: function getChainIdFromLatestSnapshot() view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetChainIdFromLatestSnapshot() (*big.Int, error) {
-	return _Snapshots.Contract.GetChainIdFromLatestSnapshot(&_Snapshots.CallOpts)
+// Solidity: function getChainIdFromLatestSnapshot() returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetChainIdFromLatestSnapshot(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getChainIdFromLatestSnapshot")
 }
 
-// GetChainIdFromSnapshot is a free data retrieval call binding the contract method 0x19f74669.
+// GetChainIdFromLatestSnapshot is a paid mutator transaction binding the contract method 0xd9c11657.
 //
-// Solidity: function getChainIdFromSnapshot(uint256 epoch_) view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetChainIdFromSnapshot(opts *bind.CallOpts, epoch_ *big.Int) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getChainIdFromSnapshot", epoch_)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getChainIdFromLatestSnapshot() returns(uint256)
+func (_Snapshots *SnapshotsSession) GetChainIdFromLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetChainIdFromLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetChainIdFromSnapshot is a free data retrieval call binding the contract method 0x19f74669.
+// GetChainIdFromLatestSnapshot is a paid mutator transaction binding the contract method 0xd9c11657.
 //
-// Solidity: function getChainIdFromSnapshot(uint256 epoch_) view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetChainIdFromSnapshot(epoch_ *big.Int) (*big.Int, error) {
-	return _Snapshots.Contract.GetChainIdFromSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getChainIdFromLatestSnapshot() returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetChainIdFromLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetChainIdFromLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetChainIdFromSnapshot is a free data retrieval call binding the contract method 0x19f74669.
+// GetChainIdFromSnapshot is a paid mutator transaction binding the contract method 0x19f74669.
 //
-// Solidity: function getChainIdFromSnapshot(uint256 epoch_) view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetChainIdFromSnapshot(epoch_ *big.Int) (*big.Int, error) {
-	return _Snapshots.Contract.GetChainIdFromSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getChainIdFromSnapshot(uint256 epoch_) returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetChainIdFromSnapshot(opts *bind.TransactOpts, epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getChainIdFromSnapshot", epoch_)
 }
 
-// GetCommittedHeightFromLatestSnapshot is a free data retrieval call binding the contract method 0x026c2b7e.
+// GetChainIdFromSnapshot is a paid mutator transaction binding the contract method 0x19f74669.
 //
-// Solidity: function getCommittedHeightFromLatestSnapshot() view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetCommittedHeightFromLatestSnapshot(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getCommittedHeightFromLatestSnapshot")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getChainIdFromSnapshot(uint256 epoch_) returns(uint256)
+func (_Snapshots *SnapshotsSession) GetChainIdFromSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetChainIdFromSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetCommittedHeightFromLatestSnapshot is a free data retrieval call binding the contract method 0x026c2b7e.
+// GetChainIdFromSnapshot is a paid mutator transaction binding the contract method 0x19f74669.
 //
-// Solidity: function getCommittedHeightFromLatestSnapshot() view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetCommittedHeightFromLatestSnapshot() (*big.Int, error) {
-	return _Snapshots.Contract.GetCommittedHeightFromLatestSnapshot(&_Snapshots.CallOpts)
+// Solidity: function getChainIdFromSnapshot(uint256 epoch_) returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetChainIdFromSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetChainIdFromSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetCommittedHeightFromLatestSnapshot is a free data retrieval call binding the contract method 0x026c2b7e.
+// GetCommittedHeightFromLatestSnapshot is a paid mutator transaction binding the contract method 0x026c2b7e.
 //
-// Solidity: function getCommittedHeightFromLatestSnapshot() view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetCommittedHeightFromLatestSnapshot() (*big.Int, error) {
-	return _Snapshots.Contract.GetCommittedHeightFromLatestSnapshot(&_Snapshots.CallOpts)
+// Solidity: function getCommittedHeightFromLatestSnapshot() returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetCommittedHeightFromLatestSnapshot(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getCommittedHeightFromLatestSnapshot")
 }
 
-// GetCommittedHeightFromSnapshot is a free data retrieval call binding the contract method 0xe18c697a.
+// GetCommittedHeightFromLatestSnapshot is a paid mutator transaction binding the contract method 0x026c2b7e.
 //
-// Solidity: function getCommittedHeightFromSnapshot(uint256 epoch_) view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetCommittedHeightFromSnapshot(opts *bind.CallOpts, epoch_ *big.Int) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getCommittedHeightFromSnapshot", epoch_)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getCommittedHeightFromLatestSnapshot() returns(uint256)
+func (_Snapshots *SnapshotsSession) GetCommittedHeightFromLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetCommittedHeightFromLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetCommittedHeightFromSnapshot is a free data retrieval call binding the contract method 0xe18c697a.
+// GetCommittedHeightFromLatestSnapshot is a paid mutator transaction binding the contract method 0x026c2b7e.
 //
-// Solidity: function getCommittedHeightFromSnapshot(uint256 epoch_) view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetCommittedHeightFromSnapshot(epoch_ *big.Int) (*big.Int, error) {
-	return _Snapshots.Contract.GetCommittedHeightFromSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getCommittedHeightFromLatestSnapshot() returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetCommittedHeightFromLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetCommittedHeightFromLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetCommittedHeightFromSnapshot is a free data retrieval call binding the contract method 0xe18c697a.
+// GetCommittedHeightFromSnapshot is a paid mutator transaction binding the contract method 0xe18c697a.
 //
-// Solidity: function getCommittedHeightFromSnapshot(uint256 epoch_) view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetCommittedHeightFromSnapshot(epoch_ *big.Int) (*big.Int, error) {
-	return _Snapshots.Contract.GetCommittedHeightFromSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getCommittedHeightFromSnapshot(uint256 epoch_) returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetCommittedHeightFromSnapshot(opts *bind.TransactOpts, epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getCommittedHeightFromSnapshot", epoch_)
 }
 
-// GetEpoch is a free data retrieval call binding the contract method 0x757991a8.
+// GetCommittedHeightFromSnapshot is a paid mutator transaction binding the contract method 0xe18c697a.
 //
-// Solidity: function getEpoch() view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetEpoch(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getEpoch")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getCommittedHeightFromSnapshot(uint256 epoch_) returns(uint256)
+func (_Snapshots *SnapshotsSession) GetCommittedHeightFromSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetCommittedHeightFromSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetEpoch is a free data retrieval call binding the contract method 0x757991a8.
+// GetCommittedHeightFromSnapshot is a paid mutator transaction binding the contract method 0xe18c697a.
 //
-// Solidity: function getEpoch() view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetEpoch() (*big.Int, error) {
-	return _Snapshots.Contract.GetEpoch(&_Snapshots.CallOpts)
+// Solidity: function getCommittedHeightFromSnapshot(uint256 epoch_) returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetCommittedHeightFromSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetCommittedHeightFromSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetEpoch is a free data retrieval call binding the contract method 0x757991a8.
+// GetEpoch is a paid mutator transaction binding the contract method 0x757991a8.
 //
-// Solidity: function getEpoch() view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetEpoch() (*big.Int, error) {
-	return _Snapshots.Contract.GetEpoch(&_Snapshots.CallOpts)
+// Solidity: function getEpoch() returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetEpoch(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getEpoch")
 }
 
-// GetEpochFromHeight is a free data retrieval call binding the contract method 0x2eee30ce.
+// GetEpoch is a paid mutator transaction binding the contract method 0x757991a8.
 //
-// Solidity: function getEpochFromHeight(uint256 height) view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetEpochFromHeight(opts *bind.CallOpts, height *big.Int) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getEpochFromHeight", height)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getEpoch() returns(uint256)
+func (_Snapshots *SnapshotsSession) GetEpoch() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetEpoch(&_Snapshots.TransactOpts)
 }
 
-// GetEpochFromHeight is a free data retrieval call binding the contract method 0x2eee30ce.
+// GetEpoch is a paid mutator transaction binding the contract method 0x757991a8.
 //
-// Solidity: function getEpochFromHeight(uint256 height) view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetEpochFromHeight(height *big.Int) (*big.Int, error) {
-	return _Snapshots.Contract.GetEpochFromHeight(&_Snapshots.CallOpts, height)
+// Solidity: function getEpoch() returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetEpoch() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetEpoch(&_Snapshots.TransactOpts)
 }
 
-// GetEpochFromHeight is a free data retrieval call binding the contract method 0x2eee30ce.
+// GetEpochFromHeight is a paid mutator transaction binding the contract method 0x2eee30ce.
 //
-// Solidity: function getEpochFromHeight(uint256 height) view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetEpochFromHeight(height *big.Int) (*big.Int, error) {
-	return _Snapshots.Contract.GetEpochFromHeight(&_Snapshots.CallOpts, height)
+// Solidity: function getEpochFromHeight(uint256 height) returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetEpochFromHeight(opts *bind.TransactOpts, height *big.Int) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getEpochFromHeight", height)
 }
 
-// GetEpochLength is a free data retrieval call binding the contract method 0xcfe8a73b.
+// GetEpochFromHeight is a paid mutator transaction binding the contract method 0x2eee30ce.
 //
-// Solidity: function getEpochLength() view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetEpochLength(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getEpochLength")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getEpochFromHeight(uint256 height) returns(uint256)
+func (_Snapshots *SnapshotsSession) GetEpochFromHeight(height *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetEpochFromHeight(&_Snapshots.TransactOpts, height)
 }
 
-// GetEpochLength is a free data retrieval call binding the contract method 0xcfe8a73b.
+// GetEpochFromHeight is a paid mutator transaction binding the contract method 0x2eee30ce.
 //
-// Solidity: function getEpochLength() view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetEpochLength() (*big.Int, error) {
-	return _Snapshots.Contract.GetEpochLength(&_Snapshots.CallOpts)
+// Solidity: function getEpochFromHeight(uint256 height) returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetEpochFromHeight(height *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetEpochFromHeight(&_Snapshots.TransactOpts, height)
 }
 
-// GetEpochLength is a free data retrieval call binding the contract method 0xcfe8a73b.
+// GetEpochLength is a paid mutator transaction binding the contract method 0xcfe8a73b.
 //
-// Solidity: function getEpochLength() view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetEpochLength() (*big.Int, error) {
-	return _Snapshots.Contract.GetEpochLength(&_Snapshots.CallOpts)
+// Solidity: function getEpochLength() returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetEpochLength(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getEpochLength")
 }
 
-// GetLatestSnapshot is a free data retrieval call binding the contract method 0xd518f243.
+// GetEpochLength is a paid mutator transaction binding the contract method 0xcfe8a73b.
 //
-// Solidity: function getLatestSnapshot() view returns((uint256,(uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32)))
-func (_Snapshots *SnapshotsCaller) GetLatestSnapshot(opts *bind.CallOpts) (Snapshot, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getLatestSnapshot")
-
-	if err != nil {
-		return *new(Snapshot), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(Snapshot)).(*Snapshot)
-
-	return out0, err
-
+// Solidity: function getEpochLength() returns(uint256)
+func (_Snapshots *SnapshotsSession) GetEpochLength() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetEpochLength(&_Snapshots.TransactOpts)
 }
 
-// GetLatestSnapshot is a free data retrieval call binding the contract method 0xd518f243.
+// GetEpochLength is a paid mutator transaction binding the contract method 0xcfe8a73b.
 //
-// Solidity: function getLatestSnapshot() view returns((uint256,(uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32)))
-func (_Snapshots *SnapshotsSession) GetLatestSnapshot() (Snapshot, error) {
-	return _Snapshots.Contract.GetLatestSnapshot(&_Snapshots.CallOpts)
+// Solidity: function getEpochLength() returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetEpochLength() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetEpochLength(&_Snapshots.TransactOpts)
 }
 
-// GetLatestSnapshot is a free data retrieval call binding the contract method 0xd518f243.
+// GetLatestSnapshot is a paid mutator transaction binding the contract method 0xd518f243.
 //
-// Solidity: function getLatestSnapshot() view returns((uint256,(uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32)))
-func (_Snapshots *SnapshotsCallerSession) GetLatestSnapshot() (Snapshot, error) {
-	return _Snapshots.Contract.GetLatestSnapshot(&_Snapshots.CallOpts)
+// Solidity: function getLatestSnapshot() returns(Snapshot)
+func (_Snapshots *SnapshotsTransactor) GetLatestSnapshot(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getLatestSnapshot")
 }
 
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
+// GetLatestSnapshot is a paid mutator transaction binding the contract method 0xd518f243.
 //
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_Snapshots *SnapshotsCaller) GetMetamorphicContractAddress(opts *bind.CallOpts, _salt [32]byte, _factory common.Address) (common.Address, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getMetamorphicContractAddress", _salt, _factory)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
+// Solidity: function getLatestSnapshot() returns(Snapshot)
+func (_Snapshots *SnapshotsSession) GetLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
+// GetLatestSnapshot is a paid mutator transaction binding the contract method 0xd518f243.
 //
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_Snapshots *SnapshotsSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _Snapshots.Contract.GetMetamorphicContractAddress(&_Snapshots.CallOpts, _salt, _factory)
+// Solidity: function getLatestSnapshot() returns(Snapshot)
+func (_Snapshots *SnapshotsTransactorSession) GetLatestSnapshot() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetLatestSnapshot(&_Snapshots.TransactOpts)
 }
 
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
 //
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_Snapshots *SnapshotsCallerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _Snapshots.Contract.GetMetamorphicContractAddress(&_Snapshots.CallOpts, _salt, _factory)
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_Snapshots *SnapshotsTransactor) GetMetamorphicContractAddress(opts *bind.TransactOpts, _salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getMetamorphicContractAddress", _salt, _factory)
 }
 
-// GetMinimumIntervalBetweenSnapshots is a free data retrieval call binding the contract method 0x42438d7b.
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
 //
-// Solidity: function getMinimumIntervalBetweenSnapshots() view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetMinimumIntervalBetweenSnapshots(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getMinimumIntervalBetweenSnapshots")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_Snapshots *SnapshotsSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetMetamorphicContractAddress(&_Snapshots.TransactOpts, _salt, _factory)
 }
 
-// GetMinimumIntervalBetweenSnapshots is a free data retrieval call binding the contract method 0x42438d7b.
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
 //
-// Solidity: function getMinimumIntervalBetweenSnapshots() view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetMinimumIntervalBetweenSnapshots() (*big.Int, error) {
-	return _Snapshots.Contract.GetMinimumIntervalBetweenSnapshots(&_Snapshots.CallOpts)
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_Snapshots *SnapshotsTransactorSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetMetamorphicContractAddress(&_Snapshots.TransactOpts, _salt, _factory)
 }
 
-// GetMinimumIntervalBetweenSnapshots is a free data retrieval call binding the contract method 0x42438d7b.
+// GetMinimumIntervalBetweenSnapshots is a paid mutator transaction binding the contract method 0x42438d7b.
 //
-// Solidity: function getMinimumIntervalBetweenSnapshots() view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetMinimumIntervalBetweenSnapshots() (*big.Int, error) {
-	return _Snapshots.Contract.GetMinimumIntervalBetweenSnapshots(&_Snapshots.CallOpts)
+// Solidity: function getMinimumIntervalBetweenSnapshots() returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetMinimumIntervalBetweenSnapshots(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getMinimumIntervalBetweenSnapshots")
 }
 
-// GetSnapshot is a free data retrieval call binding the contract method 0x76f10ad0.
+// GetMinimumIntervalBetweenSnapshots is a paid mutator transaction binding the contract method 0x42438d7b.
 //
-// Solidity: function getSnapshot(uint256 epoch_) view returns((uint256,(uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32)))
-func (_Snapshots *SnapshotsCaller) GetSnapshot(opts *bind.CallOpts, epoch_ *big.Int) (Snapshot, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getSnapshot", epoch_)
-
-	if err != nil {
-		return *new(Snapshot), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(Snapshot)).(*Snapshot)
-
-	return out0, err
-
+// Solidity: function getMinimumIntervalBetweenSnapshots() returns(uint256)
+func (_Snapshots *SnapshotsSession) GetMinimumIntervalBetweenSnapshots() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetMinimumIntervalBetweenSnapshots(&_Snapshots.TransactOpts)
 }
 
-// GetSnapshot is a free data retrieval call binding the contract method 0x76f10ad0.
+// GetMinimumIntervalBetweenSnapshots is a paid mutator transaction binding the contract method 0x42438d7b.
 //
-// Solidity: function getSnapshot(uint256 epoch_) view returns((uint256,(uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32)))
-func (_Snapshots *SnapshotsSession) GetSnapshot(epoch_ *big.Int) (Snapshot, error) {
-	return _Snapshots.Contract.GetSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getMinimumIntervalBetweenSnapshots() returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetMinimumIntervalBetweenSnapshots() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetMinimumIntervalBetweenSnapshots(&_Snapshots.TransactOpts)
 }
 
-// GetSnapshot is a free data retrieval call binding the contract method 0x76f10ad0.
+// GetSnapshot is a paid mutator transaction binding the contract method 0x76f10ad0.
 //
-// Solidity: function getSnapshot(uint256 epoch_) view returns((uint256,(uint32,uint32,uint32,bytes32,bytes32,bytes32,bytes32)))
-func (_Snapshots *SnapshotsCallerSession) GetSnapshot(epoch_ *big.Int) (Snapshot, error) {
-	return _Snapshots.Contract.GetSnapshot(&_Snapshots.CallOpts, epoch_)
+// Solidity: function getSnapshot(uint256 epoch_) returns(Snapshot)
+func (_Snapshots *SnapshotsTransactor) GetSnapshot(opts *bind.TransactOpts, epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getSnapshot", epoch_)
 }
 
-// GetSnapshotDesperationDelay is a free data retrieval call binding the contract method 0xd17fcc56.
+// GetSnapshot is a paid mutator transaction binding the contract method 0x76f10ad0.
 //
-// Solidity: function getSnapshotDesperationDelay() view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetSnapshotDesperationDelay(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getSnapshotDesperationDelay")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getSnapshot(uint256 epoch_) returns(Snapshot)
+func (_Snapshots *SnapshotsSession) GetSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetSnapshotDesperationDelay is a free data retrieval call binding the contract method 0xd17fcc56.
+// GetSnapshot is a paid mutator transaction binding the contract method 0x76f10ad0.
 //
-// Solidity: function getSnapshotDesperationDelay() view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetSnapshotDesperationDelay() (*big.Int, error) {
-	return _Snapshots.Contract.GetSnapshotDesperationDelay(&_Snapshots.CallOpts)
+// Solidity: function getSnapshot(uint256 epoch_) returns(Snapshot)
+func (_Snapshots *SnapshotsTransactorSession) GetSnapshot(epoch_ *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.GetSnapshot(&_Snapshots.TransactOpts, epoch_)
 }
 
-// GetSnapshotDesperationDelay is a free data retrieval call binding the contract method 0xd17fcc56.
+// GetSnapshotDesperationDelay is a paid mutator transaction binding the contract method 0xd17fcc56.
 //
-// Solidity: function getSnapshotDesperationDelay() view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetSnapshotDesperationDelay() (*big.Int, error) {
-	return _Snapshots.Contract.GetSnapshotDesperationDelay(&_Snapshots.CallOpts)
+// Solidity: function getSnapshotDesperationDelay() returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetSnapshotDesperationDelay(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getSnapshotDesperationDelay")
 }
 
-// GetSnapshotDesperationFactor is a free data retrieval call binding the contract method 0x7cc4cce6.
+// GetSnapshotDesperationDelay is a paid mutator transaction binding the contract method 0xd17fcc56.
 //
-// Solidity: function getSnapshotDesperationFactor() view returns(uint256)
-func (_Snapshots *SnapshotsCaller) GetSnapshotDesperationFactor(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "getSnapshotDesperationFactor")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
+// Solidity: function getSnapshotDesperationDelay() returns(uint256)
+func (_Snapshots *SnapshotsSession) GetSnapshotDesperationDelay() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetSnapshotDesperationDelay(&_Snapshots.TransactOpts)
 }
 
-// GetSnapshotDesperationFactor is a free data retrieval call binding the contract method 0x7cc4cce6.
+// GetSnapshotDesperationDelay is a paid mutator transaction binding the contract method 0xd17fcc56.
 //
-// Solidity: function getSnapshotDesperationFactor() view returns(uint256)
-func (_Snapshots *SnapshotsSession) GetSnapshotDesperationFactor() (*big.Int, error) {
-	return _Snapshots.Contract.GetSnapshotDesperationFactor(&_Snapshots.CallOpts)
+// Solidity: function getSnapshotDesperationDelay() returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetSnapshotDesperationDelay() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetSnapshotDesperationDelay(&_Snapshots.TransactOpts)
 }
 
-// GetSnapshotDesperationFactor is a free data retrieval call binding the contract method 0x7cc4cce6.
+// GetSnapshotDesperationFactor is a paid mutator transaction binding the contract method 0x7cc4cce6.
 //
-// Solidity: function getSnapshotDesperationFactor() view returns(uint256)
-func (_Snapshots *SnapshotsCallerSession) GetSnapshotDesperationFactor() (*big.Int, error) {
-	return _Snapshots.Contract.GetSnapshotDesperationFactor(&_Snapshots.CallOpts)
+// Solidity: function getSnapshotDesperationFactor() returns(uint256)
+func (_Snapshots *SnapshotsTransactor) GetSnapshotDesperationFactor(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "getSnapshotDesperationFactor")
 }
 
-// MayValidatorSnapshot is a free data retrieval call binding the contract method 0xf45fa246.
+// GetSnapshotDesperationFactor is a paid mutator transaction binding the contract method 0x7cc4cce6.
 //
-// Solidity: function mayValidatorSnapshot(uint256 numValidators, uint256 myIdx, uint256 blocksSinceDesperation, bytes32 blsig, uint256 desperationFactor) pure returns(bool)
-func (_Snapshots *SnapshotsCaller) MayValidatorSnapshot(opts *bind.CallOpts, numValidators *big.Int, myIdx *big.Int, blocksSinceDesperation *big.Int, blsig [32]byte, desperationFactor *big.Int) (bool, error) {
-	var out []interface{}
-	err := _Snapshots.contract.Call(opts, &out, "mayValidatorSnapshot", numValidators, myIdx, blocksSinceDesperation, blsig, desperationFactor)
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
+// Solidity: function getSnapshotDesperationFactor() returns(uint256)
+func (_Snapshots *SnapshotsSession) GetSnapshotDesperationFactor() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetSnapshotDesperationFactor(&_Snapshots.TransactOpts)
 }
 
-// MayValidatorSnapshot is a free data retrieval call binding the contract method 0xf45fa246.
+// GetSnapshotDesperationFactor is a paid mutator transaction binding the contract method 0x7cc4cce6.
 //
-// Solidity: function mayValidatorSnapshot(uint256 numValidators, uint256 myIdx, uint256 blocksSinceDesperation, bytes32 blsig, uint256 desperationFactor) pure returns(bool)
-func (_Snapshots *SnapshotsSession) MayValidatorSnapshot(numValidators *big.Int, myIdx *big.Int, blocksSinceDesperation *big.Int, blsig [32]byte, desperationFactor *big.Int) (bool, error) {
-	return _Snapshots.Contract.MayValidatorSnapshot(&_Snapshots.CallOpts, numValidators, myIdx, blocksSinceDesperation, blsig, desperationFactor)
-}
-
-// MayValidatorSnapshot is a free data retrieval call binding the contract method 0xf45fa246.
-//
-// Solidity: function mayValidatorSnapshot(uint256 numValidators, uint256 myIdx, uint256 blocksSinceDesperation, bytes32 blsig, uint256 desperationFactor) pure returns(bool)
-func (_Snapshots *SnapshotsCallerSession) MayValidatorSnapshot(numValidators *big.Int, myIdx *big.Int, blocksSinceDesperation *big.Int, blsig [32]byte, desperationFactor *big.Int) (bool, error) {
-	return _Snapshots.Contract.MayValidatorSnapshot(&_Snapshots.CallOpts, numValidators, myIdx, blocksSinceDesperation, blsig, desperationFactor)
+// Solidity: function getSnapshotDesperationFactor() returns(uint256)
+func (_Snapshots *SnapshotsTransactorSession) GetSnapshotDesperationFactor() (*types.Transaction, error) {
+	return _Snapshots.Contract.GetSnapshotDesperationFactor(&_Snapshots.TransactOpts)
 }
 
 // Initialize is a paid mutator transaction binding the contract method 0x3ecc0f5e.
@@ -804,6 +586,27 @@ func (_Snapshots *SnapshotsSession) Initialize(desperationDelay_ uint32, despera
 // Solidity: function initialize(uint32 desperationDelay_, uint32 desperationFactor_) returns()
 func (_Snapshots *SnapshotsTransactorSession) Initialize(desperationDelay_ uint32, desperationFactor_ uint32) (*types.Transaction, error) {
 	return _Snapshots.Contract.Initialize(&_Snapshots.TransactOpts, desperationDelay_, desperationFactor_)
+}
+
+// MayValidatorSnapshot is a paid mutator transaction binding the contract method 0xf45fa246.
+//
+// Solidity: function mayValidatorSnapshot(uint256 numValidators, uint256 myIdx, uint256 blocksSinceDesperation, bytes32 blsig, uint256 desperationFactor) returns(bool)
+func (_Snapshots *SnapshotsTransactor) MayValidatorSnapshot(opts *bind.TransactOpts, numValidators *big.Int, myIdx *big.Int, blocksSinceDesperation *big.Int, blsig [32]byte, desperationFactor *big.Int) (*types.Transaction, error) {
+	return _Snapshots.contract.Transact(opts, "mayValidatorSnapshot", numValidators, myIdx, blocksSinceDesperation, blsig, desperationFactor)
+}
+
+// MayValidatorSnapshot is a paid mutator transaction binding the contract method 0xf45fa246.
+//
+// Solidity: function mayValidatorSnapshot(uint256 numValidators, uint256 myIdx, uint256 blocksSinceDesperation, bytes32 blsig, uint256 desperationFactor) returns(bool)
+func (_Snapshots *SnapshotsSession) MayValidatorSnapshot(numValidators *big.Int, myIdx *big.Int, blocksSinceDesperation *big.Int, blsig [32]byte, desperationFactor *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.MayValidatorSnapshot(&_Snapshots.TransactOpts, numValidators, myIdx, blocksSinceDesperation, blsig, desperationFactor)
+}
+
+// MayValidatorSnapshot is a paid mutator transaction binding the contract method 0xf45fa246.
+//
+// Solidity: function mayValidatorSnapshot(uint256 numValidators, uint256 myIdx, uint256 blocksSinceDesperation, bytes32 blsig, uint256 desperationFactor) returns(bool)
+func (_Snapshots *SnapshotsTransactorSession) MayValidatorSnapshot(numValidators *big.Int, myIdx *big.Int, blocksSinceDesperation *big.Int, blsig [32]byte, desperationFactor *big.Int) (*types.Transaction, error) {
+	return _Snapshots.Contract.MayValidatorSnapshot(&_Snapshots.TransactOpts, numValidators, myIdx, blocksSinceDesperation, blsig, desperationFactor)
 }
 
 // MigrateSnapshots is a paid mutator transaction binding the contract method 0xae2728ea.
@@ -1066,6 +869,5 @@ func (_Snapshots *SnapshotsFilterer) ParseSnapshotTaken(log types.Log) (*Snapsho
 	if err := _Snapshots.contract.UnpackLog(event, "SnapshotTaken", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }

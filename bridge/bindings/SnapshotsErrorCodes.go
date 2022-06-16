@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,24 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// SnapshotsErrorCodesMetaData contains all meta data concerning the SnapshotsErrorCodes contract.
-var SnapshotsErrorCodesMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"name\":\"SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_CONSENSUS_RUNNING\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_INCORRECT_BLOCK_HEIGHT\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_INCORRECT_CHAIN_ID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_MIGRATION_NOT_ALLOWED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_ONLY_VALIDATORS_ALLOWED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_SIGNATURE_VERIFICATION_FAILED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_WRONG_MASTER_PUBLIC_KEY\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
-}
-
 // SnapshotsErrorCodesABI is the input ABI used to generate the binding from.
-// Deprecated: Use SnapshotsErrorCodesMetaData.ABI instead.
-var SnapshotsErrorCodesABI = SnapshotsErrorCodesMetaData.ABI
+const SnapshotsErrorCodesABI = "[{\"inputs\":[],\"name\":\"SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_CONSENSUS_RUNNING\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_INCORRECT_BLOCK_HEIGHT\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_INCORRECT_CHAIN_ID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_MIGRATION_NOT_ALLOWED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_ONLY_VALIDATORS_ALLOWED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_SIGNATURE_VERIFICATION_FAILED\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"SNAPSHOT_WRONG_MASTER_PUBLIC_KEY\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // SnapshotsErrorCodes is an auto generated Go binding around an Ethereum contract.
 type SnapshotsErrorCodes struct {
@@ -145,7 +138,7 @@ func bindSnapshotsErrorCodes(address common.Address, caller bind.ContractCaller,
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _SnapshotsErrorCodes.Contract.SnapshotsErrorCodesCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -164,7 +157,7 @@ func (_SnapshotsErrorCodes *SnapshotsErrorCodesRaw) Transact(opts *bind.Transact
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _SnapshotsErrorCodes.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -179,312 +172,212 @@ func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorRaw) Transact(opts *bin
 	return _SnapshotsErrorCodes.Contract.contract.Transact(opts, method, params...)
 }
 
-// SNAPSHOTCALLERNOTETHDKGPARTICIPANT is a free data retrieval call binding the contract method 0xadcb3a44.
+// SNAPSHOTCALLERNOTETHDKGPARTICIPANT is a paid mutator transaction binding the contract method 0xadcb3a44.
 //
-// Solidity: function SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTCALLERNOTETHDKGPARTICIPANT(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTCALLERNOTETHDKGPARTICIPANT(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT")
 }
 
-// SNAPSHOTCALLERNOTETHDKGPARTICIPANT is a free data retrieval call binding the contract method 0xadcb3a44.
+// SNAPSHOTCALLERNOTETHDKGPARTICIPANT is a paid mutator transaction binding the contract method 0xadcb3a44.
 //
-// Solidity: function SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTCALLERNOTETHDKGPARTICIPANT() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTCALLERNOTETHDKGPARTICIPANT(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTCALLERNOTETHDKGPARTICIPANT() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTCALLERNOTETHDKGPARTICIPANT(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTCALLERNOTETHDKGPARTICIPANT is a free data retrieval call binding the contract method 0xadcb3a44.
+// SNAPSHOTCALLERNOTETHDKGPARTICIPANT is a paid mutator transaction binding the contract method 0xadcb3a44.
 //
-// Solidity: function SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTCALLERNOTETHDKGPARTICIPANT() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTCALLERNOTETHDKGPARTICIPANT(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_CALLER_NOT_ETHDKG_PARTICIPANT() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTCALLERNOTETHDKGPARTICIPANT() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTCALLERNOTETHDKGPARTICIPANT(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTCONSENSUSRUNNING is a free data retrieval call binding the contract method 0x8d17de64.
+// SNAPSHOTCONSENSUSRUNNING is a paid mutator transaction binding the contract method 0x8d17de64.
 //
-// Solidity: function SNAPSHOT_CONSENSUS_RUNNING() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTCONSENSUSRUNNING(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_CONSENSUS_RUNNING")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_CONSENSUS_RUNNING() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTCONSENSUSRUNNING(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_CONSENSUS_RUNNING")
 }
 
-// SNAPSHOTCONSENSUSRUNNING is a free data retrieval call binding the contract method 0x8d17de64.
+// SNAPSHOTCONSENSUSRUNNING is a paid mutator transaction binding the contract method 0x8d17de64.
 //
-// Solidity: function SNAPSHOT_CONSENSUS_RUNNING() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTCONSENSUSRUNNING() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTCONSENSUSRUNNING(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_CONSENSUS_RUNNING() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTCONSENSUSRUNNING() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTCONSENSUSRUNNING(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTCONSENSUSRUNNING is a free data retrieval call binding the contract method 0x8d17de64.
+// SNAPSHOTCONSENSUSRUNNING is a paid mutator transaction binding the contract method 0x8d17de64.
 //
-// Solidity: function SNAPSHOT_CONSENSUS_RUNNING() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTCONSENSUSRUNNING() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTCONSENSUSRUNNING(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_CONSENSUS_RUNNING() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTCONSENSUSRUNNING() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTCONSENSUSRUNNING(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTINCORRECTBLOCKHEIGHT is a free data retrieval call binding the contract method 0x0c24555d.
+// SNAPSHOTINCORRECTBLOCKHEIGHT is a paid mutator transaction binding the contract method 0x0c24555d.
 //
-// Solidity: function SNAPSHOT_INCORRECT_BLOCK_HEIGHT() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTINCORRECTBLOCKHEIGHT(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_INCORRECT_BLOCK_HEIGHT")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_INCORRECT_BLOCK_HEIGHT() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTINCORRECTBLOCKHEIGHT(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_INCORRECT_BLOCK_HEIGHT")
 }
 
-// SNAPSHOTINCORRECTBLOCKHEIGHT is a free data retrieval call binding the contract method 0x0c24555d.
+// SNAPSHOTINCORRECTBLOCKHEIGHT is a paid mutator transaction binding the contract method 0x0c24555d.
 //
-// Solidity: function SNAPSHOT_INCORRECT_BLOCK_HEIGHT() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTINCORRECTBLOCKHEIGHT() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTINCORRECTBLOCKHEIGHT(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_INCORRECT_BLOCK_HEIGHT() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTINCORRECTBLOCKHEIGHT() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTINCORRECTBLOCKHEIGHT(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTINCORRECTBLOCKHEIGHT is a free data retrieval call binding the contract method 0x0c24555d.
+// SNAPSHOTINCORRECTBLOCKHEIGHT is a paid mutator transaction binding the contract method 0x0c24555d.
 //
-// Solidity: function SNAPSHOT_INCORRECT_BLOCK_HEIGHT() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTINCORRECTBLOCKHEIGHT() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTINCORRECTBLOCKHEIGHT(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_INCORRECT_BLOCK_HEIGHT() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTINCORRECTBLOCKHEIGHT() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTINCORRECTBLOCKHEIGHT(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTINCORRECTCHAINID is a free data retrieval call binding the contract method 0x3f772c6f.
+// SNAPSHOTINCORRECTCHAINID is a paid mutator transaction binding the contract method 0x3f772c6f.
 //
-// Solidity: function SNAPSHOT_INCORRECT_CHAIN_ID() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTINCORRECTCHAINID(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_INCORRECT_CHAIN_ID")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_INCORRECT_CHAIN_ID() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTINCORRECTCHAINID(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_INCORRECT_CHAIN_ID")
 }
 
-// SNAPSHOTINCORRECTCHAINID is a free data retrieval call binding the contract method 0x3f772c6f.
+// SNAPSHOTINCORRECTCHAINID is a paid mutator transaction binding the contract method 0x3f772c6f.
 //
-// Solidity: function SNAPSHOT_INCORRECT_CHAIN_ID() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTINCORRECTCHAINID() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTINCORRECTCHAINID(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_INCORRECT_CHAIN_ID() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTINCORRECTCHAINID() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTINCORRECTCHAINID(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTINCORRECTCHAINID is a free data retrieval call binding the contract method 0x3f772c6f.
+// SNAPSHOTINCORRECTCHAINID is a paid mutator transaction binding the contract method 0x3f772c6f.
 //
-// Solidity: function SNAPSHOT_INCORRECT_CHAIN_ID() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTINCORRECTCHAINID() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTINCORRECTCHAINID(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_INCORRECT_CHAIN_ID() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTINCORRECTCHAINID() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTINCORRECTCHAINID(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTMIGRATIONINPUTDATAMISMATCH is a free data retrieval call binding the contract method 0x9854bdc5.
+// SNAPSHOTMIGRATIONINPUTDATAMISMATCH is a paid mutator transaction binding the contract method 0x9854bdc5.
 //
-// Solidity: function SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTMIGRATIONINPUTDATAMISMATCH(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTMIGRATIONINPUTDATAMISMATCH(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH")
 }
 
-// SNAPSHOTMIGRATIONINPUTDATAMISMATCH is a free data retrieval call binding the contract method 0x9854bdc5.
+// SNAPSHOTMIGRATIONINPUTDATAMISMATCH is a paid mutator transaction binding the contract method 0x9854bdc5.
 //
-// Solidity: function SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTMIGRATIONINPUTDATAMISMATCH() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTMIGRATIONINPUTDATAMISMATCH(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTMIGRATIONINPUTDATAMISMATCH() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTMIGRATIONINPUTDATAMISMATCH(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTMIGRATIONINPUTDATAMISMATCH is a free data retrieval call binding the contract method 0x9854bdc5.
+// SNAPSHOTMIGRATIONINPUTDATAMISMATCH is a paid mutator transaction binding the contract method 0x9854bdc5.
 //
-// Solidity: function SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTMIGRATIONINPUTDATAMISMATCH() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTMIGRATIONINPUTDATAMISMATCH(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_MIGRATION_INPUT_DATA_MISMATCH() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTMIGRATIONINPUTDATAMISMATCH() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTMIGRATIONINPUTDATAMISMATCH(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTMIGRATIONNOTALLOWED is a free data retrieval call binding the contract method 0x4f2adaee.
+// SNAPSHOTMIGRATIONNOTALLOWED is a paid mutator transaction binding the contract method 0x4f2adaee.
 //
-// Solidity: function SNAPSHOT_MIGRATION_NOT_ALLOWED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTMIGRATIONNOTALLOWED(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_MIGRATION_NOT_ALLOWED")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_MIGRATION_NOT_ALLOWED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTMIGRATIONNOTALLOWED(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_MIGRATION_NOT_ALLOWED")
 }
 
-// SNAPSHOTMIGRATIONNOTALLOWED is a free data retrieval call binding the contract method 0x4f2adaee.
+// SNAPSHOTMIGRATIONNOTALLOWED is a paid mutator transaction binding the contract method 0x4f2adaee.
 //
-// Solidity: function SNAPSHOT_MIGRATION_NOT_ALLOWED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTMIGRATIONNOTALLOWED() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTMIGRATIONNOTALLOWED(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_MIGRATION_NOT_ALLOWED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTMIGRATIONNOTALLOWED() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTMIGRATIONNOTALLOWED(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTMIGRATIONNOTALLOWED is a free data retrieval call binding the contract method 0x4f2adaee.
+// SNAPSHOTMIGRATIONNOTALLOWED is a paid mutator transaction binding the contract method 0x4f2adaee.
 //
-// Solidity: function SNAPSHOT_MIGRATION_NOT_ALLOWED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTMIGRATIONNOTALLOWED() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTMIGRATIONNOTALLOWED(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_MIGRATION_NOT_ALLOWED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTMIGRATIONNOTALLOWED() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTMIGRATIONNOTALLOWED(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTMINBLOCKSINTERVALNOTPASSED is a free data retrieval call binding the contract method 0x4a1ec2ee.
+// SNAPSHOTMINBLOCKSINTERVALNOTPASSED is a paid mutator transaction binding the contract method 0x4a1ec2ee.
 //
-// Solidity: function SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTMINBLOCKSINTERVALNOTPASSED(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTMINBLOCKSINTERVALNOTPASSED(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED")
 }
 
-// SNAPSHOTMINBLOCKSINTERVALNOTPASSED is a free data retrieval call binding the contract method 0x4a1ec2ee.
+// SNAPSHOTMINBLOCKSINTERVALNOTPASSED is a paid mutator transaction binding the contract method 0x4a1ec2ee.
 //
-// Solidity: function SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTMINBLOCKSINTERVALNOTPASSED() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTMINBLOCKSINTERVALNOTPASSED(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTMINBLOCKSINTERVALNOTPASSED() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTMINBLOCKSINTERVALNOTPASSED(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTMINBLOCKSINTERVALNOTPASSED is a free data retrieval call binding the contract method 0x4a1ec2ee.
+// SNAPSHOTMINBLOCKSINTERVALNOTPASSED is a paid mutator transaction binding the contract method 0x4a1ec2ee.
 //
-// Solidity: function SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTMINBLOCKSINTERVALNOTPASSED() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTMINBLOCKSINTERVALNOTPASSED(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_MIN_BLOCKS_INTERVAL_NOT_PASSED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTMINBLOCKSINTERVALNOTPASSED() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTMINBLOCKSINTERVALNOTPASSED(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTONLYVALIDATORSALLOWED is a free data retrieval call binding the contract method 0x83d995fa.
+// SNAPSHOTONLYVALIDATORSALLOWED is a paid mutator transaction binding the contract method 0x83d995fa.
 //
-// Solidity: function SNAPSHOT_ONLY_VALIDATORS_ALLOWED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTONLYVALIDATORSALLOWED(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_ONLY_VALIDATORS_ALLOWED")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_ONLY_VALIDATORS_ALLOWED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTONLYVALIDATORSALLOWED(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_ONLY_VALIDATORS_ALLOWED")
 }
 
-// SNAPSHOTONLYVALIDATORSALLOWED is a free data retrieval call binding the contract method 0x83d995fa.
+// SNAPSHOTONLYVALIDATORSALLOWED is a paid mutator transaction binding the contract method 0x83d995fa.
 //
-// Solidity: function SNAPSHOT_ONLY_VALIDATORS_ALLOWED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTONLYVALIDATORSALLOWED() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTONLYVALIDATORSALLOWED(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_ONLY_VALIDATORS_ALLOWED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTONLYVALIDATORSALLOWED() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTONLYVALIDATORSALLOWED(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTONLYVALIDATORSALLOWED is a free data retrieval call binding the contract method 0x83d995fa.
+// SNAPSHOTONLYVALIDATORSALLOWED is a paid mutator transaction binding the contract method 0x83d995fa.
 //
-// Solidity: function SNAPSHOT_ONLY_VALIDATORS_ALLOWED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTONLYVALIDATORSALLOWED() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTONLYVALIDATORSALLOWED(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_ONLY_VALIDATORS_ALLOWED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTONLYVALIDATORSALLOWED() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTONLYVALIDATORSALLOWED(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTSIGNATUREVERIFICATIONFAILED is a free data retrieval call binding the contract method 0x1d449ed1.
+// SNAPSHOTSIGNATUREVERIFICATIONFAILED is a paid mutator transaction binding the contract method 0x1d449ed1.
 //
-// Solidity: function SNAPSHOT_SIGNATURE_VERIFICATION_FAILED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTSIGNATUREVERIFICATIONFAILED(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_SIGNATURE_VERIFICATION_FAILED")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_SIGNATURE_VERIFICATION_FAILED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTSIGNATUREVERIFICATIONFAILED(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_SIGNATURE_VERIFICATION_FAILED")
 }
 
-// SNAPSHOTSIGNATUREVERIFICATIONFAILED is a free data retrieval call binding the contract method 0x1d449ed1.
+// SNAPSHOTSIGNATUREVERIFICATIONFAILED is a paid mutator transaction binding the contract method 0x1d449ed1.
 //
-// Solidity: function SNAPSHOT_SIGNATURE_VERIFICATION_FAILED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTSIGNATUREVERIFICATIONFAILED() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTSIGNATUREVERIFICATIONFAILED(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_SIGNATURE_VERIFICATION_FAILED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTSIGNATUREVERIFICATIONFAILED() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTSIGNATUREVERIFICATIONFAILED(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTSIGNATUREVERIFICATIONFAILED is a free data retrieval call binding the contract method 0x1d449ed1.
+// SNAPSHOTSIGNATUREVERIFICATIONFAILED is a paid mutator transaction binding the contract method 0x1d449ed1.
 //
-// Solidity: function SNAPSHOT_SIGNATURE_VERIFICATION_FAILED() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTSIGNATUREVERIFICATIONFAILED() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTSIGNATUREVERIFICATIONFAILED(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_SIGNATURE_VERIFICATION_FAILED() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTSIGNATUREVERIFICATIONFAILED() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTSIGNATUREVERIFICATIONFAILED(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTWRONGMASTERPUBLICKEY is a free data retrieval call binding the contract method 0x85c9dba1.
+// SNAPSHOTWRONGMASTERPUBLICKEY is a paid mutator transaction binding the contract method 0x85c9dba1.
 //
-// Solidity: function SNAPSHOT_WRONG_MASTER_PUBLIC_KEY() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCaller) SNAPSHOTWRONGMASTERPUBLICKEY(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _SnapshotsErrorCodes.contract.Call(opts, &out, "SNAPSHOT_WRONG_MASTER_PUBLIC_KEY")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
+// Solidity: function SNAPSHOT_WRONG_MASTER_PUBLIC_KEY() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactor) SNAPSHOTWRONGMASTERPUBLICKEY(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.contract.Transact(opts, "SNAPSHOT_WRONG_MASTER_PUBLIC_KEY")
 }
 
-// SNAPSHOTWRONGMASTERPUBLICKEY is a free data retrieval call binding the contract method 0x85c9dba1.
+// SNAPSHOTWRONGMASTERPUBLICKEY is a paid mutator transaction binding the contract method 0x85c9dba1.
 //
-// Solidity: function SNAPSHOT_WRONG_MASTER_PUBLIC_KEY() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTWRONGMASTERPUBLICKEY() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTWRONGMASTERPUBLICKEY(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_WRONG_MASTER_PUBLIC_KEY() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesSession) SNAPSHOTWRONGMASTERPUBLICKEY() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTWRONGMASTERPUBLICKEY(&_SnapshotsErrorCodes.TransactOpts)
 }
 
-// SNAPSHOTWRONGMASTERPUBLICKEY is a free data retrieval call binding the contract method 0x85c9dba1.
+// SNAPSHOTWRONGMASTERPUBLICKEY is a paid mutator transaction binding the contract method 0x85c9dba1.
 //
-// Solidity: function SNAPSHOT_WRONG_MASTER_PUBLIC_KEY() view returns(bytes32)
-func (_SnapshotsErrorCodes *SnapshotsErrorCodesCallerSession) SNAPSHOTWRONGMASTERPUBLICKEY() ([32]byte, error) {
-	return _SnapshotsErrorCodes.Contract.SNAPSHOTWRONGMASTERPUBLICKEY(&_SnapshotsErrorCodes.CallOpts)
+// Solidity: function SNAPSHOT_WRONG_MASTER_PUBLIC_KEY() returns(bytes32)
+func (_SnapshotsErrorCodes *SnapshotsErrorCodesTransactorSession) SNAPSHOTWRONGMASTERPUBLICKEY() (*types.Transaction, error) {
+	return _SnapshotsErrorCodes.Contract.SNAPSHOTWRONGMASTERPUBLICKEY(&_SnapshotsErrorCodes.TransactOpts)
 }

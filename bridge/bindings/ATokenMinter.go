@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,24 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// ATokenMinterMetaData contains all meta data concerning the ATokenMinter contract.
-var ATokenMinterMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-}
-
 // ATokenMinterABI is the input ABI used to generate the binding from.
-// Deprecated: Use ATokenMinterMetaData.ABI instead.
-var ATokenMinterABI = ATokenMinterMetaData.ABI
+const ATokenMinterABI = "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // ATokenMinter is an auto generated Go binding around an Ethereum contract.
 type ATokenMinter struct {
@@ -145,7 +138,7 @@ func bindATokenMinter(address common.Address, caller bind.ContractCaller, transa
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ATokenMinter *ATokenMinterRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ATokenMinter *ATokenMinterRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ATokenMinter.Contract.ATokenMinterCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -164,7 +157,7 @@ func (_ATokenMinter *ATokenMinterRaw) Transact(opts *bind.TransactOpts, method s
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ATokenMinter *ATokenMinterCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ATokenMinter *ATokenMinterCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ATokenMinter.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -179,35 +172,25 @@ func (_ATokenMinter *ATokenMinterTransactorRaw) Transact(opts *bind.TransactOpts
 	return _ATokenMinter.Contract.contract.Transact(opts, method, params...)
 }
 
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
 //
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ATokenMinter *ATokenMinterCaller) GetMetamorphicContractAddress(opts *bind.CallOpts, _salt [32]byte, _factory common.Address) (common.Address, error) {
-	var out []interface{}
-	err := _ATokenMinter.contract.Call(opts, &out, "getMetamorphicContractAddress", _salt, _factory)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ATokenMinter *ATokenMinterTransactor) GetMetamorphicContractAddress(opts *bind.TransactOpts, _salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ATokenMinter.contract.Transact(opts, "getMetamorphicContractAddress", _salt, _factory)
 }
 
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
 //
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ATokenMinter *ATokenMinterSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _ATokenMinter.Contract.GetMetamorphicContractAddress(&_ATokenMinter.CallOpts, _salt, _factory)
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ATokenMinter *ATokenMinterSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ATokenMinter.Contract.GetMetamorphicContractAddress(&_ATokenMinter.TransactOpts, _salt, _factory)
 }
 
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
 //
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ATokenMinter *ATokenMinterCallerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _ATokenMinter.Contract.GetMetamorphicContractAddress(&_ATokenMinter.CallOpts, _salt, _factory)
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ATokenMinter *ATokenMinterTransactorSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ATokenMinter.Contract.GetMetamorphicContractAddress(&_ATokenMinter.TransactOpts, _salt, _factory)
 }
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.

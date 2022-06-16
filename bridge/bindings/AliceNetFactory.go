@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,24 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// AliceNetFactoryMetaData contains all meta data concerning the AliceNetFactory contract.
-var AliceNetFactoryMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"selfAddr_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"salt\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"Deployed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"DeployedProxy\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"DeployedRaw\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"DeployedStatic\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"DeployedTemplate\",\"type\":\"event\"},{\"stateMutability\":\"nonpayable\",\"type\":\"fallback\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value_\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"cdata_\",\"type\":\"bytes\"}],\"name\":\"callAny\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"contracts\",\"outputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"contracts_\",\"type\":\"bytes32[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target_\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"cdata_\",\"type\":\"bytes\"}],\"name\":\"delegateCallAny\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"delegator\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"delegator_\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"deployCode_\",\"type\":\"bytes\"}],\"name\":\"deployCreate\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"value_\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"deployCode_\",\"type\":\"bytes\"}],\"name\":\"deployCreate2\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"}],\"name\":\"deployProxy\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"initCallData_\",\"type\":\"bytes\"}],\"name\":\"deployStatic\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"deployCode_\",\"type\":\"bytes\"}],\"name\":\"deployTemplate\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getNumContracts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"contract_\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"initCallData_\",\"type\":\"bytes\"}],\"name\":\"initializeContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"}],\"name\":\"lookup\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes[]\",\"name\":\"cdata_\",\"type\":\"bytes[]\"}],\"name\":\"multiCall\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"owner_\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newDelegator_\",\"type\":\"address\"}],\"name\":\"setDelegator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementationAddress_\",\"type\":\"address\"}],\"name\":\"setImplementation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner_\",\"type\":\"address\"}],\"name\":\"setOwner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"newImpl_\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"initCallData_\",\"type\":\"bytes\"}],\"name\":\"upgradeProxy\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-}
-
 // AliceNetFactoryABI is the input ABI used to generate the binding from.
-// Deprecated: Use AliceNetFactoryMetaData.ABI instead.
-var AliceNetFactoryABI = AliceNetFactoryMetaData.ABI
+const AliceNetFactoryABI = "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"selfAddr_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"salt\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"Deployed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"DeployedProxy\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"DeployedRaw\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"DeployedStatic\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"name\":\"DeployedTemplate\",\"type\":\"event\"},{\"stateMutability\":\"nonpayable\",\"type\":\"fallback\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value_\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"cdata_\",\"type\":\"bytes\"}],\"name\":\"callAny\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"contracts\",\"outputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"contracts_\",\"type\":\"bytes32[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target_\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"cdata_\",\"type\":\"bytes\"}],\"name\":\"delegateCallAny\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"delegator\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"delegator_\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"deployCode_\",\"type\":\"bytes\"}],\"name\":\"deployCreate\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"value_\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"deployCode_\",\"type\":\"bytes\"}],\"name\":\"deployCreate2\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"}],\"name\":\"deployProxy\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"initCallData_\",\"type\":\"bytes\"}],\"name\":\"deployStatic\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"deployCode_\",\"type\":\"bytes\"}],\"name\":\"deployTemplate\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getNumContracts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"contract_\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"initCallData_\",\"type\":\"bytes\"}],\"name\":\"initializeContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"}],\"name\":\"lookup\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes[]\",\"name\":\"cdata_\",\"type\":\"bytes[]\"}],\"name\":\"multiCall\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"owner_\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newDelegator_\",\"type\":\"address\"}],\"name\":\"setDelegator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementationAddress_\",\"type\":\"address\"}],\"name\":\"setImplementation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner_\",\"type\":\"address\"}],\"name\":\"setOwner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"salt_\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"newImpl_\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"initCallData_\",\"type\":\"bytes\"}],\"name\":\"upgradeProxy\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // AliceNetFactory is an auto generated Go binding around an Ethereum contract.
 type AliceNetFactory struct {
@@ -145,7 +138,7 @@ func bindAliceNetFactory(address common.Address, caller bind.ContractCaller, tra
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_AliceNetFactory *AliceNetFactoryRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_AliceNetFactory *AliceNetFactoryRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _AliceNetFactory.Contract.AliceNetFactoryCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -164,7 +157,7 @@ func (_AliceNetFactory *AliceNetFactoryRaw) Transact(opts *bind.TransactOpts, me
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_AliceNetFactory *AliceNetFactoryCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_AliceNetFactory *AliceNetFactoryCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _AliceNetFactory.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -179,263 +172,88 @@ func (_AliceNetFactory *AliceNetFactoryTransactorRaw) Transact(opts *bind.Transa
 	return _AliceNetFactory.Contract.contract.Transact(opts, method, params...)
 }
 
-// Contracts is a free data retrieval call binding the contract method 0x6c0f79b6.
-//
-// Solidity: function contracts() view returns(bytes32[] contracts_)
-func (_AliceNetFactory *AliceNetFactoryCaller) Contracts(opts *bind.CallOpts) ([][32]byte, error) {
-	var out []interface{}
-	err := _AliceNetFactory.contract.Call(opts, &out, "contracts")
-
-	if err != nil {
-		return *new([][32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([][32]byte)).(*[][32]byte)
-
-	return out0, err
-
-}
-
-// Contracts is a free data retrieval call binding the contract method 0x6c0f79b6.
-//
-// Solidity: function contracts() view returns(bytes32[] contracts_)
-func (_AliceNetFactory *AliceNetFactorySession) Contracts() ([][32]byte, error) {
-	return _AliceNetFactory.Contract.Contracts(&_AliceNetFactory.CallOpts)
-}
-
-// Contracts is a free data retrieval call binding the contract method 0x6c0f79b6.
-//
-// Solidity: function contracts() view returns(bytes32[] contracts_)
-func (_AliceNetFactory *AliceNetFactoryCallerSession) Contracts() ([][32]byte, error) {
-	return _AliceNetFactory.Contract.Contracts(&_AliceNetFactory.CallOpts)
-}
-
-// Delegator is a free data retrieval call binding the contract method 0xce9b7930.
-//
-// Solidity: function delegator() view returns(address delegator_)
-func (_AliceNetFactory *AliceNetFactoryCaller) Delegator(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _AliceNetFactory.contract.Call(opts, &out, "delegator")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// Delegator is a free data retrieval call binding the contract method 0xce9b7930.
-//
-// Solidity: function delegator() view returns(address delegator_)
-func (_AliceNetFactory *AliceNetFactorySession) Delegator() (common.Address, error) {
-	return _AliceNetFactory.Contract.Delegator(&_AliceNetFactory.CallOpts)
-}
-
-// Delegator is a free data retrieval call binding the contract method 0xce9b7930.
-//
-// Solidity: function delegator() view returns(address delegator_)
-func (_AliceNetFactory *AliceNetFactoryCallerSession) Delegator() (common.Address, error) {
-	return _AliceNetFactory.Contract.Delegator(&_AliceNetFactory.CallOpts)
-}
-
-// GetImplementation is a free data retrieval call binding the contract method 0xaaf10f42.
-//
-// Solidity: function getImplementation() view returns(address)
-func (_AliceNetFactory *AliceNetFactoryCaller) GetImplementation(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _AliceNetFactory.contract.Call(opts, &out, "getImplementation")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetImplementation is a free data retrieval call binding the contract method 0xaaf10f42.
-//
-// Solidity: function getImplementation() view returns(address)
-func (_AliceNetFactory *AliceNetFactorySession) GetImplementation() (common.Address, error) {
-	return _AliceNetFactory.Contract.GetImplementation(&_AliceNetFactory.CallOpts)
-}
-
-// GetImplementation is a free data retrieval call binding the contract method 0xaaf10f42.
-//
-// Solidity: function getImplementation() view returns(address)
-func (_AliceNetFactory *AliceNetFactoryCallerSession) GetImplementation() (common.Address, error) {
-	return _AliceNetFactory.Contract.GetImplementation(&_AliceNetFactory.CallOpts)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_AliceNetFactory *AliceNetFactoryCaller) GetMetamorphicContractAddress(opts *bind.CallOpts, _salt [32]byte, _factory common.Address) (common.Address, error) {
-	var out []interface{}
-	err := _AliceNetFactory.contract.Call(opts, &out, "getMetamorphicContractAddress", _salt, _factory)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_AliceNetFactory *AliceNetFactorySession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _AliceNetFactory.Contract.GetMetamorphicContractAddress(&_AliceNetFactory.CallOpts, _salt, _factory)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_AliceNetFactory *AliceNetFactoryCallerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _AliceNetFactory.Contract.GetMetamorphicContractAddress(&_AliceNetFactory.CallOpts, _salt, _factory)
-}
-
-// GetNumContracts is a free data retrieval call binding the contract method 0xcfe10b30.
-//
-// Solidity: function getNumContracts() view returns(uint256)
-func (_AliceNetFactory *AliceNetFactoryCaller) GetNumContracts(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _AliceNetFactory.contract.Call(opts, &out, "getNumContracts")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetNumContracts is a free data retrieval call binding the contract method 0xcfe10b30.
-//
-// Solidity: function getNumContracts() view returns(uint256)
-func (_AliceNetFactory *AliceNetFactorySession) GetNumContracts() (*big.Int, error) {
-	return _AliceNetFactory.Contract.GetNumContracts(&_AliceNetFactory.CallOpts)
-}
-
-// GetNumContracts is a free data retrieval call binding the contract method 0xcfe10b30.
-//
-// Solidity: function getNumContracts() view returns(uint256)
-func (_AliceNetFactory *AliceNetFactoryCallerSession) GetNumContracts() (*big.Int, error) {
-	return _AliceNetFactory.Contract.GetNumContracts(&_AliceNetFactory.CallOpts)
-}
-
-// Lookup is a free data retrieval call binding the contract method 0xf39ec1f7.
-//
-// Solidity: function lookup(bytes32 salt_) view returns(address addr)
-func (_AliceNetFactory *AliceNetFactoryCaller) Lookup(opts *bind.CallOpts, salt_ [32]byte) (common.Address, error) {
-	var out []interface{}
-	err := _AliceNetFactory.contract.Call(opts, &out, "lookup", salt_)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// Lookup is a free data retrieval call binding the contract method 0xf39ec1f7.
-//
-// Solidity: function lookup(bytes32 salt_) view returns(address addr)
-func (_AliceNetFactory *AliceNetFactorySession) Lookup(salt_ [32]byte) (common.Address, error) {
-	return _AliceNetFactory.Contract.Lookup(&_AliceNetFactory.CallOpts, salt_)
-}
-
-// Lookup is a free data retrieval call binding the contract method 0xf39ec1f7.
-//
-// Solidity: function lookup(bytes32 salt_) view returns(address addr)
-func (_AliceNetFactory *AliceNetFactoryCallerSession) Lookup(salt_ [32]byte) (common.Address, error) {
-	return _AliceNetFactory.Contract.Lookup(&_AliceNetFactory.CallOpts, salt_)
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() view returns(address owner_)
-func (_AliceNetFactory *AliceNetFactoryCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _AliceNetFactory.contract.Call(opts, &out, "owner")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() view returns(address owner_)
-func (_AliceNetFactory *AliceNetFactorySession) Owner() (common.Address, error) {
-	return _AliceNetFactory.Contract.Owner(&_AliceNetFactory.CallOpts)
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() view returns(address owner_)
-func (_AliceNetFactory *AliceNetFactoryCallerSession) Owner() (common.Address, error) {
-	return _AliceNetFactory.Contract.Owner(&_AliceNetFactory.CallOpts)
-}
-
 // CallAny is a paid mutator transaction binding the contract method 0x12e6bf6a.
 //
-// Solidity: function callAny(address target_, uint256 value_, bytes cdata_) payable returns()
+// Solidity: function callAny(address target_, uint256 value_, bytes cdata_) returns()
 func (_AliceNetFactory *AliceNetFactoryTransactor) CallAny(opts *bind.TransactOpts, target_ common.Address, value_ *big.Int, cdata_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.contract.Transact(opts, "callAny", target_, value_, cdata_)
 }
 
 // CallAny is a paid mutator transaction binding the contract method 0x12e6bf6a.
 //
-// Solidity: function callAny(address target_, uint256 value_, bytes cdata_) payable returns()
+// Solidity: function callAny(address target_, uint256 value_, bytes cdata_) returns()
 func (_AliceNetFactory *AliceNetFactorySession) CallAny(target_ common.Address, value_ *big.Int, cdata_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.Contract.CallAny(&_AliceNetFactory.TransactOpts, target_, value_, cdata_)
 }
 
 // CallAny is a paid mutator transaction binding the contract method 0x12e6bf6a.
 //
-// Solidity: function callAny(address target_, uint256 value_, bytes cdata_) payable returns()
+// Solidity: function callAny(address target_, uint256 value_, bytes cdata_) returns()
 func (_AliceNetFactory *AliceNetFactoryTransactorSession) CallAny(target_ common.Address, value_ *big.Int, cdata_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.Contract.CallAny(&_AliceNetFactory.TransactOpts, target_, value_, cdata_)
 }
 
+// Contracts is a paid mutator transaction binding the contract method 0x6c0f79b6.
+//
+// Solidity: function contracts() returns(bytes32[] contracts_)
+func (_AliceNetFactory *AliceNetFactoryTransactor) Contracts(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AliceNetFactory.contract.Transact(opts, "contracts")
+}
+
+// Contracts is a paid mutator transaction binding the contract method 0x6c0f79b6.
+//
+// Solidity: function contracts() returns(bytes32[] contracts_)
+func (_AliceNetFactory *AliceNetFactorySession) Contracts() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.Contracts(&_AliceNetFactory.TransactOpts)
+}
+
+// Contracts is a paid mutator transaction binding the contract method 0x6c0f79b6.
+//
+// Solidity: function contracts() returns(bytes32[] contracts_)
+func (_AliceNetFactory *AliceNetFactoryTransactorSession) Contracts() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.Contracts(&_AliceNetFactory.TransactOpts)
+}
+
 // DelegateCallAny is a paid mutator transaction binding the contract method 0x4713ee7a.
 //
-// Solidity: function delegateCallAny(address target_, bytes cdata_) payable returns()
+// Solidity: function delegateCallAny(address target_, bytes cdata_) returns()
 func (_AliceNetFactory *AliceNetFactoryTransactor) DelegateCallAny(opts *bind.TransactOpts, target_ common.Address, cdata_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.contract.Transact(opts, "delegateCallAny", target_, cdata_)
 }
 
 // DelegateCallAny is a paid mutator transaction binding the contract method 0x4713ee7a.
 //
-// Solidity: function delegateCallAny(address target_, bytes cdata_) payable returns()
+// Solidity: function delegateCallAny(address target_, bytes cdata_) returns()
 func (_AliceNetFactory *AliceNetFactorySession) DelegateCallAny(target_ common.Address, cdata_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.Contract.DelegateCallAny(&_AliceNetFactory.TransactOpts, target_, cdata_)
 }
 
 // DelegateCallAny is a paid mutator transaction binding the contract method 0x4713ee7a.
 //
-// Solidity: function delegateCallAny(address target_, bytes cdata_) payable returns()
+// Solidity: function delegateCallAny(address target_, bytes cdata_) returns()
 func (_AliceNetFactory *AliceNetFactoryTransactorSession) DelegateCallAny(target_ common.Address, cdata_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.Contract.DelegateCallAny(&_AliceNetFactory.TransactOpts, target_, cdata_)
+}
+
+// Delegator is a paid mutator transaction binding the contract method 0xce9b7930.
+//
+// Solidity: function delegator() returns(address delegator_)
+func (_AliceNetFactory *AliceNetFactoryTransactor) Delegator(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AliceNetFactory.contract.Transact(opts, "delegator")
+}
+
+// Delegator is a paid mutator transaction binding the contract method 0xce9b7930.
+//
+// Solidity: function delegator() returns(address delegator_)
+func (_AliceNetFactory *AliceNetFactorySession) Delegator() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.Delegator(&_AliceNetFactory.TransactOpts)
+}
+
+// Delegator is a paid mutator transaction binding the contract method 0xce9b7930.
+//
+// Solidity: function delegator() returns(address delegator_)
+func (_AliceNetFactory *AliceNetFactoryTransactorSession) Delegator() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.Delegator(&_AliceNetFactory.TransactOpts)
 }
 
 // DeployCreate is a paid mutator transaction binding the contract method 0x27fe1822.
@@ -461,21 +279,21 @@ func (_AliceNetFactory *AliceNetFactoryTransactorSession) DeployCreate(deployCod
 
 // DeployCreate2 is a paid mutator transaction binding the contract method 0x56f2a761.
 //
-// Solidity: function deployCreate2(uint256 value_, bytes32 salt_, bytes deployCode_) payable returns(address contractAddr)
+// Solidity: function deployCreate2(uint256 value_, bytes32 salt_, bytes deployCode_) returns(address contractAddr)
 func (_AliceNetFactory *AliceNetFactoryTransactor) DeployCreate2(opts *bind.TransactOpts, value_ *big.Int, salt_ [32]byte, deployCode_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.contract.Transact(opts, "deployCreate2", value_, salt_, deployCode_)
 }
 
 // DeployCreate2 is a paid mutator transaction binding the contract method 0x56f2a761.
 //
-// Solidity: function deployCreate2(uint256 value_, bytes32 salt_, bytes deployCode_) payable returns(address contractAddr)
+// Solidity: function deployCreate2(uint256 value_, bytes32 salt_, bytes deployCode_) returns(address contractAddr)
 func (_AliceNetFactory *AliceNetFactorySession) DeployCreate2(value_ *big.Int, salt_ [32]byte, deployCode_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.Contract.DeployCreate2(&_AliceNetFactory.TransactOpts, value_, salt_, deployCode_)
 }
 
 // DeployCreate2 is a paid mutator transaction binding the contract method 0x56f2a761.
 //
-// Solidity: function deployCreate2(uint256 value_, bytes32 salt_, bytes deployCode_) payable returns(address contractAddr)
+// Solidity: function deployCreate2(uint256 value_, bytes32 salt_, bytes deployCode_) returns(address contractAddr)
 func (_AliceNetFactory *AliceNetFactoryTransactorSession) DeployCreate2(value_ *big.Int, salt_ [32]byte, deployCode_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.Contract.DeployCreate2(&_AliceNetFactory.TransactOpts, value_, salt_, deployCode_)
 }
@@ -543,6 +361,69 @@ func (_AliceNetFactory *AliceNetFactoryTransactorSession) DeployTemplate(deployC
 	return _AliceNetFactory.Contract.DeployTemplate(&_AliceNetFactory.TransactOpts, deployCode_)
 }
 
+// GetImplementation is a paid mutator transaction binding the contract method 0xaaf10f42.
+//
+// Solidity: function getImplementation() returns(address)
+func (_AliceNetFactory *AliceNetFactoryTransactor) GetImplementation(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AliceNetFactory.contract.Transact(opts, "getImplementation")
+}
+
+// GetImplementation is a paid mutator transaction binding the contract method 0xaaf10f42.
+//
+// Solidity: function getImplementation() returns(address)
+func (_AliceNetFactory *AliceNetFactorySession) GetImplementation() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.GetImplementation(&_AliceNetFactory.TransactOpts)
+}
+
+// GetImplementation is a paid mutator transaction binding the contract method 0xaaf10f42.
+//
+// Solidity: function getImplementation() returns(address)
+func (_AliceNetFactory *AliceNetFactoryTransactorSession) GetImplementation() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.GetImplementation(&_AliceNetFactory.TransactOpts)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_AliceNetFactory *AliceNetFactoryTransactor) GetMetamorphicContractAddress(opts *bind.TransactOpts, _salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _AliceNetFactory.contract.Transact(opts, "getMetamorphicContractAddress", _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_AliceNetFactory *AliceNetFactorySession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.GetMetamorphicContractAddress(&_AliceNetFactory.TransactOpts, _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_AliceNetFactory *AliceNetFactoryTransactorSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.GetMetamorphicContractAddress(&_AliceNetFactory.TransactOpts, _salt, _factory)
+}
+
+// GetNumContracts is a paid mutator transaction binding the contract method 0xcfe10b30.
+//
+// Solidity: function getNumContracts() returns(uint256)
+func (_AliceNetFactory *AliceNetFactoryTransactor) GetNumContracts(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AliceNetFactory.contract.Transact(opts, "getNumContracts")
+}
+
+// GetNumContracts is a paid mutator transaction binding the contract method 0xcfe10b30.
+//
+// Solidity: function getNumContracts() returns(uint256)
+func (_AliceNetFactory *AliceNetFactorySession) GetNumContracts() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.GetNumContracts(&_AliceNetFactory.TransactOpts)
+}
+
+// GetNumContracts is a paid mutator transaction binding the contract method 0xcfe10b30.
+//
+// Solidity: function getNumContracts() returns(uint256)
+func (_AliceNetFactory *AliceNetFactoryTransactorSession) GetNumContracts() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.GetNumContracts(&_AliceNetFactory.TransactOpts)
+}
+
 // InitializeContract is a paid mutator transaction binding the contract method 0xe1d7a8e4.
 //
 // Solidity: function initializeContract(address contract_, bytes initCallData_) returns()
@@ -564,6 +445,27 @@ func (_AliceNetFactory *AliceNetFactoryTransactorSession) InitializeContract(con
 	return _AliceNetFactory.Contract.InitializeContract(&_AliceNetFactory.TransactOpts, contract_, initCallData_)
 }
 
+// Lookup is a paid mutator transaction binding the contract method 0xf39ec1f7.
+//
+// Solidity: function lookup(bytes32 salt_) returns(address addr)
+func (_AliceNetFactory *AliceNetFactoryTransactor) Lookup(opts *bind.TransactOpts, salt_ [32]byte) (*types.Transaction, error) {
+	return _AliceNetFactory.contract.Transact(opts, "lookup", salt_)
+}
+
+// Lookup is a paid mutator transaction binding the contract method 0xf39ec1f7.
+//
+// Solidity: function lookup(bytes32 salt_) returns(address addr)
+func (_AliceNetFactory *AliceNetFactorySession) Lookup(salt_ [32]byte) (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.Lookup(&_AliceNetFactory.TransactOpts, salt_)
+}
+
+// Lookup is a paid mutator transaction binding the contract method 0xf39ec1f7.
+//
+// Solidity: function lookup(bytes32 salt_) returns(address addr)
+func (_AliceNetFactory *AliceNetFactoryTransactorSession) Lookup(salt_ [32]byte) (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.Lookup(&_AliceNetFactory.TransactOpts, salt_)
+}
+
 // MultiCall is a paid mutator transaction binding the contract method 0x348a0cdc.
 //
 // Solidity: function multiCall(bytes[] cdata_) returns()
@@ -583,6 +485,27 @@ func (_AliceNetFactory *AliceNetFactorySession) MultiCall(cdata_ [][]byte) (*typ
 // Solidity: function multiCall(bytes[] cdata_) returns()
 func (_AliceNetFactory *AliceNetFactoryTransactorSession) MultiCall(cdata_ [][]byte) (*types.Transaction, error) {
 	return _AliceNetFactory.Contract.MultiCall(&_AliceNetFactory.TransactOpts, cdata_)
+}
+
+// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() returns(address owner_)
+func (_AliceNetFactory *AliceNetFactoryTransactor) Owner(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _AliceNetFactory.contract.Transact(opts, "owner")
+}
+
+// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() returns(address owner_)
+func (_AliceNetFactory *AliceNetFactorySession) Owner() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.Owner(&_AliceNetFactory.TransactOpts)
+}
+
+// Owner is a paid mutator transaction binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() returns(address owner_)
+func (_AliceNetFactory *AliceNetFactoryTransactorSession) Owner() (*types.Transaction, error) {
+	return _AliceNetFactory.Contract.Owner(&_AliceNetFactory.TransactOpts)
 }
 
 // SetDelegator is a paid mutator transaction binding the contract method 0x83cd9cc3.
@@ -667,27 +590,6 @@ func (_AliceNetFactory *AliceNetFactorySession) UpgradeProxy(salt_ [32]byte, new
 // Solidity: function upgradeProxy(bytes32 salt_, address newImpl_, bytes initCallData_) returns()
 func (_AliceNetFactory *AliceNetFactoryTransactorSession) UpgradeProxy(salt_ [32]byte, newImpl_ common.Address, initCallData_ []byte) (*types.Transaction, error) {
 	return _AliceNetFactory.Contract.UpgradeProxy(&_AliceNetFactory.TransactOpts, salt_, newImpl_, initCallData_)
-}
-
-// Fallback is a paid mutator transaction binding the contract fallback function.
-//
-// Solidity: fallback() returns()
-func (_AliceNetFactory *AliceNetFactoryTransactor) Fallback(opts *bind.TransactOpts, calldata []byte) (*types.Transaction, error) {
-	return _AliceNetFactory.contract.RawTransact(opts, calldata)
-}
-
-// Fallback is a paid mutator transaction binding the contract fallback function.
-//
-// Solidity: fallback() returns()
-func (_AliceNetFactory *AliceNetFactorySession) Fallback(calldata []byte) (*types.Transaction, error) {
-	return _AliceNetFactory.Contract.Fallback(&_AliceNetFactory.TransactOpts, calldata)
-}
-
-// Fallback is a paid mutator transaction binding the contract fallback function.
-//
-// Solidity: fallback() returns()
-func (_AliceNetFactory *AliceNetFactoryTransactorSession) Fallback(calldata []byte) (*types.Transaction, error) {
-	return _AliceNetFactory.Contract.Fallback(&_AliceNetFactory.TransactOpts, calldata)
 }
 
 // AliceNetFactoryDeployedIterator is returned from FilterDeployed and is used to iterate over the raw logs and unpacked data for Deployed events raised by the AliceNetFactory contract.
@@ -821,7 +723,6 @@ func (_AliceNetFactory *AliceNetFactoryFilterer) ParseDeployed(log types.Log) (*
 	if err := _AliceNetFactory.contract.UnpackLog(event, "Deployed", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -955,7 +856,6 @@ func (_AliceNetFactory *AliceNetFactoryFilterer) ParseDeployedProxy(log types.Lo
 	if err := _AliceNetFactory.contract.UnpackLog(event, "DeployedProxy", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1089,7 +989,6 @@ func (_AliceNetFactory *AliceNetFactoryFilterer) ParseDeployedRaw(log types.Log)
 	if err := _AliceNetFactory.contract.UnpackLog(event, "DeployedRaw", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1223,7 +1122,6 @@ func (_AliceNetFactory *AliceNetFactoryFilterer) ParseDeployedStatic(log types.L
 	if err := _AliceNetFactory.contract.UnpackLog(event, "DeployedStatic", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1357,6 +1255,5 @@ func (_AliceNetFactory *AliceNetFactoryFilterer) ParseDeployedTemplate(log types
 	if err := _AliceNetFactory.contract.UnpackLog(event, "DeployedTemplate", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }

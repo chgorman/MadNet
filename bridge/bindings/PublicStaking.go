@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,24 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// PublicStakingMetaData contains all meta data concerning the PublicStaking contract.
-var PublicStakingMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payoutEth\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"payoutAToken\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"burnTo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payoutEth\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"payoutAToken\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"circuitBreakerState\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"collectEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"collectEthTo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"collectToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"collectTokenTo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"magic_\",\"type\":\"uint8\"}],\"name\":\"depositEth\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"magic_\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"amount_\",\"type\":\"uint256\"}],\"name\":\"depositToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"estimateEthCollection\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"estimateExcessEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"estimateExcessToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"estimateTokenCollection\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAccumulatorScaleFactor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getEthAccumulator\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"accumulator\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"slush\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMaxMintLock\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"getPosition\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"shares\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"freeAfter\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"withdrawFreeAfter\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"accumulatorEth\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"accumulatorToken\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTokenAccumulator\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"accumulator\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"slush\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalReserveAToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalReserveEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalShares\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDuration_\",\"type\":\"uint256\"}],\"name\":\"lockOwnPosition\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"caller_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDuration_\",\"type\":\"uint256\"}],\"name\":\"lockPosition\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDuration_\",\"type\":\"uint256\"}],\"name\":\"lockWithdraw\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount_\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDuration_\",\"type\":\"uint256\"}],\"name\":\"mintTo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"}],\"name\":\"skimExcessEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"}],\"name\":\"skimExcessToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tripCB\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
-}
-
 // PublicStakingABI is the input ABI used to generate the binding from.
-// Deprecated: Use PublicStakingMetaData.ABI instead.
-var PublicStakingABI = PublicStakingMetaData.ABI
+const PublicStakingABI = "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payoutEth\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"payoutAToken\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"burnTo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payoutEth\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"payoutAToken\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"circuitBreakerState\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"collectEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"collectEthTo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"collectToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"collectTokenTo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"magic_\",\"type\":\"uint8\"}],\"name\":\"depositEth\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"magic_\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"amount_\",\"type\":\"uint256\"}],\"name\":\"depositToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"estimateEthCollection\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"estimateExcessEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"estimateExcessToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"estimateTokenCollection\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payout\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAccumulatorScaleFactor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getEthAccumulator\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"accumulator\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"slush\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMaxMintLock\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"}],\"name\":\"getPosition\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"weightedShares\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"lockedStakingPosition\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"shares\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"freeAfter\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"withdrawFreeAfter\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"accumulatorEth\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"accumulatorToken\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTokenAccumulator\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"accumulator\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"slush\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalReserveAToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalReserveEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalSharesEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalSharesToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDuration_\",\"type\":\"uint256\"}],\"name\":\"lockOwnPosition\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"caller_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDuration_\",\"type\":\"uint256\"}],\"name\":\"lockPosition\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDuration_\",\"type\":\"uint256\"}],\"name\":\"lockStakingPosition\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDuration_\",\"type\":\"uint256\"}],\"name\":\"lockWithdraw\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount_\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDuration_\",\"type\":\"uint256\"}],\"name\":\"mintTo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"}],\"name\":\"skimExcessEth\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to_\",\"type\":\"address\"}],\"name\":\"skimExcessToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"excess\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tripCB\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // PublicStaking is an auto generated Go binding around an Ethereum contract.
 type PublicStaking struct {
@@ -145,7 +138,7 @@ func bindPublicStaking(address common.Address, caller bind.ContractCaller, trans
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_PublicStaking *PublicStakingRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_PublicStaking *PublicStakingRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _PublicStaking.Contract.PublicStakingCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -164,7 +157,7 @@ func (_PublicStaking *PublicStakingRaw) Transact(opts *bind.TransactOpts, method
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_PublicStaking *PublicStakingCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_PublicStaking *PublicStakingCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _PublicStaking.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -177,745 +170,6 @@ func (_PublicStaking *PublicStakingTransactorRaw) Transfer(opts *bind.TransactOp
 // Transact invokes the (paid) contract method with params as input values.
 func (_PublicStaking *PublicStakingTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _PublicStaking.Contract.contract.Transact(opts, method, params...)
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address owner) view returns(uint256)
-func (_PublicStaking *PublicStakingCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "balanceOf", owner)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address owner) view returns(uint256)
-func (_PublicStaking *PublicStakingSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _PublicStaking.Contract.BalanceOf(&_PublicStaking.CallOpts, owner)
-}
-
-// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
-//
-// Solidity: function balanceOf(address owner) view returns(uint256)
-func (_PublicStaking *PublicStakingCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _PublicStaking.Contract.BalanceOf(&_PublicStaking.CallOpts, owner)
-}
-
-// CircuitBreakerState is a free data retrieval call binding the contract method 0x89465c62.
-//
-// Solidity: function circuitBreakerState() view returns(bool)
-func (_PublicStaking *PublicStakingCaller) CircuitBreakerState(opts *bind.CallOpts) (bool, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "circuitBreakerState")
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// CircuitBreakerState is a free data retrieval call binding the contract method 0x89465c62.
-//
-// Solidity: function circuitBreakerState() view returns(bool)
-func (_PublicStaking *PublicStakingSession) CircuitBreakerState() (bool, error) {
-	return _PublicStaking.Contract.CircuitBreakerState(&_PublicStaking.CallOpts)
-}
-
-// CircuitBreakerState is a free data retrieval call binding the contract method 0x89465c62.
-//
-// Solidity: function circuitBreakerState() view returns(bool)
-func (_PublicStaking *PublicStakingCallerSession) CircuitBreakerState() (bool, error) {
-	return _PublicStaking.Contract.CircuitBreakerState(&_PublicStaking.CallOpts)
-}
-
-// EstimateEthCollection is a free data retrieval call binding the contract method 0x20ea0d48.
-//
-// Solidity: function estimateEthCollection(uint256 tokenID_) view returns(uint256 payout)
-func (_PublicStaking *PublicStakingCaller) EstimateEthCollection(opts *bind.CallOpts, tokenID_ *big.Int) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "estimateEthCollection", tokenID_)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// EstimateEthCollection is a free data retrieval call binding the contract method 0x20ea0d48.
-//
-// Solidity: function estimateEthCollection(uint256 tokenID_) view returns(uint256 payout)
-func (_PublicStaking *PublicStakingSession) EstimateEthCollection(tokenID_ *big.Int) (*big.Int, error) {
-	return _PublicStaking.Contract.EstimateEthCollection(&_PublicStaking.CallOpts, tokenID_)
-}
-
-// EstimateEthCollection is a free data retrieval call binding the contract method 0x20ea0d48.
-//
-// Solidity: function estimateEthCollection(uint256 tokenID_) view returns(uint256 payout)
-func (_PublicStaking *PublicStakingCallerSession) EstimateEthCollection(tokenID_ *big.Int) (*big.Int, error) {
-	return _PublicStaking.Contract.EstimateEthCollection(&_PublicStaking.CallOpts, tokenID_)
-}
-
-// EstimateExcessEth is a free data retrieval call binding the contract method 0x905953ed.
-//
-// Solidity: function estimateExcessEth() view returns(uint256 excess)
-func (_PublicStaking *PublicStakingCaller) EstimateExcessEth(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "estimateExcessEth")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// EstimateExcessEth is a free data retrieval call binding the contract method 0x905953ed.
-//
-// Solidity: function estimateExcessEth() view returns(uint256 excess)
-func (_PublicStaking *PublicStakingSession) EstimateExcessEth() (*big.Int, error) {
-	return _PublicStaking.Contract.EstimateExcessEth(&_PublicStaking.CallOpts)
-}
-
-// EstimateExcessEth is a free data retrieval call binding the contract method 0x905953ed.
-//
-// Solidity: function estimateExcessEth() view returns(uint256 excess)
-func (_PublicStaking *PublicStakingCallerSession) EstimateExcessEth() (*big.Int, error) {
-	return _PublicStaking.Contract.EstimateExcessEth(&_PublicStaking.CallOpts)
-}
-
-// EstimateExcessToken is a free data retrieval call binding the contract method 0x3eed3eff.
-//
-// Solidity: function estimateExcessToken() view returns(uint256 excess)
-func (_PublicStaking *PublicStakingCaller) EstimateExcessToken(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "estimateExcessToken")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// EstimateExcessToken is a free data retrieval call binding the contract method 0x3eed3eff.
-//
-// Solidity: function estimateExcessToken() view returns(uint256 excess)
-func (_PublicStaking *PublicStakingSession) EstimateExcessToken() (*big.Int, error) {
-	return _PublicStaking.Contract.EstimateExcessToken(&_PublicStaking.CallOpts)
-}
-
-// EstimateExcessToken is a free data retrieval call binding the contract method 0x3eed3eff.
-//
-// Solidity: function estimateExcessToken() view returns(uint256 excess)
-func (_PublicStaking *PublicStakingCallerSession) EstimateExcessToken() (*big.Int, error) {
-	return _PublicStaking.Contract.EstimateExcessToken(&_PublicStaking.CallOpts)
-}
-
-// EstimateTokenCollection is a free data retrieval call binding the contract method 0x93c5748d.
-//
-// Solidity: function estimateTokenCollection(uint256 tokenID_) view returns(uint256 payout)
-func (_PublicStaking *PublicStakingCaller) EstimateTokenCollection(opts *bind.CallOpts, tokenID_ *big.Int) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "estimateTokenCollection", tokenID_)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// EstimateTokenCollection is a free data retrieval call binding the contract method 0x93c5748d.
-//
-// Solidity: function estimateTokenCollection(uint256 tokenID_) view returns(uint256 payout)
-func (_PublicStaking *PublicStakingSession) EstimateTokenCollection(tokenID_ *big.Int) (*big.Int, error) {
-	return _PublicStaking.Contract.EstimateTokenCollection(&_PublicStaking.CallOpts, tokenID_)
-}
-
-// EstimateTokenCollection is a free data retrieval call binding the contract method 0x93c5748d.
-//
-// Solidity: function estimateTokenCollection(uint256 tokenID_) view returns(uint256 payout)
-func (_PublicStaking *PublicStakingCallerSession) EstimateTokenCollection(tokenID_ *big.Int) (*big.Int, error) {
-	return _PublicStaking.Contract.EstimateTokenCollection(&_PublicStaking.CallOpts, tokenID_)
-}
-
-// GetAccumulatorScaleFactor is a free data retrieval call binding the contract method 0x99785132.
-//
-// Solidity: function getAccumulatorScaleFactor() pure returns(uint256)
-func (_PublicStaking *PublicStakingCaller) GetAccumulatorScaleFactor(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getAccumulatorScaleFactor")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetAccumulatorScaleFactor is a free data retrieval call binding the contract method 0x99785132.
-//
-// Solidity: function getAccumulatorScaleFactor() pure returns(uint256)
-func (_PublicStaking *PublicStakingSession) GetAccumulatorScaleFactor() (*big.Int, error) {
-	return _PublicStaking.Contract.GetAccumulatorScaleFactor(&_PublicStaking.CallOpts)
-}
-
-// GetAccumulatorScaleFactor is a free data retrieval call binding the contract method 0x99785132.
-//
-// Solidity: function getAccumulatorScaleFactor() pure returns(uint256)
-func (_PublicStaking *PublicStakingCallerSession) GetAccumulatorScaleFactor() (*big.Int, error) {
-	return _PublicStaking.Contract.GetAccumulatorScaleFactor(&_PublicStaking.CallOpts)
-}
-
-// GetApproved is a free data retrieval call binding the contract method 0x081812fc.
-//
-// Solidity: function getApproved(uint256 tokenId) view returns(address)
-func (_PublicStaking *PublicStakingCaller) GetApproved(opts *bind.CallOpts, tokenId *big.Int) (common.Address, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getApproved", tokenId)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetApproved is a free data retrieval call binding the contract method 0x081812fc.
-//
-// Solidity: function getApproved(uint256 tokenId) view returns(address)
-func (_PublicStaking *PublicStakingSession) GetApproved(tokenId *big.Int) (common.Address, error) {
-	return _PublicStaking.Contract.GetApproved(&_PublicStaking.CallOpts, tokenId)
-}
-
-// GetApproved is a free data retrieval call binding the contract method 0x081812fc.
-//
-// Solidity: function getApproved(uint256 tokenId) view returns(address)
-func (_PublicStaking *PublicStakingCallerSession) GetApproved(tokenId *big.Int) (common.Address, error) {
-	return _PublicStaking.Contract.GetApproved(&_PublicStaking.CallOpts, tokenId)
-}
-
-// GetEthAccumulator is a free data retrieval call binding the contract method 0x548652d2.
-//
-// Solidity: function getEthAccumulator() view returns(uint256 accumulator, uint256 slush)
-func (_PublicStaking *PublicStakingCaller) GetEthAccumulator(opts *bind.CallOpts) (struct {
-	Accumulator *big.Int
-	Slush       *big.Int
-}, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getEthAccumulator")
-
-	outstruct := new(struct {
-		Accumulator *big.Int
-		Slush       *big.Int
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.Accumulator = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-	outstruct.Slush = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
-
-	return *outstruct, err
-
-}
-
-// GetEthAccumulator is a free data retrieval call binding the contract method 0x548652d2.
-//
-// Solidity: function getEthAccumulator() view returns(uint256 accumulator, uint256 slush)
-func (_PublicStaking *PublicStakingSession) GetEthAccumulator() (struct {
-	Accumulator *big.Int
-	Slush       *big.Int
-}, error) {
-	return _PublicStaking.Contract.GetEthAccumulator(&_PublicStaking.CallOpts)
-}
-
-// GetEthAccumulator is a free data retrieval call binding the contract method 0x548652d2.
-//
-// Solidity: function getEthAccumulator() view returns(uint256 accumulator, uint256 slush)
-func (_PublicStaking *PublicStakingCallerSession) GetEthAccumulator() (struct {
-	Accumulator *big.Int
-	Slush       *big.Int
-}, error) {
-	return _PublicStaking.Contract.GetEthAccumulator(&_PublicStaking.CallOpts)
-}
-
-// GetMaxMintLock is a free data retrieval call binding the contract method 0x090f70f0.
-//
-// Solidity: function getMaxMintLock() pure returns(uint256)
-func (_PublicStaking *PublicStakingCaller) GetMaxMintLock(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getMaxMintLock")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetMaxMintLock is a free data retrieval call binding the contract method 0x090f70f0.
-//
-// Solidity: function getMaxMintLock() pure returns(uint256)
-func (_PublicStaking *PublicStakingSession) GetMaxMintLock() (*big.Int, error) {
-	return _PublicStaking.Contract.GetMaxMintLock(&_PublicStaking.CallOpts)
-}
-
-// GetMaxMintLock is a free data retrieval call binding the contract method 0x090f70f0.
-//
-// Solidity: function getMaxMintLock() pure returns(uint256)
-func (_PublicStaking *PublicStakingCallerSession) GetMaxMintLock() (*big.Int, error) {
-	return _PublicStaking.Contract.GetMaxMintLock(&_PublicStaking.CallOpts)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_PublicStaking *PublicStakingCaller) GetMetamorphicContractAddress(opts *bind.CallOpts, _salt [32]byte, _factory common.Address) (common.Address, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getMetamorphicContractAddress", _salt, _factory)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_PublicStaking *PublicStakingSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _PublicStaking.Contract.GetMetamorphicContractAddress(&_PublicStaking.CallOpts, _salt, _factory)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_PublicStaking *PublicStakingCallerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _PublicStaking.Contract.GetMetamorphicContractAddress(&_PublicStaking.CallOpts, _salt, _factory)
-}
-
-// GetPosition is a free data retrieval call binding the contract method 0xeb02c301.
-//
-// Solidity: function getPosition(uint256 tokenID_) view returns(uint256 shares, uint256 freeAfter, uint256 withdrawFreeAfter, uint256 accumulatorEth, uint256 accumulatorToken)
-func (_PublicStaking *PublicStakingCaller) GetPosition(opts *bind.CallOpts, tokenID_ *big.Int) (struct {
-	Shares            *big.Int
-	FreeAfter         *big.Int
-	WithdrawFreeAfter *big.Int
-	AccumulatorEth    *big.Int
-	AccumulatorToken  *big.Int
-}, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getPosition", tokenID_)
-
-	outstruct := new(struct {
-		Shares            *big.Int
-		FreeAfter         *big.Int
-		WithdrawFreeAfter *big.Int
-		AccumulatorEth    *big.Int
-		AccumulatorToken  *big.Int
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.Shares = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-	outstruct.FreeAfter = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
-	outstruct.WithdrawFreeAfter = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
-	outstruct.AccumulatorEth = *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
-	outstruct.AccumulatorToken = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
-
-	return *outstruct, err
-
-}
-
-// GetPosition is a free data retrieval call binding the contract method 0xeb02c301.
-//
-// Solidity: function getPosition(uint256 tokenID_) view returns(uint256 shares, uint256 freeAfter, uint256 withdrawFreeAfter, uint256 accumulatorEth, uint256 accumulatorToken)
-func (_PublicStaking *PublicStakingSession) GetPosition(tokenID_ *big.Int) (struct {
-	Shares            *big.Int
-	FreeAfter         *big.Int
-	WithdrawFreeAfter *big.Int
-	AccumulatorEth    *big.Int
-	AccumulatorToken  *big.Int
-}, error) {
-	return _PublicStaking.Contract.GetPosition(&_PublicStaking.CallOpts, tokenID_)
-}
-
-// GetPosition is a free data retrieval call binding the contract method 0xeb02c301.
-//
-// Solidity: function getPosition(uint256 tokenID_) view returns(uint256 shares, uint256 freeAfter, uint256 withdrawFreeAfter, uint256 accumulatorEth, uint256 accumulatorToken)
-func (_PublicStaking *PublicStakingCallerSession) GetPosition(tokenID_ *big.Int) (struct {
-	Shares            *big.Int
-	FreeAfter         *big.Int
-	WithdrawFreeAfter *big.Int
-	AccumulatorEth    *big.Int
-	AccumulatorToken  *big.Int
-}, error) {
-	return _PublicStaking.Contract.GetPosition(&_PublicStaking.CallOpts, tokenID_)
-}
-
-// GetTokenAccumulator is a free data retrieval call binding the contract method 0xc47c6e14.
-//
-// Solidity: function getTokenAccumulator() view returns(uint256 accumulator, uint256 slush)
-func (_PublicStaking *PublicStakingCaller) GetTokenAccumulator(opts *bind.CallOpts) (struct {
-	Accumulator *big.Int
-	Slush       *big.Int
-}, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getTokenAccumulator")
-
-	outstruct := new(struct {
-		Accumulator *big.Int
-		Slush       *big.Int
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.Accumulator = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-	outstruct.Slush = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
-
-	return *outstruct, err
-
-}
-
-// GetTokenAccumulator is a free data retrieval call binding the contract method 0xc47c6e14.
-//
-// Solidity: function getTokenAccumulator() view returns(uint256 accumulator, uint256 slush)
-func (_PublicStaking *PublicStakingSession) GetTokenAccumulator() (struct {
-	Accumulator *big.Int
-	Slush       *big.Int
-}, error) {
-	return _PublicStaking.Contract.GetTokenAccumulator(&_PublicStaking.CallOpts)
-}
-
-// GetTokenAccumulator is a free data retrieval call binding the contract method 0xc47c6e14.
-//
-// Solidity: function getTokenAccumulator() view returns(uint256 accumulator, uint256 slush)
-func (_PublicStaking *PublicStakingCallerSession) GetTokenAccumulator() (struct {
-	Accumulator *big.Int
-	Slush       *big.Int
-}, error) {
-	return _PublicStaking.Contract.GetTokenAccumulator(&_PublicStaking.CallOpts)
-}
-
-// GetTotalReserveAToken is a free data retrieval call binding the contract method 0x856de8d2.
-//
-// Solidity: function getTotalReserveAToken() view returns(uint256)
-func (_PublicStaking *PublicStakingCaller) GetTotalReserveAToken(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getTotalReserveAToken")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetTotalReserveAToken is a free data retrieval call binding the contract method 0x856de8d2.
-//
-// Solidity: function getTotalReserveAToken() view returns(uint256)
-func (_PublicStaking *PublicStakingSession) GetTotalReserveAToken() (*big.Int, error) {
-	return _PublicStaking.Contract.GetTotalReserveAToken(&_PublicStaking.CallOpts)
-}
-
-// GetTotalReserveAToken is a free data retrieval call binding the contract method 0x856de8d2.
-//
-// Solidity: function getTotalReserveAToken() view returns(uint256)
-func (_PublicStaking *PublicStakingCallerSession) GetTotalReserveAToken() (*big.Int, error) {
-	return _PublicStaking.Contract.GetTotalReserveAToken(&_PublicStaking.CallOpts)
-}
-
-// GetTotalReserveEth is a free data retrieval call binding the contract method 0x19b8be2f.
-//
-// Solidity: function getTotalReserveEth() view returns(uint256)
-func (_PublicStaking *PublicStakingCaller) GetTotalReserveEth(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getTotalReserveEth")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetTotalReserveEth is a free data retrieval call binding the contract method 0x19b8be2f.
-//
-// Solidity: function getTotalReserveEth() view returns(uint256)
-func (_PublicStaking *PublicStakingSession) GetTotalReserveEth() (*big.Int, error) {
-	return _PublicStaking.Contract.GetTotalReserveEth(&_PublicStaking.CallOpts)
-}
-
-// GetTotalReserveEth is a free data retrieval call binding the contract method 0x19b8be2f.
-//
-// Solidity: function getTotalReserveEth() view returns(uint256)
-func (_PublicStaking *PublicStakingCallerSession) GetTotalReserveEth() (*big.Int, error) {
-	return _PublicStaking.Contract.GetTotalReserveEth(&_PublicStaking.CallOpts)
-}
-
-// GetTotalShares is a free data retrieval call binding the contract method 0xd5002f2e.
-//
-// Solidity: function getTotalShares() view returns(uint256)
-func (_PublicStaking *PublicStakingCaller) GetTotalShares(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "getTotalShares")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetTotalShares is a free data retrieval call binding the contract method 0xd5002f2e.
-//
-// Solidity: function getTotalShares() view returns(uint256)
-func (_PublicStaking *PublicStakingSession) GetTotalShares() (*big.Int, error) {
-	return _PublicStaking.Contract.GetTotalShares(&_PublicStaking.CallOpts)
-}
-
-// GetTotalShares is a free data retrieval call binding the contract method 0xd5002f2e.
-//
-// Solidity: function getTotalShares() view returns(uint256)
-func (_PublicStaking *PublicStakingCallerSession) GetTotalShares() (*big.Int, error) {
-	return _PublicStaking.Contract.GetTotalShares(&_PublicStaking.CallOpts)
-}
-
-// IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
-//
-// Solidity: function isApprovedForAll(address owner, address operator) view returns(bool)
-func (_PublicStaking *PublicStakingCaller) IsApprovedForAll(opts *bind.CallOpts, owner common.Address, operator common.Address) (bool, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "isApprovedForAll", owner, operator)
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
-//
-// Solidity: function isApprovedForAll(address owner, address operator) view returns(bool)
-func (_PublicStaking *PublicStakingSession) IsApprovedForAll(owner common.Address, operator common.Address) (bool, error) {
-	return _PublicStaking.Contract.IsApprovedForAll(&_PublicStaking.CallOpts, owner, operator)
-}
-
-// IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
-//
-// Solidity: function isApprovedForAll(address owner, address operator) view returns(bool)
-func (_PublicStaking *PublicStakingCallerSession) IsApprovedForAll(owner common.Address, operator common.Address) (bool, error) {
-	return _PublicStaking.Contract.IsApprovedForAll(&_PublicStaking.CallOpts, owner, operator)
-}
-
-// Name is a free data retrieval call binding the contract method 0x06fdde03.
-//
-// Solidity: function name() view returns(string)
-func (_PublicStaking *PublicStakingCaller) Name(opts *bind.CallOpts) (string, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "name")
-
-	if err != nil {
-		return *new(string), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(string)).(*string)
-
-	return out0, err
-
-}
-
-// Name is a free data retrieval call binding the contract method 0x06fdde03.
-//
-// Solidity: function name() view returns(string)
-func (_PublicStaking *PublicStakingSession) Name() (string, error) {
-	return _PublicStaking.Contract.Name(&_PublicStaking.CallOpts)
-}
-
-// Name is a free data retrieval call binding the contract method 0x06fdde03.
-//
-// Solidity: function name() view returns(string)
-func (_PublicStaking *PublicStakingCallerSession) Name() (string, error) {
-	return _PublicStaking.Contract.Name(&_PublicStaking.CallOpts)
-}
-
-// OwnerOf is a free data retrieval call binding the contract method 0x6352211e.
-//
-// Solidity: function ownerOf(uint256 tokenId) view returns(address)
-func (_PublicStaking *PublicStakingCaller) OwnerOf(opts *bind.CallOpts, tokenId *big.Int) (common.Address, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "ownerOf", tokenId)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// OwnerOf is a free data retrieval call binding the contract method 0x6352211e.
-//
-// Solidity: function ownerOf(uint256 tokenId) view returns(address)
-func (_PublicStaking *PublicStakingSession) OwnerOf(tokenId *big.Int) (common.Address, error) {
-	return _PublicStaking.Contract.OwnerOf(&_PublicStaking.CallOpts, tokenId)
-}
-
-// OwnerOf is a free data retrieval call binding the contract method 0x6352211e.
-//
-// Solidity: function ownerOf(uint256 tokenId) view returns(address)
-func (_PublicStaking *PublicStakingCallerSession) OwnerOf(tokenId *big.Int) (common.Address, error) {
-	return _PublicStaking.Contract.OwnerOf(&_PublicStaking.CallOpts, tokenId)
-}
-
-// SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
-//
-// Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
-func (_PublicStaking *PublicStakingCaller) SupportsInterface(opts *bind.CallOpts, interfaceId [4]byte) (bool, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "supportsInterface", interfaceId)
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
-//
-// Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
-func (_PublicStaking *PublicStakingSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
-	return _PublicStaking.Contract.SupportsInterface(&_PublicStaking.CallOpts, interfaceId)
-}
-
-// SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
-//
-// Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
-func (_PublicStaking *PublicStakingCallerSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
-	return _PublicStaking.Contract.SupportsInterface(&_PublicStaking.CallOpts, interfaceId)
-}
-
-// Symbol is a free data retrieval call binding the contract method 0x95d89b41.
-//
-// Solidity: function symbol() view returns(string)
-func (_PublicStaking *PublicStakingCaller) Symbol(opts *bind.CallOpts) (string, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "symbol")
-
-	if err != nil {
-		return *new(string), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(string)).(*string)
-
-	return out0, err
-
-}
-
-// Symbol is a free data retrieval call binding the contract method 0x95d89b41.
-//
-// Solidity: function symbol() view returns(string)
-func (_PublicStaking *PublicStakingSession) Symbol() (string, error) {
-	return _PublicStaking.Contract.Symbol(&_PublicStaking.CallOpts)
-}
-
-// Symbol is a free data retrieval call binding the contract method 0x95d89b41.
-//
-// Solidity: function symbol() view returns(string)
-func (_PublicStaking *PublicStakingCallerSession) Symbol() (string, error) {
-	return _PublicStaking.Contract.Symbol(&_PublicStaking.CallOpts)
-}
-
-// TokenURI is a free data retrieval call binding the contract method 0xc87b56dd.
-//
-// Solidity: function tokenURI(uint256 tokenId) view returns(string)
-func (_PublicStaking *PublicStakingCaller) TokenURI(opts *bind.CallOpts, tokenId *big.Int) (string, error) {
-	var out []interface{}
-	err := _PublicStaking.contract.Call(opts, &out, "tokenURI", tokenId)
-
-	if err != nil {
-		return *new(string), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(string)).(*string)
-
-	return out0, err
-
-}
-
-// TokenURI is a free data retrieval call binding the contract method 0xc87b56dd.
-//
-// Solidity: function tokenURI(uint256 tokenId) view returns(string)
-func (_PublicStaking *PublicStakingSession) TokenURI(tokenId *big.Int) (string, error) {
-	return _PublicStaking.Contract.TokenURI(&_PublicStaking.CallOpts, tokenId)
-}
-
-// TokenURI is a free data retrieval call binding the contract method 0xc87b56dd.
-//
-// Solidity: function tokenURI(uint256 tokenId) view returns(string)
-func (_PublicStaking *PublicStakingCallerSession) TokenURI(tokenId *big.Int) (string, error) {
-	return _PublicStaking.Contract.TokenURI(&_PublicStaking.CallOpts, tokenId)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
@@ -937,6 +191,27 @@ func (_PublicStaking *PublicStakingSession) Approve(to common.Address, tokenId *
 // Solidity: function approve(address to, uint256 tokenId) returns()
 func (_PublicStaking *PublicStakingTransactorSession) Approve(to common.Address, tokenId *big.Int) (*types.Transaction, error) {
 	return _PublicStaking.Contract.Approve(&_PublicStaking.TransactOpts, to, tokenId)
+}
+
+// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address owner) returns(uint256)
+func (_PublicStaking *PublicStakingTransactor) BalanceOf(opts *bind.TransactOpts, owner common.Address) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "balanceOf", owner)
+}
+
+// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address owner) returns(uint256)
+func (_PublicStaking *PublicStakingSession) BalanceOf(owner common.Address) (*types.Transaction, error) {
+	return _PublicStaking.Contract.BalanceOf(&_PublicStaking.TransactOpts, owner)
+}
+
+// BalanceOf is a paid mutator transaction binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address owner) returns(uint256)
+func (_PublicStaking *PublicStakingTransactorSession) BalanceOf(owner common.Address) (*types.Transaction, error) {
+	return _PublicStaking.Contract.BalanceOf(&_PublicStaking.TransactOpts, owner)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x42966c68.
@@ -979,6 +254,27 @@ func (_PublicStaking *PublicStakingSession) BurnTo(to_ common.Address, tokenID_ 
 // Solidity: function burnTo(address to_, uint256 tokenID_) returns(uint256 payoutEth, uint256 payoutAToken)
 func (_PublicStaking *PublicStakingTransactorSession) BurnTo(to_ common.Address, tokenID_ *big.Int) (*types.Transaction, error) {
 	return _PublicStaking.Contract.BurnTo(&_PublicStaking.TransactOpts, to_, tokenID_)
+}
+
+// CircuitBreakerState is a paid mutator transaction binding the contract method 0x89465c62.
+//
+// Solidity: function circuitBreakerState() returns(bool)
+func (_PublicStaking *PublicStakingTransactor) CircuitBreakerState(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "circuitBreakerState")
+}
+
+// CircuitBreakerState is a paid mutator transaction binding the contract method 0x89465c62.
+//
+// Solidity: function circuitBreakerState() returns(bool)
+func (_PublicStaking *PublicStakingSession) CircuitBreakerState() (*types.Transaction, error) {
+	return _PublicStaking.Contract.CircuitBreakerState(&_PublicStaking.TransactOpts)
+}
+
+// CircuitBreakerState is a paid mutator transaction binding the contract method 0x89465c62.
+//
+// Solidity: function circuitBreakerState() returns(bool)
+func (_PublicStaking *PublicStakingTransactorSession) CircuitBreakerState() (*types.Transaction, error) {
+	return _PublicStaking.Contract.CircuitBreakerState(&_PublicStaking.TransactOpts)
 }
 
 // CollectEth is a paid mutator transaction binding the contract method 0x2a0d8bd1.
@@ -1067,21 +363,21 @@ func (_PublicStaking *PublicStakingTransactorSession) CollectTokenTo(to_ common.
 
 // DepositEth is a paid mutator transaction binding the contract method 0x99a89ecc.
 //
-// Solidity: function depositEth(uint8 magic_) payable returns()
+// Solidity: function depositEth(uint8 magic_) returns()
 func (_PublicStaking *PublicStakingTransactor) DepositEth(opts *bind.TransactOpts, magic_ uint8) (*types.Transaction, error) {
 	return _PublicStaking.contract.Transact(opts, "depositEth", magic_)
 }
 
 // DepositEth is a paid mutator transaction binding the contract method 0x99a89ecc.
 //
-// Solidity: function depositEth(uint8 magic_) payable returns()
+// Solidity: function depositEth(uint8 magic_) returns()
 func (_PublicStaking *PublicStakingSession) DepositEth(magic_ uint8) (*types.Transaction, error) {
 	return _PublicStaking.Contract.DepositEth(&_PublicStaking.TransactOpts, magic_)
 }
 
 // DepositEth is a paid mutator transaction binding the contract method 0x99a89ecc.
 //
-// Solidity: function depositEth(uint8 magic_) payable returns()
+// Solidity: function depositEth(uint8 magic_) returns()
 func (_PublicStaking *PublicStakingTransactorSession) DepositEth(magic_ uint8) (*types.Transaction, error) {
 	return _PublicStaking.Contract.DepositEth(&_PublicStaking.TransactOpts, magic_)
 }
@@ -1107,6 +403,321 @@ func (_PublicStaking *PublicStakingTransactorSession) DepositToken(magic_ uint8,
 	return _PublicStaking.Contract.DepositToken(&_PublicStaking.TransactOpts, magic_, amount_)
 }
 
+// EstimateEthCollection is a paid mutator transaction binding the contract method 0x20ea0d48.
+//
+// Solidity: function estimateEthCollection(uint256 tokenID_) returns(uint256 payout)
+func (_PublicStaking *PublicStakingTransactor) EstimateEthCollection(opts *bind.TransactOpts, tokenID_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "estimateEthCollection", tokenID_)
+}
+
+// EstimateEthCollection is a paid mutator transaction binding the contract method 0x20ea0d48.
+//
+// Solidity: function estimateEthCollection(uint256 tokenID_) returns(uint256 payout)
+func (_PublicStaking *PublicStakingSession) EstimateEthCollection(tokenID_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.EstimateEthCollection(&_PublicStaking.TransactOpts, tokenID_)
+}
+
+// EstimateEthCollection is a paid mutator transaction binding the contract method 0x20ea0d48.
+//
+// Solidity: function estimateEthCollection(uint256 tokenID_) returns(uint256 payout)
+func (_PublicStaking *PublicStakingTransactorSession) EstimateEthCollection(tokenID_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.EstimateEthCollection(&_PublicStaking.TransactOpts, tokenID_)
+}
+
+// EstimateExcessEth is a paid mutator transaction binding the contract method 0x905953ed.
+//
+// Solidity: function estimateExcessEth() returns(uint256 excess)
+func (_PublicStaking *PublicStakingTransactor) EstimateExcessEth(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "estimateExcessEth")
+}
+
+// EstimateExcessEth is a paid mutator transaction binding the contract method 0x905953ed.
+//
+// Solidity: function estimateExcessEth() returns(uint256 excess)
+func (_PublicStaking *PublicStakingSession) EstimateExcessEth() (*types.Transaction, error) {
+	return _PublicStaking.Contract.EstimateExcessEth(&_PublicStaking.TransactOpts)
+}
+
+// EstimateExcessEth is a paid mutator transaction binding the contract method 0x905953ed.
+//
+// Solidity: function estimateExcessEth() returns(uint256 excess)
+func (_PublicStaking *PublicStakingTransactorSession) EstimateExcessEth() (*types.Transaction, error) {
+	return _PublicStaking.Contract.EstimateExcessEth(&_PublicStaking.TransactOpts)
+}
+
+// EstimateExcessToken is a paid mutator transaction binding the contract method 0x3eed3eff.
+//
+// Solidity: function estimateExcessToken() returns(uint256 excess)
+func (_PublicStaking *PublicStakingTransactor) EstimateExcessToken(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "estimateExcessToken")
+}
+
+// EstimateExcessToken is a paid mutator transaction binding the contract method 0x3eed3eff.
+//
+// Solidity: function estimateExcessToken() returns(uint256 excess)
+func (_PublicStaking *PublicStakingSession) EstimateExcessToken() (*types.Transaction, error) {
+	return _PublicStaking.Contract.EstimateExcessToken(&_PublicStaking.TransactOpts)
+}
+
+// EstimateExcessToken is a paid mutator transaction binding the contract method 0x3eed3eff.
+//
+// Solidity: function estimateExcessToken() returns(uint256 excess)
+func (_PublicStaking *PublicStakingTransactorSession) EstimateExcessToken() (*types.Transaction, error) {
+	return _PublicStaking.Contract.EstimateExcessToken(&_PublicStaking.TransactOpts)
+}
+
+// EstimateTokenCollection is a paid mutator transaction binding the contract method 0x93c5748d.
+//
+// Solidity: function estimateTokenCollection(uint256 tokenID_) returns(uint256 payout)
+func (_PublicStaking *PublicStakingTransactor) EstimateTokenCollection(opts *bind.TransactOpts, tokenID_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "estimateTokenCollection", tokenID_)
+}
+
+// EstimateTokenCollection is a paid mutator transaction binding the contract method 0x93c5748d.
+//
+// Solidity: function estimateTokenCollection(uint256 tokenID_) returns(uint256 payout)
+func (_PublicStaking *PublicStakingSession) EstimateTokenCollection(tokenID_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.EstimateTokenCollection(&_PublicStaking.TransactOpts, tokenID_)
+}
+
+// EstimateTokenCollection is a paid mutator transaction binding the contract method 0x93c5748d.
+//
+// Solidity: function estimateTokenCollection(uint256 tokenID_) returns(uint256 payout)
+func (_PublicStaking *PublicStakingTransactorSession) EstimateTokenCollection(tokenID_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.EstimateTokenCollection(&_PublicStaking.TransactOpts, tokenID_)
+}
+
+// GetAccumulatorScaleFactor is a paid mutator transaction binding the contract method 0x99785132.
+//
+// Solidity: function getAccumulatorScaleFactor() returns(uint256)
+func (_PublicStaking *PublicStakingTransactor) GetAccumulatorScaleFactor(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getAccumulatorScaleFactor")
+}
+
+// GetAccumulatorScaleFactor is a paid mutator transaction binding the contract method 0x99785132.
+//
+// Solidity: function getAccumulatorScaleFactor() returns(uint256)
+func (_PublicStaking *PublicStakingSession) GetAccumulatorScaleFactor() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetAccumulatorScaleFactor(&_PublicStaking.TransactOpts)
+}
+
+// GetAccumulatorScaleFactor is a paid mutator transaction binding the contract method 0x99785132.
+//
+// Solidity: function getAccumulatorScaleFactor() returns(uint256)
+func (_PublicStaking *PublicStakingTransactorSession) GetAccumulatorScaleFactor() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetAccumulatorScaleFactor(&_PublicStaking.TransactOpts)
+}
+
+// GetApproved is a paid mutator transaction binding the contract method 0x081812fc.
+//
+// Solidity: function getApproved(uint256 tokenId) returns(address)
+func (_PublicStaking *PublicStakingTransactor) GetApproved(opts *bind.TransactOpts, tokenId *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getApproved", tokenId)
+}
+
+// GetApproved is a paid mutator transaction binding the contract method 0x081812fc.
+//
+// Solidity: function getApproved(uint256 tokenId) returns(address)
+func (_PublicStaking *PublicStakingSession) GetApproved(tokenId *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetApproved(&_PublicStaking.TransactOpts, tokenId)
+}
+
+// GetApproved is a paid mutator transaction binding the contract method 0x081812fc.
+//
+// Solidity: function getApproved(uint256 tokenId) returns(address)
+func (_PublicStaking *PublicStakingTransactorSession) GetApproved(tokenId *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetApproved(&_PublicStaking.TransactOpts, tokenId)
+}
+
+// GetEthAccumulator is a paid mutator transaction binding the contract method 0x548652d2.
+//
+// Solidity: function getEthAccumulator() returns(uint256 accumulator, uint256 slush)
+func (_PublicStaking *PublicStakingTransactor) GetEthAccumulator(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getEthAccumulator")
+}
+
+// GetEthAccumulator is a paid mutator transaction binding the contract method 0x548652d2.
+//
+// Solidity: function getEthAccumulator() returns(uint256 accumulator, uint256 slush)
+func (_PublicStaking *PublicStakingSession) GetEthAccumulator() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetEthAccumulator(&_PublicStaking.TransactOpts)
+}
+
+// GetEthAccumulator is a paid mutator transaction binding the contract method 0x548652d2.
+//
+// Solidity: function getEthAccumulator() returns(uint256 accumulator, uint256 slush)
+func (_PublicStaking *PublicStakingTransactorSession) GetEthAccumulator() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetEthAccumulator(&_PublicStaking.TransactOpts)
+}
+
+// GetMaxMintLock is a paid mutator transaction binding the contract method 0x090f70f0.
+//
+// Solidity: function getMaxMintLock() returns(uint256)
+func (_PublicStaking *PublicStakingTransactor) GetMaxMintLock(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getMaxMintLock")
+}
+
+// GetMaxMintLock is a paid mutator transaction binding the contract method 0x090f70f0.
+//
+// Solidity: function getMaxMintLock() returns(uint256)
+func (_PublicStaking *PublicStakingSession) GetMaxMintLock() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetMaxMintLock(&_PublicStaking.TransactOpts)
+}
+
+// GetMaxMintLock is a paid mutator transaction binding the contract method 0x090f70f0.
+//
+// Solidity: function getMaxMintLock() returns(uint256)
+func (_PublicStaking *PublicStakingTransactorSession) GetMaxMintLock() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetMaxMintLock(&_PublicStaking.TransactOpts)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_PublicStaking *PublicStakingTransactor) GetMetamorphicContractAddress(opts *bind.TransactOpts, _salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getMetamorphicContractAddress", _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_PublicStaking *PublicStakingSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetMetamorphicContractAddress(&_PublicStaking.TransactOpts, _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_PublicStaking *PublicStakingTransactorSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetMetamorphicContractAddress(&_PublicStaking.TransactOpts, _salt, _factory)
+}
+
+// GetPosition is a paid mutator transaction binding the contract method 0xeb02c301.
+//
+// Solidity: function getPosition(uint256 tokenID_) returns(uint256 weightedShares, bool lockedStakingPosition, uint256 shares, uint256 freeAfter, uint256 withdrawFreeAfter, uint256 accumulatorEth, uint256 accumulatorToken)
+func (_PublicStaking *PublicStakingTransactor) GetPosition(opts *bind.TransactOpts, tokenID_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getPosition", tokenID_)
+}
+
+// GetPosition is a paid mutator transaction binding the contract method 0xeb02c301.
+//
+// Solidity: function getPosition(uint256 tokenID_) returns(uint256 weightedShares, bool lockedStakingPosition, uint256 shares, uint256 freeAfter, uint256 withdrawFreeAfter, uint256 accumulatorEth, uint256 accumulatorToken)
+func (_PublicStaking *PublicStakingSession) GetPosition(tokenID_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetPosition(&_PublicStaking.TransactOpts, tokenID_)
+}
+
+// GetPosition is a paid mutator transaction binding the contract method 0xeb02c301.
+//
+// Solidity: function getPosition(uint256 tokenID_) returns(uint256 weightedShares, bool lockedStakingPosition, uint256 shares, uint256 freeAfter, uint256 withdrawFreeAfter, uint256 accumulatorEth, uint256 accumulatorToken)
+func (_PublicStaking *PublicStakingTransactorSession) GetPosition(tokenID_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetPosition(&_PublicStaking.TransactOpts, tokenID_)
+}
+
+// GetTokenAccumulator is a paid mutator transaction binding the contract method 0xc47c6e14.
+//
+// Solidity: function getTokenAccumulator() returns(uint256 accumulator, uint256 slush)
+func (_PublicStaking *PublicStakingTransactor) GetTokenAccumulator(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getTokenAccumulator")
+}
+
+// GetTokenAccumulator is a paid mutator transaction binding the contract method 0xc47c6e14.
+//
+// Solidity: function getTokenAccumulator() returns(uint256 accumulator, uint256 slush)
+func (_PublicStaking *PublicStakingSession) GetTokenAccumulator() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTokenAccumulator(&_PublicStaking.TransactOpts)
+}
+
+// GetTokenAccumulator is a paid mutator transaction binding the contract method 0xc47c6e14.
+//
+// Solidity: function getTokenAccumulator() returns(uint256 accumulator, uint256 slush)
+func (_PublicStaking *PublicStakingTransactorSession) GetTokenAccumulator() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTokenAccumulator(&_PublicStaking.TransactOpts)
+}
+
+// GetTotalReserveAToken is a paid mutator transaction binding the contract method 0x856de8d2.
+//
+// Solidity: function getTotalReserveAToken() returns(uint256)
+func (_PublicStaking *PublicStakingTransactor) GetTotalReserveAToken(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getTotalReserveAToken")
+}
+
+// GetTotalReserveAToken is a paid mutator transaction binding the contract method 0x856de8d2.
+//
+// Solidity: function getTotalReserveAToken() returns(uint256)
+func (_PublicStaking *PublicStakingSession) GetTotalReserveAToken() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTotalReserveAToken(&_PublicStaking.TransactOpts)
+}
+
+// GetTotalReserveAToken is a paid mutator transaction binding the contract method 0x856de8d2.
+//
+// Solidity: function getTotalReserveAToken() returns(uint256)
+func (_PublicStaking *PublicStakingTransactorSession) GetTotalReserveAToken() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTotalReserveAToken(&_PublicStaking.TransactOpts)
+}
+
+// GetTotalReserveEth is a paid mutator transaction binding the contract method 0x19b8be2f.
+//
+// Solidity: function getTotalReserveEth() returns(uint256)
+func (_PublicStaking *PublicStakingTransactor) GetTotalReserveEth(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getTotalReserveEth")
+}
+
+// GetTotalReserveEth is a paid mutator transaction binding the contract method 0x19b8be2f.
+//
+// Solidity: function getTotalReserveEth() returns(uint256)
+func (_PublicStaking *PublicStakingSession) GetTotalReserveEth() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTotalReserveEth(&_PublicStaking.TransactOpts)
+}
+
+// GetTotalReserveEth is a paid mutator transaction binding the contract method 0x19b8be2f.
+//
+// Solidity: function getTotalReserveEth() returns(uint256)
+func (_PublicStaking *PublicStakingTransactorSession) GetTotalReserveEth() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTotalReserveEth(&_PublicStaking.TransactOpts)
+}
+
+// GetTotalSharesEth is a paid mutator transaction binding the contract method 0x6b0b5eae.
+//
+// Solidity: function getTotalSharesEth() returns(uint256)
+func (_PublicStaking *PublicStakingTransactor) GetTotalSharesEth(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getTotalSharesEth")
+}
+
+// GetTotalSharesEth is a paid mutator transaction binding the contract method 0x6b0b5eae.
+//
+// Solidity: function getTotalSharesEth() returns(uint256)
+func (_PublicStaking *PublicStakingSession) GetTotalSharesEth() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTotalSharesEth(&_PublicStaking.TransactOpts)
+}
+
+// GetTotalSharesEth is a paid mutator transaction binding the contract method 0x6b0b5eae.
+//
+// Solidity: function getTotalSharesEth() returns(uint256)
+func (_PublicStaking *PublicStakingTransactorSession) GetTotalSharesEth() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTotalSharesEth(&_PublicStaking.TransactOpts)
+}
+
+// GetTotalSharesToken is a paid mutator transaction binding the contract method 0x114be736.
+//
+// Solidity: function getTotalSharesToken() returns(uint256)
+func (_PublicStaking *PublicStakingTransactor) GetTotalSharesToken(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "getTotalSharesToken")
+}
+
+// GetTotalSharesToken is a paid mutator transaction binding the contract method 0x114be736.
+//
+// Solidity: function getTotalSharesToken() returns(uint256)
+func (_PublicStaking *PublicStakingSession) GetTotalSharesToken() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTotalSharesToken(&_PublicStaking.TransactOpts)
+}
+
+// GetTotalSharesToken is a paid mutator transaction binding the contract method 0x114be736.
+//
+// Solidity: function getTotalSharesToken() returns(uint256)
+func (_PublicStaking *PublicStakingTransactorSession) GetTotalSharesToken() (*types.Transaction, error) {
+	return _PublicStaking.Contract.GetTotalSharesToken(&_PublicStaking.TransactOpts)
+}
+
 // Initialize is a paid mutator transaction binding the contract method 0x8129fc1c.
 //
 // Solidity: function initialize() returns()
@@ -1126,6 +737,27 @@ func (_PublicStaking *PublicStakingSession) Initialize() (*types.Transaction, er
 // Solidity: function initialize() returns()
 func (_PublicStaking *PublicStakingTransactorSession) Initialize() (*types.Transaction, error) {
 	return _PublicStaking.Contract.Initialize(&_PublicStaking.TransactOpts)
+}
+
+// IsApprovedForAll is a paid mutator transaction binding the contract method 0xe985e9c5.
+//
+// Solidity: function isApprovedForAll(address owner, address operator) returns(bool)
+func (_PublicStaking *PublicStakingTransactor) IsApprovedForAll(opts *bind.TransactOpts, owner common.Address, operator common.Address) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "isApprovedForAll", owner, operator)
+}
+
+// IsApprovedForAll is a paid mutator transaction binding the contract method 0xe985e9c5.
+//
+// Solidity: function isApprovedForAll(address owner, address operator) returns(bool)
+func (_PublicStaking *PublicStakingSession) IsApprovedForAll(owner common.Address, operator common.Address) (*types.Transaction, error) {
+	return _PublicStaking.Contract.IsApprovedForAll(&_PublicStaking.TransactOpts, owner, operator)
+}
+
+// IsApprovedForAll is a paid mutator transaction binding the contract method 0xe985e9c5.
+//
+// Solidity: function isApprovedForAll(address owner, address operator) returns(bool)
+func (_PublicStaking *PublicStakingTransactorSession) IsApprovedForAll(owner common.Address, operator common.Address) (*types.Transaction, error) {
+	return _PublicStaking.Contract.IsApprovedForAll(&_PublicStaking.TransactOpts, owner, operator)
 }
 
 // LockOwnPosition is a paid mutator transaction binding the contract method 0xe42a673c.
@@ -1168,6 +800,27 @@ func (_PublicStaking *PublicStakingSession) LockPosition(caller_ common.Address,
 // Solidity: function lockPosition(address caller_, uint256 tokenID_, uint256 lockDuration_) returns(uint256)
 func (_PublicStaking *PublicStakingTransactorSession) LockPosition(caller_ common.Address, tokenID_ *big.Int, lockDuration_ *big.Int) (*types.Transaction, error) {
 	return _PublicStaking.Contract.LockPosition(&_PublicStaking.TransactOpts, caller_, tokenID_, lockDuration_)
+}
+
+// LockStakingPosition is a paid mutator transaction binding the contract method 0xa8e876b2.
+//
+// Solidity: function lockStakingPosition(uint256 tokenID_, uint256 lockDuration_) returns()
+func (_PublicStaking *PublicStakingTransactor) LockStakingPosition(opts *bind.TransactOpts, tokenID_ *big.Int, lockDuration_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "lockStakingPosition", tokenID_, lockDuration_)
+}
+
+// LockStakingPosition is a paid mutator transaction binding the contract method 0xa8e876b2.
+//
+// Solidity: function lockStakingPosition(uint256 tokenID_, uint256 lockDuration_) returns()
+func (_PublicStaking *PublicStakingSession) LockStakingPosition(tokenID_ *big.Int, lockDuration_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.LockStakingPosition(&_PublicStaking.TransactOpts, tokenID_, lockDuration_)
+}
+
+// LockStakingPosition is a paid mutator transaction binding the contract method 0xa8e876b2.
+//
+// Solidity: function lockStakingPosition(uint256 tokenID_, uint256 lockDuration_) returns()
+func (_PublicStaking *PublicStakingTransactorSession) LockStakingPosition(tokenID_ *big.Int, lockDuration_ *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.LockStakingPosition(&_PublicStaking.TransactOpts, tokenID_, lockDuration_)
 }
 
 // LockWithdraw is a paid mutator transaction binding the contract method 0x0e4eb15b.
@@ -1231,6 +884,48 @@ func (_PublicStaking *PublicStakingSession) MintTo(to_ common.Address, amount_ *
 // Solidity: function mintTo(address to_, uint256 amount_, uint256 lockDuration_) returns(uint256 tokenID)
 func (_PublicStaking *PublicStakingTransactorSession) MintTo(to_ common.Address, amount_ *big.Int, lockDuration_ *big.Int) (*types.Transaction, error) {
 	return _PublicStaking.Contract.MintTo(&_PublicStaking.TransactOpts, to_, amount_, lockDuration_)
+}
+
+// Name is a paid mutator transaction binding the contract method 0x06fdde03.
+//
+// Solidity: function name() returns(string)
+func (_PublicStaking *PublicStakingTransactor) Name(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "name")
+}
+
+// Name is a paid mutator transaction binding the contract method 0x06fdde03.
+//
+// Solidity: function name() returns(string)
+func (_PublicStaking *PublicStakingSession) Name() (*types.Transaction, error) {
+	return _PublicStaking.Contract.Name(&_PublicStaking.TransactOpts)
+}
+
+// Name is a paid mutator transaction binding the contract method 0x06fdde03.
+//
+// Solidity: function name() returns(string)
+func (_PublicStaking *PublicStakingTransactorSession) Name() (*types.Transaction, error) {
+	return _PublicStaking.Contract.Name(&_PublicStaking.TransactOpts)
+}
+
+// OwnerOf is a paid mutator transaction binding the contract method 0x6352211e.
+//
+// Solidity: function ownerOf(uint256 tokenId) returns(address)
+func (_PublicStaking *PublicStakingTransactor) OwnerOf(opts *bind.TransactOpts, tokenId *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "ownerOf", tokenId)
+}
+
+// OwnerOf is a paid mutator transaction binding the contract method 0x6352211e.
+//
+// Solidity: function ownerOf(uint256 tokenId) returns(address)
+func (_PublicStaking *PublicStakingSession) OwnerOf(tokenId *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.OwnerOf(&_PublicStaking.TransactOpts, tokenId)
+}
+
+// OwnerOf is a paid mutator transaction binding the contract method 0x6352211e.
+//
+// Solidity: function ownerOf(uint256 tokenId) returns(address)
+func (_PublicStaking *PublicStakingTransactorSession) OwnerOf(tokenId *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.OwnerOf(&_PublicStaking.TransactOpts, tokenId)
 }
 
 // SafeTransferFrom is a paid mutator transaction binding the contract method 0x42842e0e.
@@ -1336,6 +1031,69 @@ func (_PublicStaking *PublicStakingSession) SkimExcessToken(to_ common.Address) 
 // Solidity: function skimExcessToken(address to_) returns(uint256 excess)
 func (_PublicStaking *PublicStakingTransactorSession) SkimExcessToken(to_ common.Address) (*types.Transaction, error) {
 	return _PublicStaking.Contract.SkimExcessToken(&_PublicStaking.TransactOpts, to_)
+}
+
+// SupportsInterface is a paid mutator transaction binding the contract method 0x01ffc9a7.
+//
+// Solidity: function supportsInterface(bytes4 interfaceId) returns(bool)
+func (_PublicStaking *PublicStakingTransactor) SupportsInterface(opts *bind.TransactOpts, interfaceId [4]byte) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "supportsInterface", interfaceId)
+}
+
+// SupportsInterface is a paid mutator transaction binding the contract method 0x01ffc9a7.
+//
+// Solidity: function supportsInterface(bytes4 interfaceId) returns(bool)
+func (_PublicStaking *PublicStakingSession) SupportsInterface(interfaceId [4]byte) (*types.Transaction, error) {
+	return _PublicStaking.Contract.SupportsInterface(&_PublicStaking.TransactOpts, interfaceId)
+}
+
+// SupportsInterface is a paid mutator transaction binding the contract method 0x01ffc9a7.
+//
+// Solidity: function supportsInterface(bytes4 interfaceId) returns(bool)
+func (_PublicStaking *PublicStakingTransactorSession) SupportsInterface(interfaceId [4]byte) (*types.Transaction, error) {
+	return _PublicStaking.Contract.SupportsInterface(&_PublicStaking.TransactOpts, interfaceId)
+}
+
+// Symbol is a paid mutator transaction binding the contract method 0x95d89b41.
+//
+// Solidity: function symbol() returns(string)
+func (_PublicStaking *PublicStakingTransactor) Symbol(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "symbol")
+}
+
+// Symbol is a paid mutator transaction binding the contract method 0x95d89b41.
+//
+// Solidity: function symbol() returns(string)
+func (_PublicStaking *PublicStakingSession) Symbol() (*types.Transaction, error) {
+	return _PublicStaking.Contract.Symbol(&_PublicStaking.TransactOpts)
+}
+
+// Symbol is a paid mutator transaction binding the contract method 0x95d89b41.
+//
+// Solidity: function symbol() returns(string)
+func (_PublicStaking *PublicStakingTransactorSession) Symbol() (*types.Transaction, error) {
+	return _PublicStaking.Contract.Symbol(&_PublicStaking.TransactOpts)
+}
+
+// TokenURI is a paid mutator transaction binding the contract method 0xc87b56dd.
+//
+// Solidity: function tokenURI(uint256 tokenId) returns(string)
+func (_PublicStaking *PublicStakingTransactor) TokenURI(opts *bind.TransactOpts, tokenId *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.contract.Transact(opts, "tokenURI", tokenId)
+}
+
+// TokenURI is a paid mutator transaction binding the contract method 0xc87b56dd.
+//
+// Solidity: function tokenURI(uint256 tokenId) returns(string)
+func (_PublicStaking *PublicStakingSession) TokenURI(tokenId *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.TokenURI(&_PublicStaking.TransactOpts, tokenId)
+}
+
+// TokenURI is a paid mutator transaction binding the contract method 0xc87b56dd.
+//
+// Solidity: function tokenURI(uint256 tokenId) returns(string)
+func (_PublicStaking *PublicStakingTransactorSession) TokenURI(tokenId *big.Int) (*types.Transaction, error) {
+	return _PublicStaking.Contract.TokenURI(&_PublicStaking.TransactOpts, tokenId)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
@@ -1538,7 +1296,6 @@ func (_PublicStaking *PublicStakingFilterer) ParseApproval(log types.Log) (*Publ
 	if err := _PublicStaking.contract.UnpackLog(event, "Approval", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1692,7 +1449,6 @@ func (_PublicStaking *PublicStakingFilterer) ParseApprovalForAll(log types.Log) 
 	if err := _PublicStaking.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1854,6 +1610,5 @@ func (_PublicStaking *PublicStakingFilterer) ParseTransfer(log types.Log) (*Publ
 	if err := _PublicStaking.contract.UnpackLog(event, "Transfer", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }

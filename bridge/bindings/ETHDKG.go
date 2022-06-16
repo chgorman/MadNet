@@ -4,7 +4,6 @@
 package bindings
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
@@ -18,36 +17,18 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
-	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
+	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
-// Participant is an auto generated low-level Go binding around an user-defined struct.
-type Participant struct {
-	PublicKey                   [2]*big.Int
-	Nonce                       uint64
-	Index                       uint64
-	Phase                       uint8
-	DistributedSharesHash       [32]byte
-	CommitmentsFirstCoefficient [2]*big.Int
-	KeyShares                   [2]*big.Int
-	Gpkj                        [4]*big.Int
-}
-
-// ETHDKGMetaData contains all meta data concerning the ETHDKG contract.
-var ETHDKGMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[2]\",\"name\":\"publicKey\",\"type\":\"uint256[2]\"}],\"name\":\"AddressRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"GPKJSubmissionComplete\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"KeyShareSubmissionComplete\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[2]\",\"name\":\"keyShareG1\",\"type\":\"uint256[2]\"},{\"indexed\":false,\"internalType\":\"uint256[2]\",\"name\":\"keyShareG1CorrectnessProof\",\"type\":\"uint256[2]\"},{\"indexed\":false,\"internalType\":\"uint256[4]\",\"name\":\"keyShareG2\",\"type\":\"uint256[4]\"}],\"name\":\"KeyShareSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[4]\",\"name\":\"mpk\",\"type\":\"uint256[4]\"}],\"name\":\"MPKSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"RegistrationComplete\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"startBlock\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"numberValidators\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"phaseLength\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmationLength\",\"type\":\"uint256\"}],\"name\":\"RegistrationOpened\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"ShareDistributionComplete\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"encryptedShares\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[2][]\",\"name\":\"commitments\",\"type\":\"uint256[2][]\"}],\"name\":\"SharesDistributed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"share0\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"share1\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"share2\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"share3\",\"type\":\"uint256\"}],\"name\":\"ValidatorMemberAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"validatorCount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"ethHeight\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"aliceNetHeight\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"groupKey0\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"groupKey1\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"groupKey2\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"groupKey3\",\"type\":\"uint256\"}],\"name\":\"ValidatorSetCompleted\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"dishonestAddresses\",\"type\":\"address[]\"}],\"name\":\"accuseParticipantDidNotDistributeShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"dishonestAddresses\",\"type\":\"address[]\"}],\"name\":\"accuseParticipantDidNotSubmitGPKJ\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"dishonestAddresses\",\"type\":\"address[]\"}],\"name\":\"accuseParticipantDidNotSubmitKeyShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"dishonestAddress\",\"type\":\"address\"},{\"internalType\":\"uint256[]\",\"name\":\"encryptedShares\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[2][]\",\"name\":\"commitments\",\"type\":\"uint256[2][]\"},{\"internalType\":\"uint256[2]\",\"name\":\"sharedKey\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"sharedKeyCorrectnessProof\",\"type\":\"uint256[2]\"}],\"name\":\"accuseParticipantDistributedBadShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"dishonestAddresses\",\"type\":\"address[]\"}],\"name\":\"accuseParticipantNotRegistered\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validators\",\"type\":\"address[]\"},{\"internalType\":\"bytes32[]\",\"name\":\"encryptedSharesHash\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint256[2][][]\",\"name\":\"commitments\",\"type\":\"uint256[2][][]\"},{\"internalType\":\"address\",\"name\":\"dishonestAddress\",\"type\":\"address\"}],\"name\":\"accuseParticipantSubmittedBadGPKJ\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"complete\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"encryptedShares\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[2][]\",\"name\":\"commitments\",\"type\":\"uint256[2][]\"}],\"name\":\"distributeShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBadParticipants\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getConfirmationLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getETHDKGPhase\",\"outputs\":[{\"internalType\":\"enumPhase\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMasterPublicKey\",\"outputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"\",\"type\":\"uint256[4]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMasterPublicKeyHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMinValidators\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getNonce\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getNumParticipants\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"participant\",\"type\":\"address\"}],\"name\":\"getParticipantInternalState\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"publicKey\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint64\",\"name\":\"nonce\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"index\",\"type\":\"uint64\"},{\"internalType\":\"enumPhase\",\"name\":\"phase\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"distributedSharesHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitmentsFirstCoefficient\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"keyShares\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[4]\",\"name\":\"gpkj\",\"type\":\"uint256[4]\"}],\"internalType\":\"structParticipant\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"participantAddresses\",\"type\":\"address[]\"}],\"name\":\"getParticipantsInternalState\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"publicKey\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint64\",\"name\":\"nonce\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"index\",\"type\":\"uint64\"},{\"internalType\":\"enumPhase\",\"name\":\"phase\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"distributedSharesHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitmentsFirstCoefficient\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"keyShares\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[4]\",\"name\":\"gpkj\",\"type\":\"uint256[4]\"}],\"internalType\":\"structParticipant[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPhaseLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPhaseStartBlock\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"phaseLength_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"confirmationLength_\",\"type\":\"uint256\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initializeETHDKG\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isETHDKGCompleted\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isETHDKGHalted\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isETHDKGRunning\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isMasterPublicKeySet\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validatorsAccounts_\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"validatorIndexes_\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[4][]\",\"name\":\"validatorShares_\",\"type\":\"uint256[4][]\"},{\"internalType\":\"uint8\",\"name\":\"validatorCount_\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"sideChainHeight_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"ethHeight_\",\"type\":\"uint256\"},{\"internalType\":\"uint256[4]\",\"name\":\"masterPublicKey_\",\"type\":\"uint256[4]\"}],\"name\":\"migrateValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[2]\",\"name\":\"publicKey\",\"type\":\"uint256[2]\"}],\"name\":\"register\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint16\",\"name\":\"confirmationLength_\",\"type\":\"uint16\"}],\"name\":\"setConfirmationLength\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"aliceNetHeight\",\"type\":\"uint256\"}],\"name\":\"setCustomAliceNetHeight\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint16\",\"name\":\"phaseLength_\",\"type\":\"uint16\"}],\"name\":\"setPhaseLength\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"gpkj\",\"type\":\"uint256[4]\"}],\"name\":\"submitGPKJ\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[2]\",\"name\":\"keyShareG1\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"keyShareG1CorrectnessProof\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[4]\",\"name\":\"keyShareG2\",\"type\":\"uint256[4]\"}],\"name\":\"submitKeyShare\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"masterPublicKey_\",\"type\":\"uint256[4]\"}],\"name\":\"submitMasterPublicKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"participant\",\"type\":\"address\"}],\"name\":\"tryGetParticipantIndex\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
-}
-
 // ETHDKGABI is the input ABI used to generate the binding from.
-// Deprecated: Use ETHDKGMetaData.ABI instead.
-var ETHDKGABI = ETHDKGMetaData.ABI
+const ETHDKGABI = "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[2]\",\"name\":\"publicKey\",\"type\":\"uint256[2]\"}],\"name\":\"AddressRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"GPKJSubmissionComplete\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"KeyShareSubmissionComplete\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[2]\",\"name\":\"keyShareG1\",\"type\":\"uint256[2]\"},{\"indexed\":false,\"internalType\":\"uint256[2]\",\"name\":\"keyShareG1CorrectnessProof\",\"type\":\"uint256[2]\"},{\"indexed\":false,\"internalType\":\"uint256[4]\",\"name\":\"keyShareG2\",\"type\":\"uint256[4]\"}],\"name\":\"KeyShareSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[4]\",\"name\":\"mpk\",\"type\":\"uint256[4]\"}],\"name\":\"MPKSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"RegistrationComplete\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"startBlock\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"numberValidators\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"phaseLength\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"confirmationLength\",\"type\":\"uint256\"}],\"name\":\"RegistrationOpened\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"ShareDistributionComplete\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"encryptedShares\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[2][]\",\"name\":\"commitments\",\"type\":\"uint256[2][]\"}],\"name\":\"SharesDistributed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"share0\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"share1\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"share2\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"share3\",\"type\":\"uint256\"}],\"name\":\"ValidatorMemberAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"validatorCount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"epoch\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"ethHeight\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"aliceNetHeight\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"groupKey0\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"groupKey1\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"groupKey2\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"groupKey3\",\"type\":\"uint256\"}],\"name\":\"ValidatorSetCompleted\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"dishonestAddresses\",\"type\":\"address[]\"}],\"name\":\"accuseParticipantDidNotDistributeShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"dishonestAddresses\",\"type\":\"address[]\"}],\"name\":\"accuseParticipantDidNotSubmitGPKJ\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"dishonestAddresses\",\"type\":\"address[]\"}],\"name\":\"accuseParticipantDidNotSubmitKeyShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"dishonestAddress\",\"type\":\"address\"},{\"internalType\":\"uint256[]\",\"name\":\"encryptedShares\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[2][]\",\"name\":\"commitments\",\"type\":\"uint256[2][]\"},{\"internalType\":\"uint256[2]\",\"name\":\"sharedKey\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"sharedKeyCorrectnessProof\",\"type\":\"uint256[2]\"}],\"name\":\"accuseParticipantDistributedBadShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"dishonestAddresses\",\"type\":\"address[]\"}],\"name\":\"accuseParticipantNotRegistered\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validators\",\"type\":\"address[]\"},{\"internalType\":\"bytes32[]\",\"name\":\"encryptedSharesHash\",\"type\":\"bytes32[]\"},{\"internalType\":\"uint256[2][][]\",\"name\":\"commitments\",\"type\":\"uint256[2][][]\"},{\"internalType\":\"address\",\"name\":\"dishonestAddress\",\"type\":\"address\"}],\"name\":\"accuseParticipantSubmittedBadGPKJ\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"complete\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"encryptedShares\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[2][]\",\"name\":\"commitments\",\"type\":\"uint256[2][]\"}],\"name\":\"distributeShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBadParticipants\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getConfirmationLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getETHDKGPhase\",\"outputs\":[{\"internalType\":\"enumPhase\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMasterPublicKey\",\"outputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"\",\"type\":\"uint256[4]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMasterPublicKeyHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_salt\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getMetamorphicContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMinValidators\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getNonce\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getNumParticipants\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"participant\",\"type\":\"address\"}],\"name\":\"getParticipantInternalState\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"publicKey\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint64\",\"name\":\"nonce\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"index\",\"type\":\"uint64\"},{\"internalType\":\"enumPhase\",\"name\":\"phase\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"distributedSharesHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitmentsFirstCoefficient\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"keyShares\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[4]\",\"name\":\"gpkj\",\"type\":\"uint256[4]\"}],\"internalType\":\"structParticipant\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"participantAddresses\",\"type\":\"address[]\"}],\"name\":\"getParticipantsInternalState\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256[2]\",\"name\":\"publicKey\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint64\",\"name\":\"nonce\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"index\",\"type\":\"uint64\"},{\"internalType\":\"enumPhase\",\"name\":\"phase\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"distributedSharesHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256[2]\",\"name\":\"commitmentsFirstCoefficient\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"keyShares\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[4]\",\"name\":\"gpkj\",\"type\":\"uint256[4]\"}],\"internalType\":\"structParticipant[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPhaseLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPhaseStartBlock\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"phaseLength_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"confirmationLength_\",\"type\":\"uint256\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initializeETHDKG\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isETHDKGCompleted\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isETHDKGHalted\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isETHDKGRunning\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isMasterPublicKeySet\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"validatorsAccounts_\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"validatorIndexes_\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[4][]\",\"name\":\"validatorShares_\",\"type\":\"uint256[4][]\"},{\"internalType\":\"uint8\",\"name\":\"validatorCount_\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"epoch_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"sideChainHeight_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"ethHeight_\",\"type\":\"uint256\"},{\"internalType\":\"uint256[4]\",\"name\":\"masterPublicKey_\",\"type\":\"uint256[4]\"}],\"name\":\"migrateValidators\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[2]\",\"name\":\"publicKey\",\"type\":\"uint256[2]\"}],\"name\":\"register\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint16\",\"name\":\"confirmationLength_\",\"type\":\"uint16\"}],\"name\":\"setConfirmationLength\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"aliceNetHeight\",\"type\":\"uint256\"}],\"name\":\"setCustomAliceNetHeight\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint16\",\"name\":\"phaseLength_\",\"type\":\"uint16\"}],\"name\":\"setPhaseLength\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"gpkj\",\"type\":\"uint256[4]\"}],\"name\":\"submitGPKJ\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[2]\",\"name\":\"keyShareG1\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"keyShareG1CorrectnessProof\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[4]\",\"name\":\"keyShareG2\",\"type\":\"uint256[4]\"}],\"name\":\"submitKeyShare\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[4]\",\"name\":\"masterPublicKey_\",\"type\":\"uint256[4]\"}],\"name\":\"submitMasterPublicKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"participant\",\"type\":\"address\"}],\"name\":\"tryGetParticipantIndex\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // ETHDKG is an auto generated Go binding around an Ethereum contract.
 type ETHDKG struct {
@@ -157,7 +138,7 @@ func bindETHDKG(address common.Address, caller bind.ContractCaller, transactor b
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ETHDKG *ETHDKGRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ETHDKG *ETHDKGRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ETHDKG.Contract.ETHDKGCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -176,7 +157,7 @@ func (_ETHDKG *ETHDKGRaw) Transact(opts *bind.TransactOpts, method string, param
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ETHDKG *ETHDKGCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+func (_ETHDKG *ETHDKGCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _ETHDKG.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -191,563 +172,16 @@ func (_ETHDKG *ETHDKGTransactorRaw) Transact(opts *bind.TransactOpts, method str
 	return _ETHDKG.Contract.contract.Transact(opts, method, params...)
 }
 
-// GetBadParticipants is a free data retrieval call binding the contract method 0x32d4d570.
-//
-// Solidity: function getBadParticipants() view returns(uint256)
-func (_ETHDKG *ETHDKGCaller) GetBadParticipants(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getBadParticipants")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetBadParticipants is a free data retrieval call binding the contract method 0x32d4d570.
-//
-// Solidity: function getBadParticipants() view returns(uint256)
-func (_ETHDKG *ETHDKGSession) GetBadParticipants() (*big.Int, error) {
-	return _ETHDKG.Contract.GetBadParticipants(&_ETHDKG.CallOpts)
-}
-
-// GetBadParticipants is a free data retrieval call binding the contract method 0x32d4d570.
-//
-// Solidity: function getBadParticipants() view returns(uint256)
-func (_ETHDKG *ETHDKGCallerSession) GetBadParticipants() (*big.Int, error) {
-	return _ETHDKG.Contract.GetBadParticipants(&_ETHDKG.CallOpts)
-}
-
-// GetConfirmationLength is a free data retrieval call binding the contract method 0x8c848d32.
-//
-// Solidity: function getConfirmationLength() view returns(uint256)
-func (_ETHDKG *ETHDKGCaller) GetConfirmationLength(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getConfirmationLength")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetConfirmationLength is a free data retrieval call binding the contract method 0x8c848d32.
-//
-// Solidity: function getConfirmationLength() view returns(uint256)
-func (_ETHDKG *ETHDKGSession) GetConfirmationLength() (*big.Int, error) {
-	return _ETHDKG.Contract.GetConfirmationLength(&_ETHDKG.CallOpts)
-}
-
-// GetConfirmationLength is a free data retrieval call binding the contract method 0x8c848d32.
-//
-// Solidity: function getConfirmationLength() view returns(uint256)
-func (_ETHDKG *ETHDKGCallerSession) GetConfirmationLength() (*big.Int, error) {
-	return _ETHDKG.Contract.GetConfirmationLength(&_ETHDKG.CallOpts)
-}
-
-// GetETHDKGPhase is a free data retrieval call binding the contract method 0x2958e81c.
-//
-// Solidity: function getETHDKGPhase() view returns(uint8)
-func (_ETHDKG *ETHDKGCaller) GetETHDKGPhase(opts *bind.CallOpts) (uint8, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getETHDKGPhase")
-
-	if err != nil {
-		return *new(uint8), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
-
-	return out0, err
-
-}
-
-// GetETHDKGPhase is a free data retrieval call binding the contract method 0x2958e81c.
-//
-// Solidity: function getETHDKGPhase() view returns(uint8)
-func (_ETHDKG *ETHDKGSession) GetETHDKGPhase() (uint8, error) {
-	return _ETHDKG.Contract.GetETHDKGPhase(&_ETHDKG.CallOpts)
-}
-
-// GetETHDKGPhase is a free data retrieval call binding the contract method 0x2958e81c.
-//
-// Solidity: function getETHDKGPhase() view returns(uint8)
-func (_ETHDKG *ETHDKGCallerSession) GetETHDKGPhase() (uint8, error) {
-	return _ETHDKG.Contract.GetETHDKGPhase(&_ETHDKG.CallOpts)
-}
-
-// GetMasterPublicKey is a free data retrieval call binding the contract method 0xe146372a.
-//
-// Solidity: function getMasterPublicKey() view returns(uint256[4])
-func (_ETHDKG *ETHDKGCaller) GetMasterPublicKey(opts *bind.CallOpts) ([4]*big.Int, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getMasterPublicKey")
-
-	if err != nil {
-		return *new([4]*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([4]*big.Int)).(*[4]*big.Int)
-
-	return out0, err
-
-}
-
-// GetMasterPublicKey is a free data retrieval call binding the contract method 0xe146372a.
-//
-// Solidity: function getMasterPublicKey() view returns(uint256[4])
-func (_ETHDKG *ETHDKGSession) GetMasterPublicKey() ([4]*big.Int, error) {
-	return _ETHDKG.Contract.GetMasterPublicKey(&_ETHDKG.CallOpts)
-}
-
-// GetMasterPublicKey is a free data retrieval call binding the contract method 0xe146372a.
-//
-// Solidity: function getMasterPublicKey() view returns(uint256[4])
-func (_ETHDKG *ETHDKGCallerSession) GetMasterPublicKey() ([4]*big.Int, error) {
-	return _ETHDKG.Contract.GetMasterPublicKey(&_ETHDKG.CallOpts)
-}
-
-// GetMasterPublicKeyHash is a free data retrieval call binding the contract method 0x1c67d576.
-//
-// Solidity: function getMasterPublicKeyHash() view returns(bytes32)
-func (_ETHDKG *ETHDKGCaller) GetMasterPublicKeyHash(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getMasterPublicKeyHash")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
-}
-
-// GetMasterPublicKeyHash is a free data retrieval call binding the contract method 0x1c67d576.
-//
-// Solidity: function getMasterPublicKeyHash() view returns(bytes32)
-func (_ETHDKG *ETHDKGSession) GetMasterPublicKeyHash() ([32]byte, error) {
-	return _ETHDKG.Contract.GetMasterPublicKeyHash(&_ETHDKG.CallOpts)
-}
-
-// GetMasterPublicKeyHash is a free data retrieval call binding the contract method 0x1c67d576.
-//
-// Solidity: function getMasterPublicKeyHash() view returns(bytes32)
-func (_ETHDKG *ETHDKGCallerSession) GetMasterPublicKeyHash() ([32]byte, error) {
-	return _ETHDKG.Contract.GetMasterPublicKeyHash(&_ETHDKG.CallOpts)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ETHDKG *ETHDKGCaller) GetMetamorphicContractAddress(opts *bind.CallOpts, _salt [32]byte, _factory common.Address) (common.Address, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getMetamorphicContractAddress", _salt, _factory)
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ETHDKG *ETHDKGSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _ETHDKG.Contract.GetMetamorphicContractAddress(&_ETHDKG.CallOpts, _salt, _factory)
-}
-
-// GetMetamorphicContractAddress is a free data retrieval call binding the contract method 0x8653a465.
-//
-// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) pure returns(address)
-func (_ETHDKG *ETHDKGCallerSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (common.Address, error) {
-	return _ETHDKG.Contract.GetMetamorphicContractAddress(&_ETHDKG.CallOpts, _salt, _factory)
-}
-
-// GetMinValidators is a free data retrieval call binding the contract method 0xecbadb36.
-//
-// Solidity: function getMinValidators() pure returns(uint256)
-func (_ETHDKG *ETHDKGCaller) GetMinValidators(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getMinValidators")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetMinValidators is a free data retrieval call binding the contract method 0xecbadb36.
-//
-// Solidity: function getMinValidators() pure returns(uint256)
-func (_ETHDKG *ETHDKGSession) GetMinValidators() (*big.Int, error) {
-	return _ETHDKG.Contract.GetMinValidators(&_ETHDKG.CallOpts)
-}
-
-// GetMinValidators is a free data retrieval call binding the contract method 0xecbadb36.
-//
-// Solidity: function getMinValidators() pure returns(uint256)
-func (_ETHDKG *ETHDKGCallerSession) GetMinValidators() (*big.Int, error) {
-	return _ETHDKG.Contract.GetMinValidators(&_ETHDKG.CallOpts)
-}
-
-// GetNonce is a free data retrieval call binding the contract method 0xd087d288.
-//
-// Solidity: function getNonce() view returns(uint256)
-func (_ETHDKG *ETHDKGCaller) GetNonce(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getNonce")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetNonce is a free data retrieval call binding the contract method 0xd087d288.
-//
-// Solidity: function getNonce() view returns(uint256)
-func (_ETHDKG *ETHDKGSession) GetNonce() (*big.Int, error) {
-	return _ETHDKG.Contract.GetNonce(&_ETHDKG.CallOpts)
-}
-
-// GetNonce is a free data retrieval call binding the contract method 0xd087d288.
-//
-// Solidity: function getNonce() view returns(uint256)
-func (_ETHDKG *ETHDKGCallerSession) GetNonce() (*big.Int, error) {
-	return _ETHDKG.Contract.GetNonce(&_ETHDKG.CallOpts)
-}
-
-// GetNumParticipants is a free data retrieval call binding the contract method 0xfd478ca9.
-//
-// Solidity: function getNumParticipants() view returns(uint256)
-func (_ETHDKG *ETHDKGCaller) GetNumParticipants(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getNumParticipants")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetNumParticipants is a free data retrieval call binding the contract method 0xfd478ca9.
-//
-// Solidity: function getNumParticipants() view returns(uint256)
-func (_ETHDKG *ETHDKGSession) GetNumParticipants() (*big.Int, error) {
-	return _ETHDKG.Contract.GetNumParticipants(&_ETHDKG.CallOpts)
-}
-
-// GetNumParticipants is a free data retrieval call binding the contract method 0xfd478ca9.
-//
-// Solidity: function getNumParticipants() view returns(uint256)
-func (_ETHDKG *ETHDKGCallerSession) GetNumParticipants() (*big.Int, error) {
-	return _ETHDKG.Contract.GetNumParticipants(&_ETHDKG.CallOpts)
-}
-
-// GetParticipantInternalState is a free data retrieval call binding the contract method 0xbf7786b6.
-//
-// Solidity: function getParticipantInternalState(address participant) view returns((uint256[2],uint64,uint64,uint8,bytes32,uint256[2],uint256[2],uint256[4]))
-func (_ETHDKG *ETHDKGCaller) GetParticipantInternalState(opts *bind.CallOpts, participant common.Address) (Participant, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getParticipantInternalState", participant)
-
-	if err != nil {
-		return *new(Participant), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(Participant)).(*Participant)
-
-	return out0, err
-
-}
-
-// GetParticipantInternalState is a free data retrieval call binding the contract method 0xbf7786b6.
-//
-// Solidity: function getParticipantInternalState(address participant) view returns((uint256[2],uint64,uint64,uint8,bytes32,uint256[2],uint256[2],uint256[4]))
-func (_ETHDKG *ETHDKGSession) GetParticipantInternalState(participant common.Address) (Participant, error) {
-	return _ETHDKG.Contract.GetParticipantInternalState(&_ETHDKG.CallOpts, participant)
-}
-
-// GetParticipantInternalState is a free data retrieval call binding the contract method 0xbf7786b6.
-//
-// Solidity: function getParticipantInternalState(address participant) view returns((uint256[2],uint64,uint64,uint8,bytes32,uint256[2],uint256[2],uint256[4]))
-func (_ETHDKG *ETHDKGCallerSession) GetParticipantInternalState(participant common.Address) (Participant, error) {
-	return _ETHDKG.Contract.GetParticipantInternalState(&_ETHDKG.CallOpts, participant)
-}
-
-// GetParticipantsInternalState is a free data retrieval call binding the contract method 0xc016baee.
-//
-// Solidity: function getParticipantsInternalState(address[] participantAddresses) view returns((uint256[2],uint64,uint64,uint8,bytes32,uint256[2],uint256[2],uint256[4])[])
-func (_ETHDKG *ETHDKGCaller) GetParticipantsInternalState(opts *bind.CallOpts, participantAddresses []common.Address) ([]Participant, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getParticipantsInternalState", participantAddresses)
-
-	if err != nil {
-		return *new([]Participant), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]Participant)).(*[]Participant)
-
-	return out0, err
-
-}
-
-// GetParticipantsInternalState is a free data retrieval call binding the contract method 0xc016baee.
-//
-// Solidity: function getParticipantsInternalState(address[] participantAddresses) view returns((uint256[2],uint64,uint64,uint8,bytes32,uint256[2],uint256[2],uint256[4])[])
-func (_ETHDKG *ETHDKGSession) GetParticipantsInternalState(participantAddresses []common.Address) ([]Participant, error) {
-	return _ETHDKG.Contract.GetParticipantsInternalState(&_ETHDKG.CallOpts, participantAddresses)
-}
-
-// GetParticipantsInternalState is a free data retrieval call binding the contract method 0xc016baee.
-//
-// Solidity: function getParticipantsInternalState(address[] participantAddresses) view returns((uint256[2],uint64,uint64,uint8,bytes32,uint256[2],uint256[2],uint256[4])[])
-func (_ETHDKG *ETHDKGCallerSession) GetParticipantsInternalState(participantAddresses []common.Address) ([]Participant, error) {
-	return _ETHDKG.Contract.GetParticipantsInternalState(&_ETHDKG.CallOpts, participantAddresses)
-}
-
-// GetPhaseLength is a free data retrieval call binding the contract method 0x106da57d.
-//
-// Solidity: function getPhaseLength() view returns(uint256)
-func (_ETHDKG *ETHDKGCaller) GetPhaseLength(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getPhaseLength")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetPhaseLength is a free data retrieval call binding the contract method 0x106da57d.
-//
-// Solidity: function getPhaseLength() view returns(uint256)
-func (_ETHDKG *ETHDKGSession) GetPhaseLength() (*big.Int, error) {
-	return _ETHDKG.Contract.GetPhaseLength(&_ETHDKG.CallOpts)
-}
-
-// GetPhaseLength is a free data retrieval call binding the contract method 0x106da57d.
-//
-// Solidity: function getPhaseLength() view returns(uint256)
-func (_ETHDKG *ETHDKGCallerSession) GetPhaseLength() (*big.Int, error) {
-	return _ETHDKG.Contract.GetPhaseLength(&_ETHDKG.CallOpts)
-}
-
-// GetPhaseStartBlock is a free data retrieval call binding the contract method 0xa2bc9c78.
-//
-// Solidity: function getPhaseStartBlock() view returns(uint256)
-func (_ETHDKG *ETHDKGCaller) GetPhaseStartBlock(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "getPhaseStartBlock")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// GetPhaseStartBlock is a free data retrieval call binding the contract method 0xa2bc9c78.
-//
-// Solidity: function getPhaseStartBlock() view returns(uint256)
-func (_ETHDKG *ETHDKGSession) GetPhaseStartBlock() (*big.Int, error) {
-	return _ETHDKG.Contract.GetPhaseStartBlock(&_ETHDKG.CallOpts)
-}
-
-// GetPhaseStartBlock is a free data retrieval call binding the contract method 0xa2bc9c78.
-//
-// Solidity: function getPhaseStartBlock() view returns(uint256)
-func (_ETHDKG *ETHDKGCallerSession) GetPhaseStartBlock() (*big.Int, error) {
-	return _ETHDKG.Contract.GetPhaseStartBlock(&_ETHDKG.CallOpts)
-}
-
-// IsETHDKGCompleted is a free data retrieval call binding the contract method 0x2b7c6724.
-//
-// Solidity: function isETHDKGCompleted() view returns(bool)
-func (_ETHDKG *ETHDKGCaller) IsETHDKGCompleted(opts *bind.CallOpts) (bool, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "isETHDKGCompleted")
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsETHDKGCompleted is a free data retrieval call binding the contract method 0x2b7c6724.
-//
-// Solidity: function isETHDKGCompleted() view returns(bool)
-func (_ETHDKG *ETHDKGSession) IsETHDKGCompleted() (bool, error) {
-	return _ETHDKG.Contract.IsETHDKGCompleted(&_ETHDKG.CallOpts)
-}
-
-// IsETHDKGCompleted is a free data retrieval call binding the contract method 0x2b7c6724.
-//
-// Solidity: function isETHDKGCompleted() view returns(bool)
-func (_ETHDKG *ETHDKGCallerSession) IsETHDKGCompleted() (bool, error) {
-	return _ETHDKG.Contract.IsETHDKGCompleted(&_ETHDKG.CallOpts)
-}
-
-// IsETHDKGHalted is a free data retrieval call binding the contract method 0x43ced534.
-//
-// Solidity: function isETHDKGHalted() view returns(bool)
-func (_ETHDKG *ETHDKGCaller) IsETHDKGHalted(opts *bind.CallOpts) (bool, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "isETHDKGHalted")
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsETHDKGHalted is a free data retrieval call binding the contract method 0x43ced534.
-//
-// Solidity: function isETHDKGHalted() view returns(bool)
-func (_ETHDKG *ETHDKGSession) IsETHDKGHalted() (bool, error) {
-	return _ETHDKG.Contract.IsETHDKGHalted(&_ETHDKG.CallOpts)
-}
-
-// IsETHDKGHalted is a free data retrieval call binding the contract method 0x43ced534.
-//
-// Solidity: function isETHDKGHalted() view returns(bool)
-func (_ETHDKG *ETHDKGCallerSession) IsETHDKGHalted() (bool, error) {
-	return _ETHDKG.Contract.IsETHDKGHalted(&_ETHDKG.CallOpts)
-}
-
-// IsETHDKGRunning is a free data retrieval call binding the contract method 0x747b217c.
-//
-// Solidity: function isETHDKGRunning() view returns(bool)
-func (_ETHDKG *ETHDKGCaller) IsETHDKGRunning(opts *bind.CallOpts) (bool, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "isETHDKGRunning")
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsETHDKGRunning is a free data retrieval call binding the contract method 0x747b217c.
-//
-// Solidity: function isETHDKGRunning() view returns(bool)
-func (_ETHDKG *ETHDKGSession) IsETHDKGRunning() (bool, error) {
-	return _ETHDKG.Contract.IsETHDKGRunning(&_ETHDKG.CallOpts)
-}
-
-// IsETHDKGRunning is a free data retrieval call binding the contract method 0x747b217c.
-//
-// Solidity: function isETHDKGRunning() view returns(bool)
-func (_ETHDKG *ETHDKGCallerSession) IsETHDKGRunning() (bool, error) {
-	return _ETHDKG.Contract.IsETHDKGRunning(&_ETHDKG.CallOpts)
-}
-
-// IsMasterPublicKeySet is a free data retrieval call binding the contract method 0x08efcf16.
-//
-// Solidity: function isMasterPublicKeySet() view returns(bool)
-func (_ETHDKG *ETHDKGCaller) IsMasterPublicKeySet(opts *bind.CallOpts) (bool, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "isMasterPublicKeySet")
-
-	if err != nil {
-		return *new(bool), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
-	return out0, err
-
-}
-
-// IsMasterPublicKeySet is a free data retrieval call binding the contract method 0x08efcf16.
-//
-// Solidity: function isMasterPublicKeySet() view returns(bool)
-func (_ETHDKG *ETHDKGSession) IsMasterPublicKeySet() (bool, error) {
-	return _ETHDKG.Contract.IsMasterPublicKeySet(&_ETHDKG.CallOpts)
-}
-
-// IsMasterPublicKeySet is a free data retrieval call binding the contract method 0x08efcf16.
-//
-// Solidity: function isMasterPublicKeySet() view returns(bool)
-func (_ETHDKG *ETHDKGCallerSession) IsMasterPublicKeySet() (bool, error) {
-	return _ETHDKG.Contract.IsMasterPublicKeySet(&_ETHDKG.CallOpts)
-}
-
-// TryGetParticipantIndex is a free data retrieval call binding the contract method 0x65e62b9b.
-//
-// Solidity: function tryGetParticipantIndex(address participant) view returns(bool, uint256)
-func (_ETHDKG *ETHDKGCaller) TryGetParticipantIndex(opts *bind.CallOpts, participant common.Address) (bool, *big.Int, error) {
-	var out []interface{}
-	err := _ETHDKG.contract.Call(opts, &out, "tryGetParticipantIndex", participant)
-
-	if err != nil {
-		return *new(bool), *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-	out1 := *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
-
-	return out0, out1, err
-
-}
-
-// TryGetParticipantIndex is a free data retrieval call binding the contract method 0x65e62b9b.
-//
-// Solidity: function tryGetParticipantIndex(address participant) view returns(bool, uint256)
-func (_ETHDKG *ETHDKGSession) TryGetParticipantIndex(participant common.Address) (bool, *big.Int, error) {
-	return _ETHDKG.Contract.TryGetParticipantIndex(&_ETHDKG.CallOpts, participant)
-}
-
-// TryGetParticipantIndex is a free data retrieval call binding the contract method 0x65e62b9b.
-//
-// Solidity: function tryGetParticipantIndex(address participant) view returns(bool, uint256)
-func (_ETHDKG *ETHDKGCallerSession) TryGetParticipantIndex(participant common.Address) (bool, *big.Int, error) {
-	return _ETHDKG.Contract.TryGetParticipantIndex(&_ETHDKG.CallOpts, participant)
+// Participant is an auto generated low-level Go binding around an user-defined struct.
+type Participant struct {
+	PublicKey                   [2]*big.Int
+	Nonce                       uint64
+	Index                       uint64
+	Phase                       uint8
+	DistributedSharesHash       [32]byte
+	CommitmentsFirstCoefficient [2]*big.Int
+	KeyShares                   [2]*big.Int
+	Gpkj                        [4]*big.Int
 }
 
 // AccuseParticipantDidNotDistributeShares is a paid mutator transaction binding the contract method 0xdae681bc.
@@ -918,6 +352,279 @@ func (_ETHDKG *ETHDKGTransactorSession) DistributeShares(encryptedShares []*big.
 	return _ETHDKG.Contract.DistributeShares(&_ETHDKG.TransactOpts, encryptedShares, commitments)
 }
 
+// GetBadParticipants is a paid mutator transaction binding the contract method 0x32d4d570.
+//
+// Solidity: function getBadParticipants() returns(uint256)
+func (_ETHDKG *ETHDKGTransactor) GetBadParticipants(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getBadParticipants")
+}
+
+// GetBadParticipants is a paid mutator transaction binding the contract method 0x32d4d570.
+//
+// Solidity: function getBadParticipants() returns(uint256)
+func (_ETHDKG *ETHDKGSession) GetBadParticipants() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetBadParticipants(&_ETHDKG.TransactOpts)
+}
+
+// GetBadParticipants is a paid mutator transaction binding the contract method 0x32d4d570.
+//
+// Solidity: function getBadParticipants() returns(uint256)
+func (_ETHDKG *ETHDKGTransactorSession) GetBadParticipants() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetBadParticipants(&_ETHDKG.TransactOpts)
+}
+
+// GetConfirmationLength is a paid mutator transaction binding the contract method 0x8c848d32.
+//
+// Solidity: function getConfirmationLength() returns(uint256)
+func (_ETHDKG *ETHDKGTransactor) GetConfirmationLength(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getConfirmationLength")
+}
+
+// GetConfirmationLength is a paid mutator transaction binding the contract method 0x8c848d32.
+//
+// Solidity: function getConfirmationLength() returns(uint256)
+func (_ETHDKG *ETHDKGSession) GetConfirmationLength() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetConfirmationLength(&_ETHDKG.TransactOpts)
+}
+
+// GetConfirmationLength is a paid mutator transaction binding the contract method 0x8c848d32.
+//
+// Solidity: function getConfirmationLength() returns(uint256)
+func (_ETHDKG *ETHDKGTransactorSession) GetConfirmationLength() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetConfirmationLength(&_ETHDKG.TransactOpts)
+}
+
+// GetETHDKGPhase is a paid mutator transaction binding the contract method 0x2958e81c.
+//
+// Solidity: function getETHDKGPhase() returns(uint8)
+func (_ETHDKG *ETHDKGTransactor) GetETHDKGPhase(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getETHDKGPhase")
+}
+
+// GetETHDKGPhase is a paid mutator transaction binding the contract method 0x2958e81c.
+//
+// Solidity: function getETHDKGPhase() returns(uint8)
+func (_ETHDKG *ETHDKGSession) GetETHDKGPhase() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetETHDKGPhase(&_ETHDKG.TransactOpts)
+}
+
+// GetETHDKGPhase is a paid mutator transaction binding the contract method 0x2958e81c.
+//
+// Solidity: function getETHDKGPhase() returns(uint8)
+func (_ETHDKG *ETHDKGTransactorSession) GetETHDKGPhase() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetETHDKGPhase(&_ETHDKG.TransactOpts)
+}
+
+// GetMasterPublicKey is a paid mutator transaction binding the contract method 0xe146372a.
+//
+// Solidity: function getMasterPublicKey() returns(uint256[4])
+func (_ETHDKG *ETHDKGTransactor) GetMasterPublicKey(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getMasterPublicKey")
+}
+
+// GetMasterPublicKey is a paid mutator transaction binding the contract method 0xe146372a.
+//
+// Solidity: function getMasterPublicKey() returns(uint256[4])
+func (_ETHDKG *ETHDKGSession) GetMasterPublicKey() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetMasterPublicKey(&_ETHDKG.TransactOpts)
+}
+
+// GetMasterPublicKey is a paid mutator transaction binding the contract method 0xe146372a.
+//
+// Solidity: function getMasterPublicKey() returns(uint256[4])
+func (_ETHDKG *ETHDKGTransactorSession) GetMasterPublicKey() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetMasterPublicKey(&_ETHDKG.TransactOpts)
+}
+
+// GetMasterPublicKeyHash is a paid mutator transaction binding the contract method 0x1c67d576.
+//
+// Solidity: function getMasterPublicKeyHash() returns(bytes32)
+func (_ETHDKG *ETHDKGTransactor) GetMasterPublicKeyHash(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getMasterPublicKeyHash")
+}
+
+// GetMasterPublicKeyHash is a paid mutator transaction binding the contract method 0x1c67d576.
+//
+// Solidity: function getMasterPublicKeyHash() returns(bytes32)
+func (_ETHDKG *ETHDKGSession) GetMasterPublicKeyHash() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetMasterPublicKeyHash(&_ETHDKG.TransactOpts)
+}
+
+// GetMasterPublicKeyHash is a paid mutator transaction binding the contract method 0x1c67d576.
+//
+// Solidity: function getMasterPublicKeyHash() returns(bytes32)
+func (_ETHDKG *ETHDKGTransactorSession) GetMasterPublicKeyHash() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetMasterPublicKeyHash(&_ETHDKG.TransactOpts)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ETHDKG *ETHDKGTransactor) GetMetamorphicContractAddress(opts *bind.TransactOpts, _salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getMetamorphicContractAddress", _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ETHDKG *ETHDKGSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetMetamorphicContractAddress(&_ETHDKG.TransactOpts, _salt, _factory)
+}
+
+// GetMetamorphicContractAddress is a paid mutator transaction binding the contract method 0x8653a465.
+//
+// Solidity: function getMetamorphicContractAddress(bytes32 _salt, address _factory) returns(address)
+func (_ETHDKG *ETHDKGTransactorSession) GetMetamorphicContractAddress(_salt [32]byte, _factory common.Address) (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetMetamorphicContractAddress(&_ETHDKG.TransactOpts, _salt, _factory)
+}
+
+// GetMinValidators is a paid mutator transaction binding the contract method 0xecbadb36.
+//
+// Solidity: function getMinValidators() returns(uint256)
+func (_ETHDKG *ETHDKGTransactor) GetMinValidators(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getMinValidators")
+}
+
+// GetMinValidators is a paid mutator transaction binding the contract method 0xecbadb36.
+//
+// Solidity: function getMinValidators() returns(uint256)
+func (_ETHDKG *ETHDKGSession) GetMinValidators() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetMinValidators(&_ETHDKG.TransactOpts)
+}
+
+// GetMinValidators is a paid mutator transaction binding the contract method 0xecbadb36.
+//
+// Solidity: function getMinValidators() returns(uint256)
+func (_ETHDKG *ETHDKGTransactorSession) GetMinValidators() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetMinValidators(&_ETHDKG.TransactOpts)
+}
+
+// GetNonce is a paid mutator transaction binding the contract method 0xd087d288.
+//
+// Solidity: function getNonce() returns(uint256)
+func (_ETHDKG *ETHDKGTransactor) GetNonce(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getNonce")
+}
+
+// GetNonce is a paid mutator transaction binding the contract method 0xd087d288.
+//
+// Solidity: function getNonce() returns(uint256)
+func (_ETHDKG *ETHDKGSession) GetNonce() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetNonce(&_ETHDKG.TransactOpts)
+}
+
+// GetNonce is a paid mutator transaction binding the contract method 0xd087d288.
+//
+// Solidity: function getNonce() returns(uint256)
+func (_ETHDKG *ETHDKGTransactorSession) GetNonce() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetNonce(&_ETHDKG.TransactOpts)
+}
+
+// GetNumParticipants is a paid mutator transaction binding the contract method 0xfd478ca9.
+//
+// Solidity: function getNumParticipants() returns(uint256)
+func (_ETHDKG *ETHDKGTransactor) GetNumParticipants(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getNumParticipants")
+}
+
+// GetNumParticipants is a paid mutator transaction binding the contract method 0xfd478ca9.
+//
+// Solidity: function getNumParticipants() returns(uint256)
+func (_ETHDKG *ETHDKGSession) GetNumParticipants() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetNumParticipants(&_ETHDKG.TransactOpts)
+}
+
+// GetNumParticipants is a paid mutator transaction binding the contract method 0xfd478ca9.
+//
+// Solidity: function getNumParticipants() returns(uint256)
+func (_ETHDKG *ETHDKGTransactorSession) GetNumParticipants() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetNumParticipants(&_ETHDKG.TransactOpts)
+}
+
+// GetParticipantInternalState is a paid mutator transaction binding the contract method 0xbf7786b6.
+//
+// Solidity: function getParticipantInternalState(address participant) returns(Participant)
+func (_ETHDKG *ETHDKGTransactor) GetParticipantInternalState(opts *bind.TransactOpts, participant common.Address) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getParticipantInternalState", participant)
+}
+
+// GetParticipantInternalState is a paid mutator transaction binding the contract method 0xbf7786b6.
+//
+// Solidity: function getParticipantInternalState(address participant) returns(Participant)
+func (_ETHDKG *ETHDKGSession) GetParticipantInternalState(participant common.Address) (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetParticipantInternalState(&_ETHDKG.TransactOpts, participant)
+}
+
+// GetParticipantInternalState is a paid mutator transaction binding the contract method 0xbf7786b6.
+//
+// Solidity: function getParticipantInternalState(address participant) returns(Participant)
+func (_ETHDKG *ETHDKGTransactorSession) GetParticipantInternalState(participant common.Address) (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetParticipantInternalState(&_ETHDKG.TransactOpts, participant)
+}
+
+// GetParticipantsInternalState is a paid mutator transaction binding the contract method 0xc016baee.
+//
+// Solidity: function getParticipantsInternalState(address[] participantAddresses) returns([]Participant)
+func (_ETHDKG *ETHDKGTransactor) GetParticipantsInternalState(opts *bind.TransactOpts, participantAddresses []common.Address) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getParticipantsInternalState", participantAddresses)
+}
+
+// GetParticipantsInternalState is a paid mutator transaction binding the contract method 0xc016baee.
+//
+// Solidity: function getParticipantsInternalState(address[] participantAddresses) returns([]Participant)
+func (_ETHDKG *ETHDKGSession) GetParticipantsInternalState(participantAddresses []common.Address) (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetParticipantsInternalState(&_ETHDKG.TransactOpts, participantAddresses)
+}
+
+// GetParticipantsInternalState is a paid mutator transaction binding the contract method 0xc016baee.
+//
+// Solidity: function getParticipantsInternalState(address[] participantAddresses) returns([]Participant)
+func (_ETHDKG *ETHDKGTransactorSession) GetParticipantsInternalState(participantAddresses []common.Address) (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetParticipantsInternalState(&_ETHDKG.TransactOpts, participantAddresses)
+}
+
+// GetPhaseLength is a paid mutator transaction binding the contract method 0x106da57d.
+//
+// Solidity: function getPhaseLength() returns(uint256)
+func (_ETHDKG *ETHDKGTransactor) GetPhaseLength(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getPhaseLength")
+}
+
+// GetPhaseLength is a paid mutator transaction binding the contract method 0x106da57d.
+//
+// Solidity: function getPhaseLength() returns(uint256)
+func (_ETHDKG *ETHDKGSession) GetPhaseLength() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetPhaseLength(&_ETHDKG.TransactOpts)
+}
+
+// GetPhaseLength is a paid mutator transaction binding the contract method 0x106da57d.
+//
+// Solidity: function getPhaseLength() returns(uint256)
+func (_ETHDKG *ETHDKGTransactorSession) GetPhaseLength() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetPhaseLength(&_ETHDKG.TransactOpts)
+}
+
+// GetPhaseStartBlock is a paid mutator transaction binding the contract method 0xa2bc9c78.
+//
+// Solidity: function getPhaseStartBlock() returns(uint256)
+func (_ETHDKG *ETHDKGTransactor) GetPhaseStartBlock(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "getPhaseStartBlock")
+}
+
+// GetPhaseStartBlock is a paid mutator transaction binding the contract method 0xa2bc9c78.
+//
+// Solidity: function getPhaseStartBlock() returns(uint256)
+func (_ETHDKG *ETHDKGSession) GetPhaseStartBlock() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetPhaseStartBlock(&_ETHDKG.TransactOpts)
+}
+
+// GetPhaseStartBlock is a paid mutator transaction binding the contract method 0xa2bc9c78.
+//
+// Solidity: function getPhaseStartBlock() returns(uint256)
+func (_ETHDKG *ETHDKGTransactorSession) GetPhaseStartBlock() (*types.Transaction, error) {
+	return _ETHDKG.Contract.GetPhaseStartBlock(&_ETHDKG.TransactOpts)
+}
+
 // Initialize is a paid mutator transaction binding the contract method 0xe4a30116.
 //
 // Solidity: function initialize(uint256 phaseLength_, uint256 confirmationLength_) returns()
@@ -958,6 +665,90 @@ func (_ETHDKG *ETHDKGSession) InitializeETHDKG() (*types.Transaction, error) {
 // Solidity: function initializeETHDKG() returns()
 func (_ETHDKG *ETHDKGTransactorSession) InitializeETHDKG() (*types.Transaction, error) {
 	return _ETHDKG.Contract.InitializeETHDKG(&_ETHDKG.TransactOpts)
+}
+
+// IsETHDKGCompleted is a paid mutator transaction binding the contract method 0x2b7c6724.
+//
+// Solidity: function isETHDKGCompleted() returns(bool)
+func (_ETHDKG *ETHDKGTransactor) IsETHDKGCompleted(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "isETHDKGCompleted")
+}
+
+// IsETHDKGCompleted is a paid mutator transaction binding the contract method 0x2b7c6724.
+//
+// Solidity: function isETHDKGCompleted() returns(bool)
+func (_ETHDKG *ETHDKGSession) IsETHDKGCompleted() (*types.Transaction, error) {
+	return _ETHDKG.Contract.IsETHDKGCompleted(&_ETHDKG.TransactOpts)
+}
+
+// IsETHDKGCompleted is a paid mutator transaction binding the contract method 0x2b7c6724.
+//
+// Solidity: function isETHDKGCompleted() returns(bool)
+func (_ETHDKG *ETHDKGTransactorSession) IsETHDKGCompleted() (*types.Transaction, error) {
+	return _ETHDKG.Contract.IsETHDKGCompleted(&_ETHDKG.TransactOpts)
+}
+
+// IsETHDKGHalted is a paid mutator transaction binding the contract method 0x43ced534.
+//
+// Solidity: function isETHDKGHalted() returns(bool)
+func (_ETHDKG *ETHDKGTransactor) IsETHDKGHalted(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "isETHDKGHalted")
+}
+
+// IsETHDKGHalted is a paid mutator transaction binding the contract method 0x43ced534.
+//
+// Solidity: function isETHDKGHalted() returns(bool)
+func (_ETHDKG *ETHDKGSession) IsETHDKGHalted() (*types.Transaction, error) {
+	return _ETHDKG.Contract.IsETHDKGHalted(&_ETHDKG.TransactOpts)
+}
+
+// IsETHDKGHalted is a paid mutator transaction binding the contract method 0x43ced534.
+//
+// Solidity: function isETHDKGHalted() returns(bool)
+func (_ETHDKG *ETHDKGTransactorSession) IsETHDKGHalted() (*types.Transaction, error) {
+	return _ETHDKG.Contract.IsETHDKGHalted(&_ETHDKG.TransactOpts)
+}
+
+// IsETHDKGRunning is a paid mutator transaction binding the contract method 0x747b217c.
+//
+// Solidity: function isETHDKGRunning() returns(bool)
+func (_ETHDKG *ETHDKGTransactor) IsETHDKGRunning(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "isETHDKGRunning")
+}
+
+// IsETHDKGRunning is a paid mutator transaction binding the contract method 0x747b217c.
+//
+// Solidity: function isETHDKGRunning() returns(bool)
+func (_ETHDKG *ETHDKGSession) IsETHDKGRunning() (*types.Transaction, error) {
+	return _ETHDKG.Contract.IsETHDKGRunning(&_ETHDKG.TransactOpts)
+}
+
+// IsETHDKGRunning is a paid mutator transaction binding the contract method 0x747b217c.
+//
+// Solidity: function isETHDKGRunning() returns(bool)
+func (_ETHDKG *ETHDKGTransactorSession) IsETHDKGRunning() (*types.Transaction, error) {
+	return _ETHDKG.Contract.IsETHDKGRunning(&_ETHDKG.TransactOpts)
+}
+
+// IsMasterPublicKeySet is a paid mutator transaction binding the contract method 0x08efcf16.
+//
+// Solidity: function isMasterPublicKeySet() returns(bool)
+func (_ETHDKG *ETHDKGTransactor) IsMasterPublicKeySet(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "isMasterPublicKeySet")
+}
+
+// IsMasterPublicKeySet is a paid mutator transaction binding the contract method 0x08efcf16.
+//
+// Solidity: function isMasterPublicKeySet() returns(bool)
+func (_ETHDKG *ETHDKGSession) IsMasterPublicKeySet() (*types.Transaction, error) {
+	return _ETHDKG.Contract.IsMasterPublicKeySet(&_ETHDKG.TransactOpts)
+}
+
+// IsMasterPublicKeySet is a paid mutator transaction binding the contract method 0x08efcf16.
+//
+// Solidity: function isMasterPublicKeySet() returns(bool)
+func (_ETHDKG *ETHDKGTransactorSession) IsMasterPublicKeySet() (*types.Transaction, error) {
+	return _ETHDKG.Contract.IsMasterPublicKeySet(&_ETHDKG.TransactOpts)
 }
 
 // MigrateValidators is a paid mutator transaction binding the contract method 0x4890465a.
@@ -1128,6 +919,27 @@ func (_ETHDKG *ETHDKGTransactorSession) SubmitMasterPublicKey(masterPublicKey_ [
 	return _ETHDKG.Contract.SubmitMasterPublicKey(&_ETHDKG.TransactOpts, masterPublicKey_)
 }
 
+// TryGetParticipantIndex is a paid mutator transaction binding the contract method 0x65e62b9b.
+//
+// Solidity: function tryGetParticipantIndex(address participant) returns(bool, uint256)
+func (_ETHDKG *ETHDKGTransactor) TryGetParticipantIndex(opts *bind.TransactOpts, participant common.Address) (*types.Transaction, error) {
+	return _ETHDKG.contract.Transact(opts, "tryGetParticipantIndex", participant)
+}
+
+// TryGetParticipantIndex is a paid mutator transaction binding the contract method 0x65e62b9b.
+//
+// Solidity: function tryGetParticipantIndex(address participant) returns(bool, uint256)
+func (_ETHDKG *ETHDKGSession) TryGetParticipantIndex(participant common.Address) (*types.Transaction, error) {
+	return _ETHDKG.Contract.TryGetParticipantIndex(&_ETHDKG.TransactOpts, participant)
+}
+
+// TryGetParticipantIndex is a paid mutator transaction binding the contract method 0x65e62b9b.
+//
+// Solidity: function tryGetParticipantIndex(address participant) returns(bool, uint256)
+func (_ETHDKG *ETHDKGTransactorSession) TryGetParticipantIndex(participant common.Address) (*types.Transaction, error) {
+	return _ETHDKG.Contract.TryGetParticipantIndex(&_ETHDKG.TransactOpts, participant)
+}
+
 // ETHDKGAddressRegisteredIterator is returned from FilterAddressRegistered and is used to iterate over the raw logs and unpacked data for AddressRegistered events raised by the ETHDKG contract.
 type ETHDKGAddressRegisteredIterator struct {
 	Event *ETHDKGAddressRegistered // Event containing the contract specifics and raw log
@@ -1261,7 +1073,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseAddressRegistered(log types.Log) (*ETHDKGAdd
 	if err := _ETHDKG.contract.UnpackLog(event, "AddressRegistered", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1395,7 +1206,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseGPKJSubmissionComplete(log types.Log) (*ETHD
 	if err := _ETHDKG.contract.UnpackLog(event, "GPKJSubmissionComplete", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1529,7 +1339,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseKeyShareSubmissionComplete(log types.Log) (*
 	if err := _ETHDKG.contract.UnpackLog(event, "KeyShareSubmissionComplete", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1668,7 +1477,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseKeyShareSubmitted(log types.Log) (*ETHDKGKey
 	if err := _ETHDKG.contract.UnpackLog(event, "KeyShareSubmitted", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1804,7 +1612,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseMPKSet(log types.Log) (*ETHDKGMPKSet, error)
 	if err := _ETHDKG.contract.UnpackLog(event, "MPKSet", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -1938,7 +1745,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseRegistrationComplete(log types.Log) (*ETHDKG
 	if err := _ETHDKG.contract.UnpackLog(event, "RegistrationComplete", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -2076,7 +1882,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseRegistrationOpened(log types.Log) (*ETHDKGRe
 	if err := _ETHDKG.contract.UnpackLog(event, "RegistrationOpened", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -2210,7 +2015,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseShareDistributionComplete(log types.Log) (*E
 	if err := _ETHDKG.contract.UnpackLog(event, "ShareDistributionComplete", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -2348,7 +2152,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseSharesDistributed(log types.Log) (*ETHDKGSha
 	if err := _ETHDKG.contract.UnpackLog(event, "SharesDistributed", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -2489,7 +2292,6 @@ func (_ETHDKG *ETHDKGFilterer) ParseValidatorMemberAdded(log types.Log) (*ETHDKG
 	if err := _ETHDKG.contract.UnpackLog(event, "ValidatorMemberAdded", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
 
@@ -2631,6 +2433,5 @@ func (_ETHDKG *ETHDKGFilterer) ParseValidatorSetCompleted(log types.Log) (*ETHDK
 	if err := _ETHDKG.contract.UnpackLog(event, "ValidatorSetCompleted", log); err != nil {
 		return nil, err
 	}
-	event.Raw = log
 	return event, nil
 }
