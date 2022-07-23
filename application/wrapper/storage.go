@@ -75,15 +75,32 @@ func (s *Storage) GetValueStoreFee() (*uint256.Uint256, error) {
 	return feeUint256, nil
 }
 
-// GetMinTxFee returns the minimum TxFee
-func (s *Storage) GetMinTxFee() (*uint256.Uint256, error) {
+// GetERCTokenFee returns the fee of ValueStore
+func (s *Storage) GetERCTokenFee() (*uint256.Uint256, error) {
 	if s == nil {
-		return nil, errorz.ErrInvalid{}.New("storage.GetMinTxFee; struct not initialized")
+		return nil, errorz.ErrInvalid{}.New("storage.GetERCTokenFee; struct not initialized")
 	}
 	if s.storage == nil {
-		return nil, errorz.ErrInvalid{}.New("storage.GetMinTxFee; storage not initialized")
+		return nil, errorz.ErrInvalid{}.New("storage.GetERCTokenFee; storage not initialized")
 	}
-	fee := s.storage.GetMinTxFee()
+	fee := s.storage.GetERCTokenFee()
+	feeUint256 := &uint256.Uint256{}
+	_, err := feeUint256.FromBigInt(fee)
+	if err != nil {
+		return nil, err
+	}
+	return feeUint256, nil
+}
+
+// GetMinTxFeeCostRatio returns the minimum TxFee
+func (s *Storage) GetMinTxFeeCostRatio() (*uint256.Uint256, error) {
+	if s == nil {
+		return nil, errorz.ErrInvalid{}.New("storage.GetMinTxFeeCostRatio; struct not initialized")
+	}
+	if s.storage == nil {
+		return nil, errorz.ErrInvalid{}.New("storage.GetMinTxFeeCostRatio; storage not initialized")
+	}
+	fee := s.storage.GetMinTxFeeCostRatio()
 	feeUint256 := &uint256.Uint256{}
 	_, err := feeUint256.FromBigInt(fee)
 	if err != nil {

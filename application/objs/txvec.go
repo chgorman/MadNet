@@ -171,6 +171,19 @@ func (txv TxVec) GeneratedUTXOs() (Vout, error) {
 	return gen, nil
 }
 
+// GeneratedUTXOsNoWithdrawn returns list of TXOuts from Txs in txv
+func (txv TxVec) GeneratedUTXOsNoWithdrawn() (Vout, error) {
+	gen := Vout{}
+	for i := 0; i < len(txv); i++ {
+		c, err := txv[i].GeneratedUTXOsNoWithdrawn()
+		if err != nil {
+			return nil, err
+		}
+		gen = append(gen, c...)
+	}
+	return gen, nil
+}
+
 // GeneratedPreHash returns list of PreHashs for Tx in txv
 func (txv TxVec) GeneratedPreHash() ([][]byte, error) {
 	gen := [][]byte{}
@@ -184,11 +197,38 @@ func (txv TxVec) GeneratedPreHash() ([][]byte, error) {
 	return gen, nil
 }
 
+// GeneratedPreHashNoWithdrawn returns list of PreHashs for Tx in txv
+func (txv TxVec) GeneratedPreHashNoWithdrawn() ([][]byte, error) {
+	gen := [][]byte{}
+	for i := 0; i < len(txv); i++ {
+		c, err := txv[i].GeneratedPreHashNoWithdrawn()
+		if err != nil {
+			return nil, err
+		}
+		gen = append(gen, c...)
+	}
+	return gen, nil
+}
+
 // GeneratedUTXOID returns list of UTXOIDs for Tx in txv
 func (txv TxVec) GeneratedUTXOID() ([][]byte, error) {
 	gen := [][]byte{}
 	for i := 0; i < len(txv); i++ {
 		c, err := txv[i].GeneratedUTXOID()
+		if err != nil {
+			return nil, err
+		}
+		gen = append(gen, c...)
+	}
+	return gen, nil
+}
+
+// GeneratedUTXOIDNoWithdrawn returns list of UTXOIDs for Tx in txv
+// which do not include withdrawn ERCTokens
+func (txv TxVec) GeneratedUTXOIDNoWithdrawn() ([][]byte, error) {
+	gen := [][]byte{}
+	for i := 0; i < len(txv); i++ {
+		c, err := txv[i].GeneratedUTXOIDNoWithdrawn()
 		if err != nil {
 			return nil, err
 		}

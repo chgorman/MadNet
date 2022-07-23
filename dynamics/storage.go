@@ -54,10 +54,13 @@ type StorageGetter interface {
 	GetValueStoreFee() *big.Int
 	GetValueStoreValidVersion() uint32
 
+	GetERCTokenFee() *big.Int
+	GetERCTokenValidVersion() uint32
+
 	GetAtomicSwapFee() *big.Int
 	GetAtomicSwapValidStopEpoch() uint32
 
-	GetMinTxFee() *big.Int
+	GetMinTxFeeCostRatio() *big.Int
 	GetTxValidVersion() uint32
 }
 
@@ -688,14 +691,14 @@ func (s *Storage) GetDownloadTimeout() time.Duration {
 	return s.rawStorage.GetDownloadTimeout()
 }
 
-// GetMinTxFee returns the minimum transaction fee.
-func (s *Storage) GetMinTxFee() *big.Int {
+// GetMinTxFeeCostRatio returns the minimum transaction fee.
+func (s *Storage) GetMinTxFeeCostRatio() *big.Int {
 	select {
 	case <-s.startChan:
 	}
 	s.RLock()
 	defer s.RUnlock()
-	return s.rawStorage.GetMinTxFee()
+	return s.rawStorage.GetMinTxFeeCostRatio()
 }
 
 // GetTxValidVersion returns the transaction valid version
@@ -766,4 +769,24 @@ func (s *Storage) GetDataStoreValidVersion() uint32 {
 	s.RLock()
 	defer s.RUnlock()
 	return s.rawStorage.GetDataStoreValidVersion()
+}
+
+// GetERCTokenFee returns the transaction fee for ERCToken
+func (s *Storage) GetERCTokenFee() *big.Int {
+	select {
+	case <-s.startChan:
+	}
+	s.RLock()
+	defer s.RUnlock()
+	return s.rawStorage.GetERCTokenFee()
+}
+
+// GetERCTokenValidVersion returns the ERCToken valid version
+func (s *Storage) GetERCTokenValidVersion() uint32 {
+	select {
+	case <-s.startChan:
+	}
+	s.RLock()
+	defer s.RUnlock()
+	return s.rawStorage.GetERCTokenValidVersion()
 }

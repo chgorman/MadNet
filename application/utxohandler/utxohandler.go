@@ -34,24 +34,26 @@ import (
 // NewUTXOHandler constructs a new UTXOHandler
 func NewUTXOHandler(dB *badger.DB) *UTXOHandler {
 	return &UTXOHandler{
-		logger:     logging.GetLogger(constants.LoggerApp),
-		trie:       utxotrie.NewUTXOTrie(dB),
-		expIndex:   indexer.NewExpSizeIndex(dbprefix.PrefixMinedUTXOEpcKey, dbprefix.PrefixMinedUTXOEpcRefKey),
-		dataIndex:  indexer.NewDataIndex(dbprefix.PrefixMinedUTXODataKey, dbprefix.PrefixMinedUTXODataRefKey),
-		valueIndex: indexer.NewValueIndex(dbprefix.PrefixMinedUTXOValueKey, dbprefix.PrefixMinedUTXOValueRefKey),
-		db:         dB,
+		logger:        logging.GetLogger(constants.LoggerApp),
+		trie:          utxotrie.NewUTXOTrie(dB),
+		expIndex:      indexer.NewExpSizeIndex(dbprefix.PrefixMinedUTXOEpcKey, dbprefix.PrefixMinedUTXOEpcRefKey),
+		dataIndex:     indexer.NewDataIndex(dbprefix.PrefixMinedUTXODataKey, dbprefix.PrefixMinedUTXODataRefKey),
+		valueIndex:    indexer.NewValueIndex(dbprefix.PrefixMinedUTXOValueKey, dbprefix.PrefixMinedUTXOValueRefKey),
+		erctokenIndex: indexer.NewERCTokenIndex(dbprefix.PrefixDepositERCTKey, dbprefix.PrefixDepositERCTRefKey),
+		db:            dB,
 	}
 }
 
 // UTXOHandler is the object that indexes and stores UTXOs. This object
 // also manages the UTXOTrie.
 type UTXOHandler struct {
-	logger     *logrus.Logger
-	db         *badger.DB
-	trie       *utxotrie.UTXOTrie
-	expIndex   *indexer.ExpSizeIndex
-	dataIndex  *indexer.DataIndex
-	valueIndex *indexer.ValueIndex
+	logger        *logrus.Logger
+	db            *badger.DB
+	trie          *utxotrie.UTXOTrie
+	expIndex      *indexer.ExpSizeIndex
+	dataIndex     *indexer.DataIndex
+	valueIndex    *indexer.ValueIndex
+	erctokenIndex *indexer.ERCTokenIndex
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -234,14 +236,16 @@ func (ut *UTXOHandler) IsValid(txn *badger.Txn, txs objs.TxVec, currentHeight ui
 	}
 
 	// the trie must not contain any of the new UTXOIDs being created already
-	// as this would cause a conflict with those UTXOIDs
-	generatedUTXOIDs, err := txs.GeneratedUTXOID()
+	// as this would cause a conflict with those UTXOIDs;
+	// we exclude UTXOIDs for withdrawn ERCToken objects
+	// as these will not be included.
+	generatedUTXOIDsNoWithdrawn, err := txs.GeneratedUTXOIDNoWithdrawn()
 	if err != nil {
 		utils.DebugTrace(ut.logger, err)
 		return nil, err
 	}
-	for j := 0; j < len(generatedUTXOIDs); j++ {
-		ok, err := ut.TrieContains(txn, utils.CopySlice(generatedUTXOIDs[j]))
+	for j := 0; j < len(generatedUTXOIDsNoWithdrawn); j++ {
+		ok, err := ut.TrieContains(txn, utils.CopySlice(generatedUTXOIDsNoWithdrawn[j]))
 		if err != nil {
 			utils.DebugTrace(ut.logger, err)
 			return nil, err
@@ -306,7 +310,8 @@ func (ut *UTXOHandler) ApplyState(txn *badger.Txn, txs objs.TxVec, height uint32
 			return nil, err
 		}
 	}
-	newUTXOs, err := txs.GeneratedUTXOs()
+	// We add all newly generated utxos to trie except for withdrawn ERCTokens
+	newUTXOs, err := txs.GeneratedUTXOsNoWithdrawn()
 	if err != nil {
 		utils.DebugTrace(ut.logger, err)
 		return nil, err
@@ -649,6 +654,35 @@ func (ut *UTXOHandler) addOne(txn *badger.Txn, utxo *objs.TXOut) error {
 		}
 	case utxo.HasAtomicSwap():
 		panic("utxoHandler.addOne; not implemented for AtomicSwap objects")
+	case utxo.HasERCToken():
+		if utxo.WithdrawnERCToken() {
+			return errorz.ErrInvalid{}.New("utxoHandler.addOne; should not add ERCTokens which are set to be withdrawn")
+		}
+		owner, err := utxo.GenericOwner()
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
+		erctValue, err := utxo.ERCTokenValue()
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
+		sc, err := utxo.ERCTokenSmartContract()
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
+		tokenID, err := utxo.ERCTokenTokenID()
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
+		err = ut.erctokenIndex.Add(txn, utxoID, owner, erctValue, sc, tokenID)
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
 	default:
 		panic("utxoHandler.addOne; utxo type not defined")
 	}
@@ -699,6 +733,12 @@ func (ut *UTXOHandler) dropFromIndexes(txn *badger.Txn, utxoID []byte) error {
 		}
 	case utxo.HasAtomicSwap():
 		panic("utxoHandler.dropFromIndexes; not implemented for AtomicSwap objects")
+	case utxo.HasERCToken():
+		err = ut.erctokenIndex.Drop(txn, utxoID)
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
 	default:
 		panic("utxoHandler.dropFromIndexes; utxo type not defined")
 	}
@@ -706,9 +746,8 @@ func (ut *UTXOHandler) dropFromIndexes(txn *badger.Txn, utxoID []byte) error {
 }
 
 func (ut *UTXOHandler) makeUTXOKey(utxoID []byte) []byte {
-	utxoIDCopy := utils.CopySlice(utxoID)
 	key := dbprefix.PrefixMinedUTXO()
-	key = append(key, utxoIDCopy...)
+	key = append(key, utils.CopySlice(utxoID)...)
 	return key
 }
 
@@ -775,6 +814,35 @@ func (ut *UTXOHandler) addOneFastSync(txn *badger.Txn, utxo *objs.TXOut) error {
 		}
 	case utxo.HasAtomicSwap():
 		panic("utxoHandler.addOneFastSync; not implemented for AtomicSwap objects")
+	case utxo.HasERCToken():
+		if utxo.WithdrawnERCToken() {
+			return errorz.ErrInvalid{}.New("utxoHandler.addOneFastSync; should not add ERCTokens which are set to be withdrawn")
+		}
+		owner, err := utxo.GenericOwner()
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
+		erctValue, err := utxo.ERCTokenValue()
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
+		sc, err := utxo.ERCTokenSmartContract()
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
+		tokenID, err := utxo.ERCTokenTokenID()
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
+		err = ut.erctokenIndex.Add(txn, utxoID, owner, erctValue, sc, tokenID)
+		if err != nil {
+			utils.DebugTrace(ut.logger, err)
+			return err
+		}
 	default:
 		panic("utxoHandler.addOneFastSync; utxo type not defined")
 	}

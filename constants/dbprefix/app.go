@@ -113,3 +113,27 @@ func PrefixDepositValueKey() []byte {
 func PrefixPendingTxCooldownKey() []byte {
 	return []byte("n7")
 }
+
+func PrefixPendingTxTxFeeIndex() []byte {
+	return []byte("n8")
+}
+
+func PrefixPendingTxTxFeeIndexRef() []byte {
+	return []byte("n9")
+}
+
+func PrefixPendingTxTxSizeIndex() []byte {
+	return []byte("oa")
+}
+
+func PrefixPendingTxTxSizeIndexRef() []byte {
+	return []byte("ob")
+}
+
+func PrefixDepositERCTKey() []byte {
+	return []byte("oc")
+}
+
+func PrefixDepositERCTRefKey() []byte {
+	return []byte("od")
+}

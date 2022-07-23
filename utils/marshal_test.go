@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"math"
 
 	"github.com/MadBase/MadNet/constants"
 
@@ -230,6 +231,62 @@ func TestMarshalInt64(t *testing.T) {
 
 	badBytes := make([]byte, 9)
 	_, err = UnmarshalInt64(badBytes)
+	if err == nil {
+		t.Fatal("Should have raised error")
+	}
+}
+
+func TestMarshalFloat32(t *testing.T) {
+	z := float32(0)
+	zBytesTrue := make([]byte, 4)
+	zBytes := MarshalFloat32(z)
+	if !bytes.Equal(zBytes, zBytesTrue) {
+		t.Fatal("MarshalFloat32 fail: 0")
+	}
+	zUn, err := UnmarshalFloat32(zBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if z != zUn {
+		t.Fatal("UnmarshalFloat32 fail: 0")
+
+	}
+
+	maxFloat32 := float32(math.MaxFloat32)
+	maxFloat32BytesTrue := make([]byte, 4) // Hex: 7f7f ffff
+	maxFloat32BytesTrue[0] = 127
+	maxFloat32BytesTrue[1] = 127
+	maxFloat32BytesTrue[2] = 255
+	maxFloat32BytesTrue[3] = 255
+	maxFloat32Bytes := MarshalFloat32(maxFloat32)
+	if !bytes.Equal(maxFloat32Bytes, maxFloat32BytesTrue) {
+		t.Fatal("MarshalFloat32 fail: MaxFloat32")
+	}
+	maxFloat32Un, err := UnmarshalFloat32(maxFloat32Bytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if maxFloat32 != maxFloat32Un {
+		t.Fatal("UnmarshalFloat32 fail: MaxFloat32")
+	}
+
+	minFloat32 := float32(math.Pow(2, -126)) // minimum positive normal number
+	minFloat32BytesTrue := make([]byte, 4)   // Hex: 0080 0000
+	minFloat32BytesTrue[1] = 128
+	minFloat32Bytes := MarshalFloat32(minFloat32)
+	if !bytes.Equal(minFloat32Bytes, minFloat32BytesTrue) {
+		t.Fatal("MarshalFloat32 fail: MinFloat32")
+	}
+	minFloat32Un, err := UnmarshalFloat32(minFloat32Bytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if minFloat32 != minFloat32Un {
+		t.Fatal("UnmarshalFloat32 fail: MinFloat32")
+	}
+
+	badBytes := make([]byte, 5)
+	_, err = UnmarshalFloat32(badBytes)
 	if err == nil {
 		t.Fatal("Should have raised error")
 	}

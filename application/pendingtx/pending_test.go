@@ -56,7 +56,7 @@ func accountFromSigner(s objs.Signer) []byte {
 	return crypto.GetAccount(pubk)
 }
 
-func makeVS(ownerSigner objs.Signer) *objs.TXOut {
+func makeVS(ownerSigner objs.Signer, fee *uint256.Uint256) *objs.TXOut {
 	cid := uint32(2)
 	val := uint256.One()
 
@@ -64,7 +64,6 @@ func makeVS(ownerSigner objs.Signer) *objs.TXOut {
 	owner := &objs.ValueStoreOwner{}
 	owner.New(ownerAcct, constants.CurveSecp256k1)
 
-	fee := uint256.One()
 	vsp := &objs.VSPreImage{
 		ChainID: cid,
 		Value:   val,
@@ -84,7 +83,7 @@ func makeVS(ownerSigner objs.Signer) *objs.TXOut {
 }
 
 func makeVSTXIn(ownerSigner objs.Signer, txHash []byte) (*objs.TXOut, *objs.TXIn) {
-	vs := makeVS(ownerSigner)
+	vs := makeVS(ownerSigner, uint256.One())
 	vss, err := vs.ValueStore()
 	if err != nil {
 		panic(err)
@@ -104,6 +103,105 @@ func makeVSTXIn(ownerSigner objs.Signer, txHash []byte) (*objs.TXOut, *objs.TXIn
 	return vs, txin
 }
 
+func makeVSwithFees(ownerSigner objs.Signer, value, vsfee *uint256.Uint256) *objs.TXOut {
+	cid := uint32(2)
+
+	ownerAcct := accountFromSigner(ownerSigner)
+	owner := &objs.ValueStoreOwner{}
+	owner.New(ownerAcct, constants.CurveSecp256k1)
+
+	vsp := &objs.VSPreImage{
+		ChainID: cid,
+		Value:   value.Clone(),
+		Owner:   owner,
+		Fee:     vsfee.Clone(),
+	}
+	vs := &objs.ValueStore{
+		VSPreImage: vsp,
+		TxHash:     make([]byte, constants.HashLen),
+	}
+	utxInputs := &objs.TXOut{}
+	err := utxInputs.NewValueStore(vs)
+	if err != nil {
+		panic(err)
+	}
+	return utxInputs
+}
+
+func makeVSTXInwithFees(ownerSigner objs.Signer, txHash []byte, value, vsfee *uint256.Uint256) (*objs.TXOut, *objs.TXIn) {
+	vs := makeVSwithFees(ownerSigner, value, vsfee)
+	vss, err := vs.ValueStore()
+	if err != nil {
+		panic(err)
+	}
+	if txHash == nil {
+		txHash = make([]byte, constants.HashLen)
+		_, err := rand.Read(txHash)
+		if err != nil {
+			panic(err)
+		}
+	}
+	vss.TxHash = txHash
+	txin, err := vss.MakeTxIn()
+	if err != nil {
+		panic(err)
+	}
+	return vs, txin
+}
+
+func makeTxInitialwithFees(value, txfee, vsfee *uint256.Uint256) (objs.Vout, *objs.Tx) {
+	ownerSigner := testingOwner()
+	consumedUTXOs := objs.Vout{}
+	txInputs := []*objs.TXIn{}
+	utxo, txin := makeVSTXInwithFees(ownerSigner, nil, value, vsfee)
+	consumedUTXOs = append(consumedUTXOs, utxo)
+	txInputs = append(txInputs, txin)
+
+	generatedUTXOs := objs.Vout{}
+	valueMinusFees := new(uint256.Uint256)
+	err := valueMinusFees.Set(value)
+	if err != nil {
+		panic(err)
+	}
+	_, err = valueMinusFees.Sub(valueMinusFees, vsfee)
+	if err != nil {
+		panic(err)
+	}
+	_, err = valueMinusFees.Sub(valueMinusFees, txfee)
+	if err != nil {
+		panic(err)
+	}
+	generatedUTXOs = append(generatedUTXOs, makeVSwithFees(ownerSigner, valueMinusFees, vsfee))
+	err = generatedUTXOs.SetTxOutIdx()
+	if err != nil {
+		panic(err)
+	}
+	tx := &objs.Tx{
+		Vin:  txInputs,
+		Vout: generatedUTXOs,
+		Fee:  txfee.Clone(),
+	}
+	err = tx.SetTxHash()
+	if err != nil {
+		panic(err)
+	}
+	for i := 0; i < 1; i++ {
+		vs, err := consumedUTXOs[i].ValueStore()
+		if err != nil {
+			panic(err)
+		}
+		err = vs.Sign(tx.Vin[i], ownerSigner)
+		if err != nil {
+			panic(err)
+		}
+	}
+	err = tx.ValidateEqualVinVout(1, consumedUTXOs)
+	if err != nil {
+		panic(err)
+	}
+	return consumedUTXOs, tx
+}
+
 func makeTxInitial() (objs.Vout, *objs.Tx) {
 	ownerSigner := testingOwner()
 	consumedUTXOs := objs.Vout{}
@@ -115,7 +213,7 @@ func makeTxInitial() (objs.Vout, *objs.Tx) {
 	}
 	generatedUTXOs := objs.Vout{}
 	for i := 0; i < 2; i++ {
-		generatedUTXOs = append(generatedUTXOs, makeVS(ownerSigner))
+		generatedUTXOs = append(generatedUTXOs, makeVS(ownerSigner, uint256.One()))
 	}
 	err := generatedUTXOs.SetTxOutIdx()
 	if err != nil {
@@ -156,7 +254,7 @@ func makeTxConsuming(consumedUTXOs objs.Vout) *objs.Tx {
 	}
 	generatedUTXOs := objs.Vout{}
 	for i := 0; i < 2; i++ {
-		generatedUTXOs = append(generatedUTXOs, makeVS(ownerSigner))
+		generatedUTXOs = append(generatedUTXOs, makeVS(ownerSigner, uint256.One()))
 	}
 	err := generatedUTXOs.SetTxOutIdx()
 	if err != nil {
@@ -183,6 +281,156 @@ func makeTxConsuming(consumedUTXOs objs.Vout) *objs.Tx {
 		}
 	}
 	return tx
+}
+
+func makeTxCleanup() (objs.Vout, *objs.Tx) {
+	cid := uint32(2)
+	ownerSigner := testingOwner()
+	consumedUTXOs := objs.Vout{}
+	txInputs := []*objs.TXIn{}
+	rawData := make([]byte, 1)
+	index := make([]byte, constants.HashLen)
+	index[0] = 1
+	startEpoch := uint32(1)
+	numEpochs := uint32(1)
+	dsfee := uint256.One()
+	ds, txin := makeDSTXInWithValueFee(ownerSigner, rawData, index, startEpoch, numEpochs, dsfee)
+	utxo := &objs.TXOut{}
+	err := utxo.NewDataStore(ds)
+	if err != nil {
+		panic(err)
+	}
+	consumedUTXOs = append(consumedUTXOs, utxo)
+	txInputs = append(txInputs, txin)
+
+	cleanupHeight := (startEpoch + numEpochs + 1) * constants.EpochLength
+	remValue, err := ds.RemainingValue(cleanupHeight)
+	if err != nil {
+		panic(err)
+	}
+	account := accountFromSigner(ownerSigner)
+	owner := &objs.ValueStoreOwner{}
+	owner.New(account, constants.CurveSecp256k1)
+
+	vs := &objs.ValueStore{}
+	fee := uint256.Zero()
+	curveSpec := constants.CurveSecp256k1
+	err = vs.New(cid, remValue, fee, account, curveSpec, make([]byte, constants.HashLen))
+	if err != nil {
+		panic(err)
+	}
+	newUTXO := &objs.TXOut{}
+	err = newUTXO.NewValueStore(vs)
+	if err != nil {
+		panic(err)
+	}
+
+	generatedUTXOs := objs.Vout{}
+	generatedUTXOs = append(generatedUTXOs, newUTXO)
+	err = generatedUTXOs.SetTxOutIdx()
+	if err != nil {
+		panic(err)
+	}
+	txfee := uint256.Zero()
+	tx := &objs.Tx{
+		Vin:  txInputs,
+		Vout: generatedUTXOs,
+		Fee:  txfee,
+	}
+	err = tx.SetTxHash()
+	if err != nil {
+		panic(err)
+	}
+	err = ds.Sign(tx.Vin[0], ownerSigner)
+	if err != nil {
+		panic(err)
+	}
+
+	// Testing
+	currentHeight := uint32(1) + (startEpoch+numEpochs)*constants.EpochLength
+	if !tx.IsCleanupTx(currentHeight, consumedUTXOs) {
+		panic("invalid cleanup tx")
+	}
+
+	return consumedUTXOs, tx
+}
+
+func makeDSTXInWithValueFee(ownerSigner objs.Signer, rawData []byte, index []byte, startEpoch uint32, numEpochs uint32, dsPerEpochFee *uint256.Uint256) (*objs.DataStore, *objs.TXIn) {
+	if dsPerEpochFee == nil || len(rawData) == 0 {
+		panic("invalid fee or rawData")
+	}
+	cid := uint32(2)
+
+	ownerPubk, err := ownerSigner.Pubkey()
+	if err != nil {
+		panic(err)
+	}
+	ownerAcct := crypto.GetAccount(ownerPubk)
+	owner := &objs.DataStoreOwner{}
+	owner.New(ownerAcct, constants.CurveSecp256k1)
+
+	dataSize32 := uint32(len(rawData))
+	deposit, err := objs.BaseDepositEquation(dataSize32, numEpochs)
+	if err != nil {
+		panic(err)
+	}
+
+	mulFactor, err := new(uint256.Uint256).FromUint64(uint64(numEpochs + 2))
+	if err != nil {
+		panic(err)
+	}
+	dsfee, err := new(uint256.Uint256).Mul(dsPerEpochFee, mulFactor)
+	if err != nil {
+		panic(err)
+	}
+	dsp := &objs.DSPreImage{
+		ChainID:  cid,
+		Index:    index,
+		IssuedAt: startEpoch,
+		Deposit:  deposit,
+		RawData:  rawData,
+		Owner:    owner,
+		Fee:      dsfee,
+	}
+	err = dsp.ValidateDeposit()
+	if err != nil {
+		panic(err)
+	}
+	txHash := make([]byte, constants.HashLen)
+	_, err = rand.Read(txHash)
+	if err != nil {
+		panic(err)
+	}
+	dsl := &objs.DSLinker{
+		DSPreImage: dsp,
+		TxHash:     txHash,
+	}
+	ds := &objs.DataStore{
+		DSLinker: dsl,
+	}
+	err = ds.PreSign(ownerSigner)
+	if err != nil {
+		panic(err)
+	}
+	err = ds.ValidatePreSignature()
+	if err != nil {
+		panic(err)
+	}
+
+	ds2 := &objs.DataStore{}
+	dsBytes, err := ds.MarshalBinary()
+	if err != nil {
+		panic(err)
+	}
+	err = ds2.UnmarshalBinary(dsBytes)
+	if err != nil {
+		panic(err)
+	}
+	txin, err := ds.MakeTxIn()
+	if err != nil {
+		panic(err)
+	}
+	return ds, txin
 }
 
 func mustAddTx(t *testing.T, hndlr *Handler, tx *objs.Tx, currentHeight uint32) {
@@ -274,7 +522,11 @@ func setup(t *testing.T) (*Handler, *mockTrie, func()) {
 	////////////////////////////////////////
 	mt := &mockTrie{}
 	mt.m = make(map[string]bool)
-	hndlr := NewPendingTxHandler(db)
+	queueSize := 1024
+	hndlr, err := NewPendingTxHandler(db, queueSize)
+	if err != nil {
+		t.Fatal(err)
+	}
 	hndlr.UTXOHandler = mt
 	hndlr.DepositHandler = mt
 	return hndlr, mt, fn
@@ -335,7 +587,11 @@ func TestDeleteMined(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = hndlr.DeleteMined(nil, 1, [][]byte{txHash})
+	consumedUTXOIDs, err := tx.ConsumedUTXOID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = hndlr.DeleteMined(nil, 1, [][]byte{txHash}, consumedUTXOIDs)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -364,10 +620,12 @@ func TestGetProposal(t *testing.T) {
 	tx4 := makeTxConsuming(c2)
 	mustAddTx(t, hndlr, tx4, 1)
 	maxBytes := constants.MaxUint32
-	txs, _, err := hndlr.GetTxsForProposal(nil, context.TODO(), 1, maxBytes, nil)
+	hndlr.txqueue.ClearTxQueue()
+	txs, _, err := hndlr.GetTxsForProposal(hndlr.db.NewTransaction(false), context.TODO(), 1, maxBytes, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Logf("Length: %v\n", len(txs))
 	txHashes, err := objs.TxVec(txs).TxHash()
 	if err != nil {
 		t.Fatal(err)
@@ -394,5 +652,316 @@ func TestGetProposal(t *testing.T) {
 	}
 	if len(txs) != 2 {
 		t.Fatalf("conflict: %x", txHashes)
+	}
+}
+
+func TestGetTxsForProposal1(t *testing.T) {
+	hndlr, trie, cleanup := setup(t)
+	defer cleanup()
+	value1, err := new(uint256.Uint256).FromUint64(123)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee1, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	vsfee, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx1 := makeTxInitialwithFees(value1, txfee1, vsfee)
+	txhash1, err := tx1.TxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	mustAddTx(t, hndlr, tx1, 1)
+	value2, err := new(uint256.Uint256).FromUint64(1234567)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee2, err := new(uint256.Uint256).FromUint64(100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx2 := makeTxInitialwithFees(value2, txfee2, vsfee)
+	txhash2, err := tx2.TxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	mustAddTx(t, hndlr, tx2, 1)
+	value3, err := new(uint256.Uint256).FromUint64(1234)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee3, err := new(uint256.Uint256).FromUint64(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx3 := makeTxInitialwithFees(value3, txfee3, vsfee)
+	txhash3, err := tx3.TxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	mustAddTx(t, hndlr, tx3, 1)
+	value4, err := new(uint256.Uint256).FromUint64(12341235235232)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee4, err := new(uint256.Uint256).FromUint64(10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx4 := makeTxInitialwithFees(value4, txfee4, vsfee)
+	txhash4, err := tx4.TxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	mustAddTx(t, hndlr, tx4, 1)
+	// trie must contain utxos getting spent but must not contain
+	// utxos being generated
+	utxoIDs, err := objs.TxVec{tx1, tx2, tx3, tx4}.ConsumedUTXOID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, ut := range utxoIDs {
+		trie.Add(ut)
+	}
+	maxBytes := constants.MaxUint32
+	txs, _, err := hndlr.GetTxsForProposal(hndlr.db.NewTransaction(false), context.TODO(), 1+3*constants.EpochLength, maxBytes, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("Length: %v\n", len(txs))
+	if len(txs) != 4 {
+		t.Fatal("invalid number of txs")
+	}
+	txHashes, err := objs.TxVec(txs).TxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(txHashes[0], txhash3) {
+		t.Fatal("invalid first hash")
+	}
+	if !bytes.Equal(txHashes[1], txhash2) {
+		t.Fatal("invalid second hash")
+	}
+	if !bytes.Equal(txHashes[2], txhash4) {
+		t.Fatal("invalid third hash")
+	}
+	if !bytes.Equal(txHashes[3], txhash1) {
+		t.Fatal("invalid fourth hash")
+	}
+}
+
+func TestGetTxsForProposal2(t *testing.T) {
+	hndlr, trie, cleanup := setup(t)
+	defer cleanup()
+	value1, err := new(uint256.Uint256).FromUint64(123)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee1, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	vsfee, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx1 := makeTxInitialwithFees(value1, txfee1, vsfee)
+	mustAddTx(t, hndlr, tx1, 1)
+	value2, err := new(uint256.Uint256).FromUint64(1234567)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee2, err := new(uint256.Uint256).FromUint64(100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx2 := makeTxInitialwithFees(value2, txfee2, vsfee)
+	mustAddTx(t, hndlr, tx2, 1)
+	value3, err := new(uint256.Uint256).FromUint64(1234)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee3, err := new(uint256.Uint256).FromUint64(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx3 := makeTxInitialwithFees(value3, txfee3, vsfee)
+	mustAddTx(t, hndlr, tx3, 1)
+	value4, err := new(uint256.Uint256).FromUint64(12341235235232)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee4, err := new(uint256.Uint256).FromUint64(10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx4 := makeTxInitialwithFees(value4, txfee4, vsfee)
+	mustAddTx(t, hndlr, tx4, 1)
+	// trie must contain utxos getting spent but must not contain
+	// utxos being generated
+	utxoIDs, err := objs.TxVec{tx1, tx2, tx3, tx4}.ConsumedUTXOID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, ut := range utxoIDs {
+		trie.Add(ut)
+	}
+	maxBytes := constants.MaxUint32
+
+	ctx, cancel := context.WithTimeout(context.Background(), 0)
+	defer cancel()
+	txs, retMaxBytes, err := hndlr.GetTxsForProposal(hndlr.db.NewTransaction(false), ctx, 1, maxBytes, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(txs) != 0 {
+		t.Fatal("invalid number of txs")
+	}
+	if retMaxBytes != maxBytes {
+		t.Fatal("invalid retMaxBytes")
+	}
+}
+
+func TestAddTxsToQueueFullQueue(t *testing.T) {
+	hndlr, _, cleanup := setup(t)
+	defer cleanup()
+
+	_, tx := makeTxInitial()
+	mustAddTx(t, hndlr, tx, 1)
+
+	_, tx2 := makeTxInitial()
+	mustAddTx(t, hndlr, tx2, 1)
+
+	hndlr.SetQueueSize(1)
+	err := hndlr.AddTxsToQueue(nil, context.TODO(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAddTxsToQueueStatusChecks(t *testing.T) {
+	hndlr, _, cleanup := setup(t)
+	defer cleanup()
+
+	_, tx := makeTxInitial()
+	mustAddTx(t, hndlr, tx, 1)
+
+	_, tx2 := makeTxInitial()
+	mustAddTx(t, hndlr, tx2, 1)
+
+	hndlr.SetQueueSize(1)
+	if hndlr.TxQueueAddStatus() {
+		t.Fatal("Status should be false")
+	}
+	hndlr.TxQueueAddStart()
+	if !hndlr.TxQueueAddStatus() {
+		t.Fatal("Status should be true")
+	}
+	hndlr.TxQueueAddStart()
+	if !hndlr.TxQueueAddStatus() {
+		t.Fatal("Status should be true")
+	}
+	hndlr.TxQueueAddStop()
+	if hndlr.TxQueueAddStatus() {
+		t.Fatal("Status should be false")
+	}
+
+	if hndlr.TxQueueAddFinished() {
+		t.Fatal("StatusFinished should be false")
+	}
+	err := hndlr.AddTxsToQueue(hndlr.db.NewTransaction(false), context.TODO(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !hndlr.TxQueueAddFinished() {
+		t.Fatal("StatusFinished should be true")
+	}
+	err = hndlr.AddTxsToQueue(hndlr.db.NewTransaction(false), context.TODO(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !hndlr.TxQueueAddFinished() {
+		t.Fatal("StatusFinished should still be true")
+	}
+}
+
+func TestAddTxsToQueueStartStop(t *testing.T) {
+	hndlr, trie, cleanup := setup(t)
+	defer cleanup()
+
+	value1, err := new(uint256.Uint256).FromUint64(123)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee1, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	vsfee, err := new(uint256.Uint256).FromUint64(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx1 := makeTxInitialwithFees(value1, txfee1, vsfee)
+	txhash1, err := tx1.TxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	mustAddTx(t, hndlr, tx1, 1)
+	value2, err := new(uint256.Uint256).FromUint64(1234567)
+	if err != nil {
+		t.Fatal(err)
+	}
+	txfee2, err := new(uint256.Uint256).FromUint64(100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, tx2 := makeTxInitialwithFees(value2, txfee2, vsfee)
+	txhash2, err := tx2.TxHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	mustAddTx(t, hndlr, tx2, 1)
+	// trie must contain utxos getting spent but must not contain
+	// utxos being generated
+	utxoIDs, err := objs.TxVec{tx1, tx2}.ConsumedUTXOID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, ut := range utxoIDs {
+		trie.Add(ut)
+	}
+	hndlr.txqueue.ClearTxQueue()
+	hndlr.txqueue.SetQueueSize(1)
+
+	// Attempt to add but force a timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 0)
+	defer cancel()
+	err = hndlr.AddTxsToQueue(hndlr.db.NewTransaction(false), ctx, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if hndlr.TxQueueAddFinished() {
+		t.Fatal("StatusFinished should be false")
+	}
+	if hndlr.iterInfo.currentKey == nil {
+		t.Fatal("currentKey should not be nil")
+	}
+	// Attempt to add more txs
+	err = hndlr.AddTxsToQueue(hndlr.db.NewTransaction(false), context.TODO(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !hndlr.TxQueueAddFinished() {
+		t.Fatal("StatusFinished should still be true")
+	}
+	if hndlr.txqueue.Contains(txhash1) {
+		t.Fatal("TxQueue should not contain tx1")
+	}
+	if !hndlr.txqueue.Contains(txhash2) {
+		t.Fatal("TxQueue should contain tx2")
 	}
 }

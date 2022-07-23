@@ -21,8 +21,8 @@ type RawStorage struct {
 	SrvrMsgTimeout                 time.Duration `json:"srvrMsgTimeout,omitempty"`
 	MsgTimeout                     time.Duration `json:"msgTimeout,omitempty"`
 
-	MinTxFee       *big.Int `json:"minTxFee,omitempty"`
-	TxValidVersion uint32   `json:"txValidVersion,omitempty"`
+	MinTxFeeCostRatio *big.Int `json:"minTxFee,omitempty"`
+	TxValidVersion    uint32   `json:"txValidVersion,omitempty"`
 
 	ValueStoreFee          *big.Int `json:"valueStoreFee,omitempty"`
 	ValueStoreValidVersion uint32   `json:"valueStoreValidVersion,omitempty"`
@@ -32,6 +32,9 @@ type RawStorage struct {
 
 	DataStoreEpochFee     *big.Int `json:"dataStoreEpochFee,omitempty"`
 	DataStoreValidVersion uint32   `json:"dataStoreValidVersion,omitempty"`
+
+	ERCTokenFee          *big.Int `json:"ercTokenFee,omitempty"`
+	ERCTokenValidVersion uint32   `json:"ercTokenValidVersion,omitempty"`
 }
 
 // Marshal performs json.Marshal on the RawStorage struct.
@@ -115,13 +118,13 @@ func (rs *RawStorage) UpdateValue(update Updater) error {
 			return err
 		}
 		rs.SetMsgTimeout(v)
-	case MinTxFeeType:
+	case MinTxFeeCostRatioType:
 		// *big.Int
 		v, err := stringToBigInt(value)
 		if err != nil {
 			return err
 		}
-		err = rs.SetMinTxFee(v)
+		err = rs.SetMinTxFeeCostRatio(v)
 		if err != nil {
 			return err
 		}
@@ -183,6 +186,23 @@ func (rs *RawStorage) UpdateValue(update Updater) error {
 			return err
 		}
 		rs.SetDataStoreValidVersion(v)
+	case ERCTokenFeeType:
+		// *big.Int
+		v, err := stringToBigInt(value)
+		if err != nil {
+			return err
+		}
+		err = rs.SetERCTokenFee(v)
+		if err != nil {
+			return err
+		}
+	case ERCTokenValidVersionType:
+		// uint32
+		v, err := stringToUint32(value)
+		if err != nil {
+			return err
+		}
+		rs.SetERCTokenValidVersion(v)
 	default:
 		return ErrInvalidUpdateValue
 	}
@@ -207,7 +227,8 @@ func (rs *RawStorage) standardParameters() {
 	rs.AtomicSwapFee = new(big.Int).Set(atomicSwapFee)
 	rs.DataStoreEpochFee = new(big.Int).Set(dataStoreEpochFee)
 	rs.ValueStoreFee = new(big.Int).Set(valueStoreFee)
-	rs.MinTxFee = new(big.Int).Set(minTxFee)
+	rs.ERCTokenFee = new(big.Int).Set(ercTokenFee)
+	rs.MinTxFeeCostRatio = new(big.Int).Set(minTxFeeCostRatio)
 }
 
 // GetMaxBytes returns the maximum allowed bytes
@@ -292,26 +313,26 @@ func (rs *RawStorage) GetDownloadTimeout() time.Duration {
 	return rs.DownloadTimeout
 }
 
-// GetMinTxFee returns the minimun tx burned fee
-func (rs *RawStorage) GetMinTxFee() *big.Int {
-	if rs.MinTxFee == nil {
-		rs.MinTxFee = new(big.Int)
+// GetMinTxFeeCostRatio returns the minimun tx fee-cost ratio
+func (rs *RawStorage) GetMinTxFeeCostRatio() *big.Int {
+	if rs.MinTxFeeCostRatio == nil {
+		rs.MinTxFeeCostRatio = new(big.Int)
 	}
-	return rs.MinTxFee
+	return rs.MinTxFeeCostRatio
 }
 
-// SetMinTxFee sets the minimun tx burned fee
-func (rs *RawStorage) SetMinTxFee(value *big.Int) error {
+// SetMinTxFeeCostRatio sets the minimun tx burned fee
+func (rs *RawStorage) SetMinTxFeeCostRatio(value *big.Int) error {
 	if value == nil {
 		return ErrInvalidValue
 	}
-	if rs.MinTxFee == nil {
-		rs.MinTxFee = new(big.Int)
+	if rs.MinTxFeeCostRatio == nil {
+		rs.MinTxFeeCostRatio = new(big.Int)
 	}
 	if value.Sign() < 0 {
 		return ErrInvalidValue
 	}
-	rs.MinTxFee.Set(value)
+	rs.MinTxFeeCostRatio.Set(value)
 	return nil
 }
 
@@ -422,4 +443,37 @@ func (rs *RawStorage) GetDataStoreValidVersion() uint32 {
 // SetDataStoreValidVersion sets the valid version of AtomicSwap
 func (rs *RawStorage) SetDataStoreValidVersion(value uint32) {
 	rs.DataStoreValidVersion = value
+}
+
+// GetERCTokenFee returns the minimun ERCToken burned fee
+func (rs *RawStorage) GetERCTokenFee() *big.Int {
+	if rs.ERCTokenFee == nil {
+		rs.ERCTokenFee = new(big.Int)
+	}
+	return rs.ERCTokenFee
+}
+
+// SetERCTokenFee sets the minimun ERCToken burned fee
+func (rs *RawStorage) SetERCTokenFee(value *big.Int) error {
+	if value == nil {
+		return ErrInvalidValue
+	}
+	if rs.ERCTokenFee == nil {
+		rs.ERCTokenFee = new(big.Int)
+	}
+	if value.Sign() < 0 {
+		return ErrInvalidValue
+	}
+	rs.ERCTokenFee.Set(value)
+	return nil
+}
+
+// GetERCTokenValidVersion returns the valid version of ERCToken
+func (rs *RawStorage) GetERCTokenValidVersion() uint32 {
+	return rs.ERCTokenValidVersion
+}
+
+// SetERCTokenValidVersion sets the valid version of ERCToken
+func (rs *RawStorage) SetERCTokenValidVersion(value uint32) {
+	rs.ERCTokenValidVersion = value
 }
